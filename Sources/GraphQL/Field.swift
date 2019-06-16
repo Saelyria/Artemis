@@ -1,19 +1,5 @@
 import Foundation
 
-public protocol FieldProtocol: FieldAggregate {
-
-}
-public extension FieldProtocol {
-    func unsafeIncludedKeyPaths() -> [(String, AnyKeyPath)] {
-        return self.includedKeyPaths()
-    }
-}
-
-public protocol AnyField {
-    func render() -> String
-    func renderDebug() -> String
-}
-
 public protocol AnyFieldValue {
     associatedtype Value: GraphQLCompatibleValue
     associatedtype Arguments = Void
@@ -25,7 +11,7 @@ public struct FieldValue<Value: GraphQLCompatibleValue, ArgType>: AnyFieldValue 
     public typealias Arguments = ArgType
 }
 
-public struct Field<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggregate>: FieldProtocol {
+public struct Field<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggregate>: FieldAggregate {
     public typealias Result = Value.Value.Result
     
     private let alias: String?
@@ -33,7 +19,7 @@ public struct Field<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggregat
     private let arguments: [Value.Arguments]
     /// The query string of the sub-selection on the requested key. This is `nil` if the key is a scalar value.
     private let renderedSubSelection: String?
-    var key: String { T.string(for: self.keyPath) }
+    var key: String { self.alias ?? T.string(for: self.keyPath) }
     public var items: [AnyFieldAggregate] = []
     
     public func render() -> String {
@@ -43,7 +29,7 @@ public struct Field<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggregat
 //                args = self.arguments.map { T.string(for: $0) }.joined(separator: ", ")
 //                args = "(\(args))"
 //            }
-            return "\(T.string(for: self.keyPath))\(args) { \(renderedSubQuery) }"
+            return "\(self.key)\(args) { \(renderedSubQuery) }"
         }
         return T.string(for: self.keyPath)
     }
@@ -57,7 +43,7 @@ public struct Field<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggregat
 //                })
 //                args = "(\(args))"
 //            }
-            return "\(T.string(for: self.keyPath))\(args) {\n\t\(renderedSubQuery)\n}"
+            return "\(self.key)\(args) {\n\t\(renderedSubQuery)\n}"
         }
         return T.string(for: self.keyPath)
     }
@@ -129,7 +115,7 @@ extension Field where Value.Value: Collection, SubSelection.T.QueryableType == V
     }
 }
 
-public struct EmptySubSelection<T: Schema>: FieldProtocol {
+public struct EmptySubSelection<T: Schema>: FieldAggregate {
     public typealias Result = Never
     
     public var items: [AnyFieldAggregate]

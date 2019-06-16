@@ -45,48 +45,6 @@ public extension Partial where T: Schema {
     }
 }
 
-// Keep around - potentially lets us do some trickery with aliases
-//@dynamicMemberLookup
-//struct PartialValue<T: Queryable, U> {
-//    private let values: [String: Any]
-//    private let keyPath: KeyPath<T.QueryableType, U>
-//
-//    init(keyPath: KeyPath<T.QueryableType, U>, values: [String: Any]) {
-//        self.values = values
-//        self.keyPath = keyPath
-//    }
-//
-//    subscript<U>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> U? where U: GraphQLScalarValue {
-//        let keyString = T.string(for: keyPath)
-//        return self.values[keyString] as? U
-//    }
-//
-//    subscript<U: Sequence & GraphQLScalarValue>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> U? {
-//        let keyString = T.string(for: keyPath)
-//        return self.values[keyString] as? U
-//    }
-//
-//    subscript<U>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> (String) -> U? where U: GraphQLScalarValue {
-//        return { keyString in self.values[keyString] as? U }
-//    }
-//
-//    subscript<U: Sequence & GraphQLScalarValue>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> (String) -> U? {
-//        return { keyString in self.values[keyString] as? U }
-//    }
-//
-//    subscript<U: Queryable>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> Partial<U>? {
-//        let keyString = T.string(for: keyPath)
-//        guard let valueDict = self.values[keyString] as? [String: Any] else { return nil }
-//        return Partial<U>(values: valueDict)
-//    }
-//
-//    subscript<U: Sequence & Queryable>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> [Partial<U.Element>]? {
-//        let keyString = T.string(for: keyPath)
-//        guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
-//        return valuesArray.map { Partial<U.Element>(values: $0) }
-//    }
-//}
-
 extension Partial: CustomStringConvertible {
     public var description: String {
         var desc = "Partial<\(String(describing: T.self).split(separator: ".").last!)>("

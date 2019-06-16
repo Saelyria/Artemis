@@ -30,7 +30,7 @@ public struct SubSelectionBuilder {
     }
     
     public static func buildBlock
-        <T, F1: FieldProtocol, F2: FieldProtocol, F3: FieldProtocol, F4: FieldProtocol>
+        <T, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate>
         (_ f1: F1, _ f2: F2, _ f3: F3, _ f4: F4)
         -> AggregateOperationItem4<T, F1, F2, F3, F4>
         where F1.T == T, F2.T == T, F3.T == T, F4.T == T
@@ -39,7 +39,7 @@ public struct SubSelectionBuilder {
     }
     
     public static func buildBlock
-        <T, F1: FieldProtocol, F2: FieldProtocol, F3: FieldProtocol, F4: FieldProtocol, F5: FieldProtocol>
+        <T, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate>
         (_ f1: F1, _ f2: F2, _ f3: F3, _ f4: F4, _ f5: F5)
         -> AggregateOperationItem5<T, F1, F2, F3, F4, F5>
         where F1.T == T, F2.T == T, F3.T == T, F4.T == T, F5.T == T
@@ -48,7 +48,7 @@ public struct SubSelectionBuilder {
     }
 
     public static func buildBlock
-        <T, F1: FieldProtocol, F2: FieldProtocol, F3: FieldProtocol, F4: FieldProtocol, F5: FieldProtocol, F6: FieldProtocol>
+        <T, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate, F6: FieldAggregate>
         (_ f1: F1, _ f2: F2, _ f3: F3, _ f4: F4, _ f5: F5, _ f6: F6)
         -> AggregateOperationItem6<T, F1, F2, F3, F4, F5, F6>
         where F1.T == T, F2.T == T, F3.T == T, F4.T == T, F5.T == T, F6.T == T
@@ -57,7 +57,7 @@ public struct SubSelectionBuilder {
     }
     
     public static func buildBlock
-        <T, F1: FieldProtocol, F2: FieldProtocol, F3: FieldProtocol, F4: FieldProtocol, F5: FieldProtocol, F6: FieldProtocol, F7: FieldProtocol>
+        <T, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate, F6: FieldAggregate, F7: FieldAggregate>
         (_ f1: F1, _ f2: F2, _ f3: F3, _ f4: F4, _ f5: F5, _ f6: F6, _ f7: F7)
         -> AggregateOperationItem7<T, F1, F2, F3, F4, F5, F6, F7>
         where F1.T == T, F2.T == T, F3.T == T, F4.T == T, F5.T == T, F6.T == T, F7.T == T

@@ -3,7 +3,6 @@ import Foundation
 public protocol FieldAggregate: AnyFieldAggregate {
     associatedtype T: Schema
     associatedtype Result
-//    associatedtype Value: GraphQLCompatibleValue
     
     func includedKeyPaths() -> [(String, PartialKeyPath<T.QueryableType>)]
     func createResult(from: [String : Any]) throws -> Result
@@ -13,10 +12,16 @@ extension FieldAggregate {
     public func includedKeyPaths() -> [(String, PartialKeyPath<T.QueryableType>)] {
         return []
     }
+    
+    func unsafeIncludedKeyPaths() -> [(String, AnyKeyPath)] {
+        return self.includedKeyPaths()
+    }
 }
 
-public protocol AnyFieldAggregate: AnyField {
+public protocol AnyFieldAggregate {
     var items: [AnyFieldAggregate] { get }
+    func render() -> String
+    func renderDebug() -> String
 }
 public extension AnyFieldAggregate {
     func render() -> String {
