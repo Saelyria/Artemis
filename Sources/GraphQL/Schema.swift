@@ -3,22 +3,12 @@ import Foundation
 public protocol Schema: GraphQLCompatibleValue, AnyFieldValue {
     /// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
     associatedtype QueryableType: Schema = Self
-    /// An enum type that is used to provide arguments to queries for this object. Defaults to `Void`.
-    associatedtype Args = Void
-    
     associatedtype Result = Partial<Self>
     
     static func string(for keyPath: PartialKeyPath<QueryableType>) -> String
-    static func string(for argument: Args) -> String
 }
 
 public extension Schema {
-    static func string(for argument: Args) -> String {
-        return String(describing: argument)
-            .replacingOccurrences(of: "(", with: ": ")
-            .replacingOccurrences(of: ")", with: "")
-    }
-    
     static func createUnsafeResult<R>(from dict: [String : Any], key: String) throws -> R {
         guard R.self == Result.self else { throw GraphQLError.invalidOperation }
         guard let dictRepresentation = dict[key] as? [String: Any] else { throw GraphQLError.singleItemParseFailure(operation: key) }
@@ -34,14 +24,9 @@ public extension Schema where Result == Partial<Self> {
 
 extension Array: Schema where Element: Schema {
     public typealias QueryableType = Element.QueryableType
-    public typealias Args = Element.Args
     
     public static func string(for keyPath: PartialKeyPath<Element.QueryableType>) -> String {
         return Element.string(for: keyPath)
-    }
-    
-    public static func string(for argument: Args) -> String {
-        return Element.string(for: argument)
     }
     
     public static func createResult(from dict: [String : Any], key: String) throws -> [Partial<Element>] {
