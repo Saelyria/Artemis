@@ -33,7 +33,7 @@ import Foundation
 //}
 
 
-public class Graph<Q: Queryable> {
+public class Graph<Q: Schema> {
     public init() { }
     
     public func perform<U>(_ query: Query<Q, U>, completion: @escaping (U.T) -> Void) {

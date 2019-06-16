@@ -2,7 +2,7 @@ import Foundation
 
 /// A protocol representing one piece of a GraphQL query. The associated `T` type refers to the type we're building a query for.
 public protocol GraphQLItem: AnyGraphQLItem {
-    associatedtype T: Queryable // The type whose keys are being queried
+    associatedtype T: Schema // The type whose keys are being queried
     
     func includedKeyPaths() -> [(String, PartialKeyPath<T.QueryableType>)]
 }
@@ -18,7 +18,7 @@ public protocol AnyGraphQLItem {
     func unsafeIncludedKeyPaths() -> [(String, AnyKeyPath)]
 }
 
-public struct AggregateGraphQLItem<T: Queryable>: GraphQLItem {
+public struct AggregateGraphQLItem<T: Schema>: GraphQLItem {
     let items: [AnyGraphQLItem]
     
     init(_ items: [AnyGraphQLItem]) {
@@ -44,7 +44,7 @@ public struct AggregateGraphQLItem<T: Queryable>: GraphQLItem {
     }
 }
 
-public struct EmptyGraphQLItem<T: Queryable>: GraphQLItem {
+public struct EmptyGraphQLItem<T: Schema>: GraphQLItem {
     public func includedKeyPaths<T>() -> [(String, PartialKeyPath<T>)] {
         return []
     }

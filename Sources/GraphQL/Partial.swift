@@ -10,7 +10,7 @@ import Foundation
  */
 @dynamicMemberLookup
 //@dynamicCallable
-public struct Partial<T: Queryable> {
+public struct Partial<T: Schema> {
     private let values: [String: Any]
 
     init(values: [String: Any]) {
@@ -39,13 +39,13 @@ public struct Partial<T: Queryable> {
         return { keyString in self.values[keyString] as? U }
     }
     
-    public subscript<U: Queryable>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> Partial<U>? {
+    public subscript<U: Schema>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> Partial<U>? {
         let keyString = T.string(for: keyPath)
         guard let valueDict = self.values[keyString] as? [String: Any] else { return nil }
         return Partial<U>(values: valueDict)
     }
     
-    public subscript<U: Sequence & Queryable>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> [Partial<U.Element>]? {
+    public subscript<U: Sequence & Schema>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> [Partial<U.Element>]? {
         let keyString = T.string(for: keyPath)
         guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
         return valuesArray.map { Partial<U.Element>(values: $0) }
@@ -118,9 +118,9 @@ public enum GraphQLError: Error {
     case other(Error)
 }
 
-public protocol Queryable: GraphQLCompatibleValue {
+public protocol Schema: GraphQLCompatibleValue {
     /// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
-    associatedtype QueryableType: Queryable = Self
+    associatedtype QueryableType: Schema = Self
     /// An enum type that is used to provide arguments to queries for this object. Defaults to `Void`.
     associatedtype Args = Void
     
@@ -131,21 +131,21 @@ public protocol Queryable: GraphQLCompatibleValue {
     static func createResult(from dict: [String: Any], key: String) throws -> Result
 }
 
-public extension Queryable {
+public extension Schema {
     static func string(for argument: Args) -> String {
         return String(describing: argument)
             .replacingOccurrences(of: "(", with: ": ")
             .replacingOccurrences(of: ")", with: "")
     }
 }
-public extension Queryable where Result == Partial<Self> {
+public extension Schema where Result == Partial<Self> {
     static func createResult(from dict: [String: Any], key: String) throws -> Partial<Self> {
         guard let dictRepresentation = dict[key] as? [String: Any] else { throw GraphQLError.singleItemParseFailure(operation: key) }
         return Partial(values: dictRepresentation)
     }
 }
 
-extension Array: Queryable where Element: Queryable {
+extension Array: Schema where Element: Schema {
     public typealias QueryableType = Element.QueryableType
     public typealias Args = Element.Args
     public typealias Result = [Partial<Element>]

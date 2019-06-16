@@ -8,7 +8,7 @@ protocol GraphOperation: GraphQLItem {
 
 
 /// A declaration of a property that we want to be included in the queried type.
-public struct Get<T: Queryable, Value: GraphQLCompatibleValue, SubSelection: GraphQLItem>: GraphQLItem {
+public struct Get<T: Schema, Value: GraphQLCompatibleValue, SubSelection: GraphQLItem>: GraphQLItem {
     private let keyPath: KeyPath<T.QueryableType, Value>
     private let arguments: [T.Args]
     /// The query string of the sub-selection on the requested key. This is `nil` if the key is a scalar value.
@@ -62,7 +62,7 @@ extension Get where Value: GraphQLScalarValue, SubSelection == EmptyGraphQLItem<
     }
 }
 
-extension Get where Value: Queryable, SubSelection.T == Value {
+extension Get where Value: Schema, SubSelection.T == Value {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
     public init(_ keyPath: KeyPath<T.QueryableType, Value>, @QuerySubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
