@@ -10,6 +10,6 @@ public class Graph<Q: Schema> {
 
 public struct Query<Q, AggregateItems: FieldAggregate> where AggregateItems.T == Q {
     public init(name: String? = nil, @SubSelectionBuilder query: () -> AggregateItems) {
-        
+        print(query().render())
     }
 }
