@@ -9,8 +9,7 @@ import Foundation
  safe way using `KeyPath` objects.
  */
 @dynamicMemberLookup
-//@dynamicCallable
-public struct Partial<T: Schema> {
+public struct Partial<T: GraphQLCompatibleValue> {
     private let values: [String: Any]
 
     init(values: [String: Any]) {
@@ -20,7 +19,9 @@ public struct Partial<T: Schema> {
     public subscript(dynamicMember alias: String) -> Any? {
         return self.values[alias]
     }
+}
 
+extension Partial where T: Schema {
     public subscript<U>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> U? where U: GraphQLScalarValue {
         let keyString = T.string(for: keyPath)
         return self.values[keyString] as? U
@@ -34,7 +35,7 @@ public struct Partial<T: Schema> {
     public subscript<U>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> (String) -> U? where U: GraphQLScalarValue {
         return { keyString in self.values[keyString] as? U }
     }
-
+    
     public subscript<U: Sequence & GraphQLScalarValue>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> (String) -> U? {
         return { keyString in self.values[keyString] as? U }
     }
@@ -112,6 +113,7 @@ extension Partial: CustomStringConvertible {
 }
 
 public enum GraphQLError: Error {
+    case invalidOperation
     case malformattedResponse(reason: String)
     case singleItemParseFailure(operation: String)
     case arrayParseFailure(operation: String)
@@ -128,7 +130,6 @@ public protocol Schema: GraphQLCompatibleValue {
     
     static func string(for keyPath: PartialKeyPath<QueryableType>) -> String
     static func string(for argument: Args) -> String
-    static func createResult(from dict: [String: Any], key: String) throws -> Result
 }
 
 public extension Schema {
@@ -136,6 +137,12 @@ public extension Schema {
         return String(describing: argument)
             .replacingOccurrences(of: "(", with: ": ")
             .replacingOccurrences(of: ")", with: "")
+    }
+    
+    static func createUnsafeResult<R>(from dict: [String : Any], key: String) throws -> R {
+        guard R.self == Result.self else { throw GraphQLError.invalidOperation }
+        guard let dictRepresentation = dict[key] as? [String: Any] else { throw GraphQLError.singleItemParseFailure(operation: key) }
+        return Partial<Self>(values: dictRepresentation) as! R
     }
 }
 public extension Schema where Result == Partial<Self> {
@@ -148,7 +155,6 @@ public extension Schema where Result == Partial<Self> {
 extension Array: Schema where Element: Schema {
     public typealias QueryableType = Element.QueryableType
     public typealias Args = Element.Args
-    public typealias Result = [Partial<Element>]
     
     public static func string(for keyPath: PartialKeyPath<Element.QueryableType>) -> String {
         return Element.string(for: keyPath)
@@ -170,7 +176,13 @@ extension Array: Schema where Element: Schema {
 }
 
 extension Array: GraphQLScalarValue where Element: GraphQLScalarValue { }
-extension Array: GraphQLCompatibleValue where Element: GraphQLCompatibleValue { }
+extension Array: GraphQLCompatibleValue where Element: GraphQLCompatibleValue {
+    public typealias Result = [Element.Result]
+
+    public static func createUnsafeResult<R>(from dict: [String : Any], key: String) throws -> R {
+        fatalError()
+    }
+}
 
 //extension Optional: Queryable where Wrapped: Queryable {
 //    typealias QueryableType = Wrapped.QueryableType
@@ -207,12 +219,32 @@ extension Array: GraphQLCompatibleValue where Element: GraphQLCompatibleValue { 
 //extension Optional: GraphQLScalarValue where Wrapped: GraphQLScalarValue { }
 //extension Optional: GraphQLCompatibleValue where Wrapped: GraphQLCompatibleValue { }
 
-public protocol GraphQLCompatibleValue { }
+public protocol GraphQLCompatibleValue {
+    associatedtype Result = Partial<Self>
+    static func createUnsafeResult<R>(from dict: [String: Any], key: String) throws -> R
+}
 
-public protocol GraphQLScalarValue: GraphQLCompatibleValue { }
+public protocol GraphQLScalarValue: GraphQLCompatibleValue {
+    associatedtype Result = Self
+}
+extension GraphQLScalarValue {
+    public static func createUnsafeResult<R>(from dict: [String: Any], key: String) throws -> R {
+        fatalError()
+    }
+}
 
-extension String: GraphQLScalarValue { }
-extension Int: GraphQLScalarValue { }
-extension Float: GraphQLScalarValue { }
-extension Double: GraphQLScalarValue { }
-extension Bool: GraphQLScalarValue { }
+extension String: GraphQLScalarValue {
+    public typealias Result = String
+}
+extension Int: GraphQLScalarValue {
+    public typealias Result = Int
+}
+extension Float: GraphQLScalarValue {
+    public typealias Result = Float
+}
+extension Double: GraphQLScalarValue {
+    public typealias Result = Double
+}
+extension Bool: GraphQLScalarValue {
+    public typealias Result = Bool
+}

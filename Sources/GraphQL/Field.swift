@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol FieldProtocol: FieldAggregate {
-    func includedKeyPaths() -> [(String, PartialKeyPath<T.QueryableType>)]
+
 }
 public extension FieldProtocol {
     func unsafeIncludedKeyPaths() -> [(String, AnyKeyPath)] {
@@ -15,7 +15,7 @@ public protocol AnyField {
 }
 
 public struct Field<T: Schema, Value: GraphQLCompatibleValue, SubSelection: FieldAggregate>: FieldProtocol {
-    public typealias Result = T.Result
+    public typealias Result = Value.Result
     
     private let keyPath: KeyPath<T.QueryableType, Value>
     private let arguments: [T.Args]
@@ -54,8 +54,9 @@ public struct Field<T: Schema, Value: GraphQLCompatibleValue, SubSelection: Fiel
         return [(self.key, self.keyPath)]
     }
     
-    public func createResult(from: [String : Any]) throws -> T.Result {
-        fatalError()
+    public func createResult(from dict: [String : Any]) throws -> Value.Result {
+        try Value.createUnsafeResult(from: dict, key: self.key)
+//        try Value.createResult(from: dict, key: self.key)
     }
 }
 
@@ -106,6 +107,7 @@ extension Field where Value: Collection, SubSelection.T.QueryableType == Value.E
 }
 
 public struct EmptySubSelection<T: Schema>: FieldProtocol {
+    public typealias Value = Int
     public typealias Result = Never
     
     public var items: [AnyFieldAggregate]
