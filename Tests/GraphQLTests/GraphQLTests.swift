@@ -3,7 +3,7 @@ import XCTest
 
 final class GraphQLTests: XCTestCase {
     func testExample() {
-
+        
     }
 
     static var allTests = [
