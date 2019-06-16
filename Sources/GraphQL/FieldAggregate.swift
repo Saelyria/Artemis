@@ -37,7 +37,6 @@ public extension AnyFieldAggregate {
     }
 }
 
-
 public struct AggregateOperationItem1
     <T: Schema, F1: FieldAggregate>
     : FieldAggregate

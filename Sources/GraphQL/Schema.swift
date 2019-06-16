@@ -121,4 +121,3 @@ extension Bool: GraphQLScalarValue {
     public typealias Result = Bool
     public typealias Value = Bool
 }
-

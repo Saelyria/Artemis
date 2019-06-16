@@ -16,9 +16,9 @@ public struct Partial<T: GraphQLCompatibleValue> {
         self.values = values
     }
     
-    public subscript(dynamicMember alias: String) -> Any? {
-        return self.values[alias]
-    }
+//    public subscript(dynamicMember alias: String) -> Any? {
+//        return self.values[alias]
+//    }
 }
 
 public extension Partial where T: Schema {
@@ -67,5 +67,7 @@ public enum GraphQLError: Error {
     case malformattedResponse(reason: String)
     case singleItemParseFailure(operation: String)
     case arrayParseFailure(operation: String)
+    /// The type of the associated value of an argument enum case wasn't convertible to a string.
+    case argumentValueNotConvertible
     case other(Error)
 }
