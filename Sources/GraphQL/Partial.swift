@@ -11,7 +11,7 @@ import Foundation
 @dynamicMemberLookup
 public struct Partial<T: GraphQLCompatibleValue> {
     private let values: [String: Any]
-
+    
     init(values: [String: Any]) {
         self.values = values
     }
@@ -21,32 +21,24 @@ public struct Partial<T: GraphQLCompatibleValue> {
     }
 }
 
-extension Partial where T: Schema {
-    public subscript<U>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> U? where U: GraphQLScalarValue {
+public extension Partial where T: Schema {
+    subscript<U>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> U? where U: GraphQLScalarValue {
         let keyString = T.string(for: keyPath)
         return self.values[keyString] as? U
     }
     
-    public subscript<U: Sequence & GraphQLScalarValue>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> U? {
+    subscript<U: Sequence & GraphQLScalarValue>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> U? {
         let keyString = T.string(for: keyPath)
         return self.values[keyString] as? U
     }
     
-    public subscript<U>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> (String) -> U? where U: GraphQLScalarValue {
-        return { keyString in self.values[keyString] as? U }
-    }
-    
-    public subscript<U: Sequence & GraphQLScalarValue>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> (String) -> U? {
-        return { keyString in self.values[keyString] as? U }
-    }
-    
-    public subscript<U: Schema>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> Partial<U>? {
+    subscript<U: Schema>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> Partial<U>? {
         let keyString = T.string(for: keyPath)
         guard let valueDict = self.values[keyString] as? [String: Any] else { return nil }
         return Partial<U>(values: valueDict)
     }
     
-    public subscript<U: Sequence & Schema>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> [Partial<U.Element>]? {
+    subscript<U: Sequence & Schema>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> [Partial<U.Element>]? {
         let keyString = T.string(for: keyPath)
         guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
         return valuesArray.map { Partial<U.Element>(values: $0) }
@@ -180,7 +172,8 @@ extension Array: GraphQLCompatibleValue where Element: GraphQLCompatibleValue {
     public typealias Result = [Element.Result]
 
     public static func createUnsafeResult<R>(from dict: [String : Any], key: String) throws -> R {
-        fatalError()
+        guard R.self == Result.self else { throw GraphQLError.invalidOperation }
+        return dict[key] as! R
     }
 }
 
@@ -229,7 +222,8 @@ public protocol GraphQLScalarValue: GraphQLCompatibleValue {
 }
 extension GraphQLScalarValue {
     public static func createUnsafeResult<R>(from dict: [String: Any], key: String) throws -> R {
-        fatalError()
+        guard R.self == Result.self else { throw GraphQLError.invalidOperation }
+        return dict[key] as! R
     }
 }
 

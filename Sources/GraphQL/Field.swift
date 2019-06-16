@@ -56,7 +56,6 @@ public struct Field<T: Schema, Value: GraphQLCompatibleValue, SubSelection: Fiel
     
     public func createResult(from dict: [String : Any]) throws -> Value.Result {
         try Value.createUnsafeResult(from: dict, key: self.key)
-//        try Value.createResult(from: dict, key: self.key)
     }
 }
 
