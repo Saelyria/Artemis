@@ -3,7 +3,7 @@ import Foundation
 public protocol FieldAggregate: AnyFieldAggregate {
     associatedtype T: Schema
     associatedtype Result
-    associatedtype Value: GraphQLCompatibleValue
+//    associatedtype Value: GraphQLCompatibleValue
     
     func includedKeyPaths() -> [(String, PartialKeyPath<T.QueryableType>)]
     func createResult(from: [String : Any]) throws -> Result

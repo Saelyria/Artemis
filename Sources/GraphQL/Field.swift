@@ -14,11 +14,20 @@ public protocol AnyField {
     func renderDebug() -> String
 }
 
-public struct Field<T: Schema, Value: GraphQLCompatibleValue, SubSelection: FieldAggregate>: FieldProtocol {
-    public typealias Result = Value.Result
+public protocol AnyFieldValue {
+    associatedtype Value: GraphQLCompatibleValue
+    associatedtype Arguments = Void
+}
+public extension AnyFieldValue where Self: Schema {
+    typealias Value = Self
+}
+public struct FieldValue<Value: GraphQLCompatibleValue, Arguments>: AnyFieldValue { }
+
+public struct Field<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggregate>: FieldProtocol {
+    public typealias Result = Value.Value.Result
     
     private let alias: String?
-    private let keyPath: KeyPath<T.QueryableType, Value>
+    private let keyPath: PartialKeyPath<T.QueryableType>
     private let arguments: [T.Args]
     /// The query string of the sub-selection on the requested key. This is `nil` if the key is a scalar value.
     private let renderedSubSelection: String?
@@ -55,12 +64,12 @@ public struct Field<T: Schema, Value: GraphQLCompatibleValue, SubSelection: Fiel
         return [(self.key, self.keyPath)]
     }
     
-    public func createResult(from dict: [String : Any]) throws -> Value.Result {
-        try Value.createUnsafeResult(from: dict, key: self.key)
+    public func createResult(from dict: [String : Any]) throws -> Value.Value.Result {
+        try Value.Value.createUnsafeResult(from: dict, key: self.key)
     }
 }
 
-extension Field where Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T> {
+extension Field where Value.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T> {
     /// Declares that the given property should be fetched on the queried object.
     public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil) {
         self.keyPath = keyPath
@@ -68,17 +77,9 @@ extension Field where Value: GraphQLScalarValue, SubSelection == EmptySubSelecti
         self.renderedSubSelection = nil
         self.arguments = []
     }
-    
-    /// Declares that the given property should be fetched on the queried object.
-    public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, arguments: T.Args...) {
-        self.keyPath = keyPath
-        self.alias = alias
-        self.renderedSubSelection = nil
-        self.arguments = arguments
-    }
 }
 
-extension Field where Value: Schema, SubSelection.T == Value {
+extension Field where Value.Value: Schema, SubSelection.T == Value.Value {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
     public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
@@ -86,34 +87,18 @@ extension Field where Value: Schema, SubSelection.T == Value {
         self.renderedSubSelection = subSelection().render()
         self.arguments = []
     }
-    
-    /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
-    public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, arguments: T.Args..., @SubSelectionBuilder subSelection: () -> SubSelection) {
-        self.keyPath = keyPath
-        self.alias = alias
-        self.renderedSubSelection = subSelection().render()
-        self.arguments = arguments
-    }
 }
 
-extension Field where Value: Collection, SubSelection.T.QueryableType == Value.Element, Value.Element: GraphQLCompatibleValue {
+extension Field where Value.Value: Collection, SubSelection.T.QueryableType == Value.Value.Element, Value.Value.Element: GraphQLCompatibleValue {
     public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = subSelection().render()
         self.arguments = []
-    }
-    
-    public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, arguments: T.Args..., @SubSelectionBuilder subSelection: () -> SubSelection) {
-        self.keyPath = keyPath
-        self.alias = alias
-        self.renderedSubSelection = subSelection().render()
-        self.arguments = arguments
     }
 }
 
 public struct EmptySubSelection<T: Schema>: FieldProtocol {
-    public typealias Value = Int
     public typealias Result = Never
     
     public var items: [AnyFieldAggregate]
