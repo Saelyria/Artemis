@@ -15,10 +15,6 @@ public struct Partial<T: GraphQLCompatibleValue> {
     init(values: [String: Any]) {
         self.values = values
     }
-    
-//    public subscript(dynamicMember alias: String) -> Any? {
-//        return self.values[alias]
-//    }
 }
 
 public extension Partial where T: Schema {
@@ -43,32 +39,25 @@ public extension Partial where T: Schema {
         guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
         return valuesArray.map { Partial<F.Value.Element>(values: $0) }
     }
+    
+    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> F.Value? where F.Value: GraphQLScalarValue {
+        return self.values[alias] as? F.Value
+    }
+    
+    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> F.Value? where F.Value: Collection & GraphQLScalarValue {
+        return self.values[alias] as? F.Value
+    }
+    
+    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> Partial<F.Value>? where F.Value: Schema {
+        guard let valueDict = self.values[alias] as? [String: Any] else { return nil }
+        return Partial<F.Value>(values: valueDict)
+    }
+    
+    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> [Partial<F.Value.Element>]? where F.Value: Collection & Schema {
+        guard let valuesArray = self.values[alias] as? [[String: Any]] else { return nil }
+        return valuesArray.map { Partial<F.Value.Element>(values: $0) }
+    }
 }
-
-//
-//public extension Partial where T: Schema {
-//    subscript<U>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> U? where U: GraphQLScalarValue {
-//        let keyString = T.string(for: keyPath)
-//        return self.values[keyString] as? U
-//    }
-//
-//    subscript<U: Sequence & GraphQLScalarValue>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> U? {
-//        let keyString = T.string(for: keyPath)
-//        return self.values[keyString] as? U
-//    }
-//
-//    subscript<U: Schema>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> Partial<U>? {
-//        let keyString = T.string(for: keyPath)
-//        guard let valueDict = self.values[keyString] as? [String: Any] else { return nil }
-//        return Partial<U>(values: valueDict)
-//    }
-//
-//    subscript<U: Sequence & Schema>(dynamicMember keyPath: KeyPath<T.QueryableType, U>) -> [Partial<U.Element>]? {
-//        let keyString = T.string(for: keyPath)
-//        guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
-//        return valuesArray.map { Partial<U.Element>(values: $0) }
-//    }
-//}
 
 extension Partial: CustomStringConvertible {
     public var description: String {
