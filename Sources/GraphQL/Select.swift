@@ -5,24 +5,32 @@ public protocol AnyFieldValue {
     associatedtype Argument = Void
     static func string(for argument: Argument) throws -> String
 }
-public extension AnyFieldValue where Self: Schema {
-    typealias Value = Self
-}
+//public extension AnyFieldValue where Self: Schema {
+//    typealias Value = Self
+//}
 public extension AnyFieldValue where Argument == Void {
     static func string(for argument: Argument) -> String {
         return ""
     }
 }
-public struct FieldValue<Value: GraphQLCompatibleValue, ArgType>: AnyFieldValue {
+
+//@propertyDelegate
+public struct Field<Value: GraphQLCompatibleValue, ArgType>: AnyFieldValue {
     public typealias Argument = ArgType
+    
+//    public var value: Value!
+//    public init(_ argumentType: ArgType.Type) { }
     
     public static func string(for argument: ArgType) throws -> String {
         return try argumentString(forEnumArgument: argument)
     }
 }
+//public extension Field where ArgType == Void {
+//    init() { }
+//}
 
-public struct Select<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggregate>: FieldAggregate {
-    public typealias Result = Value.Value.Result
+public struct Select<T: Schema, F: AnyFieldValue, SubSelection: FieldAggregate>: FieldAggregate {
+    public typealias Result = F.Value.Result
     
     private let alias: String?
     private let keyPath: PartialKeyPath<T.QueryableType>
@@ -61,18 +69,19 @@ public struct Select<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggrega
         return [(self.key, self.keyPath)]
     }
     
-    public func createResult(from dict: [String : Any]) throws -> Value.Value.Result {
-        try Value.Value.createUnsafeResult(from: dict, key: self.key)
+    public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
+        try Value.createUnsafeResult(from: dict, key: self.key)
     }
     
-    private static func render(arguments: [Value.Argument]) throws -> String {
-        return try arguments.map { try Value.string(for: $0) }.joined(separator: ", ")
+    private static func render(arguments: F.Argument) throws -> String {
+        return ""
+//        return try arguments.map { try Value.string(for: $0) }.joined(separator: ", ")
     }
 }
 
-extension Select where Value.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T>, Value.Argument == Void {
+extension Select where F.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T>, F.Argument == Void {
     /// Declares that the given property should be fetched on the queried object.
-    public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil) {
+    public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil) {
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = nil
@@ -81,30 +90,26 @@ extension Select where Value.Value: GraphQLScalarValue, SubSelection == EmptySub
     }
 }
 
-extension Select where Value.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T> {
+extension Select where F.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T> {
     /// Declares that the given property should be fetched on the queried object.
-    public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, arguments: Value.Argument...) {
+    public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, arguments: F.Argument) {
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = nil
-        if !arguments.isEmpty {
-            do {
-                self.renderedArguments = try Self.render(arguments: arguments)
-                self.error = nil
-            } catch {
-                self.error = error as? GraphQLError ?? .other(error)
-                self.renderedArguments = nil
-            }
-        } else {
+        
+        do {
+            self.renderedArguments = try Self.render(arguments: arguments)
             self.error = nil
+        } catch {
+            self.error = error as? GraphQLError ?? .other(error)
             self.renderedArguments = nil
         }
     }
 }
 
-extension Select where Value.Value: Schema, SubSelection.T == Value.Value, Value.Argument == Void {
+extension Select where F.Value: Schema, SubSelection.T == F.Value, F.Argument == Void {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
-    public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
+    public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = subSelection().render()
@@ -113,29 +118,24 @@ extension Select where Value.Value: Schema, SubSelection.T == Value.Value, Value
     }
 }
 
-extension Select where Value.Value: Schema, SubSelection.T == Value.Value {
+extension Select where F.Value: Schema, SubSelection.T == F.Value {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
-    public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, arguments: Value.Argument..., @SubSelectionBuilder subSelection: () -> SubSelection) {
+    public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, arguments: F.Argument, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = subSelection().render()
-        if !arguments.isEmpty {
-            do {
-                self.renderedArguments = try Self.render(arguments: arguments)
-                self.error = nil
-            } catch {
-                self.error = error as? GraphQLError ?? .other(error)
-                self.renderedArguments = nil
-            }
-        } else {
+        do {
+            self.renderedArguments = try Self.render(arguments: arguments)
             self.error = nil
+        } catch {
+            self.error = error as? GraphQLError ?? .other(error)
             self.renderedArguments = nil
         }
     }
 }
 
-extension Select where Value.Value: Collection, SubSelection.T.QueryableType == Value.Value.Element, Value.Value.Element: GraphQLCompatibleValue, Value.Argument == Void {
-    public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
+extension Select where F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue, F.Argument == Void {
+    public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = subSelection().render()
@@ -144,21 +144,16 @@ extension Select where Value.Value: Collection, SubSelection.T.QueryableType == 
     }
 }
 
-extension Select where Value.Value: Collection, SubSelection.T.QueryableType == Value.Value.Element, Value.Value.Element: GraphQLCompatibleValue {
-    public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, arguments: Value.Argument..., @SubSelectionBuilder subSelection: () -> SubSelection) {
+extension Select where F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue {
+    public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, arguments: F.Argument, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = subSelection().render()
-        if !arguments.isEmpty {
-            do {
-                self.renderedArguments = try Self.render(arguments: arguments)
-                self.error = nil
-            } catch {
-                self.error = error as? GraphQLError ?? .other(error)
-                self.renderedArguments = nil
-            }
-        } else {
+        do {
+            self.renderedArguments = try Self.render(arguments: arguments)
             self.error = nil
+        } catch {
+            self.error = error as? GraphQLError ?? .other(error)
             self.renderedArguments = nil
         }
     }

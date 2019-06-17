@@ -1,5 +1,6 @@
 import Foundation
 
+/*
 public protocol KeyPathListable {
     init()
     
@@ -32,3 +33,4 @@ public extension KeyPathListable where Self: Schema, Self.QueryableType == Self 
         return keyString
     }
 }
+*/
