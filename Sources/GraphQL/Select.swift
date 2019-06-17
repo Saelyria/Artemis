@@ -21,7 +21,7 @@ public struct FieldValue<Value: GraphQLCompatibleValue, ArgType>: AnyFieldValue 
     }
 }
 
-public struct Field<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggregate>: FieldAggregate {
+public struct Select<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggregate>: FieldAggregate {
     public typealias Result = Value.Value.Result
     
     private let alias: String?
@@ -70,7 +70,7 @@ public struct Field<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggregat
     }
 }
 
-extension Field where Value.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T>, Value.Argument == Void {
+extension Select where Value.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T>, Value.Argument == Void {
     /// Declares that the given property should be fetched on the queried object.
     public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil) {
         self.keyPath = keyPath
@@ -81,7 +81,7 @@ extension Field where Value.Value: GraphQLScalarValue, SubSelection == EmptySubS
     }
 }
 
-extension Field where Value.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T> {
+extension Select where Value.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T> {
     /// Declares that the given property should be fetched on the queried object.
     public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, arguments: Value.Argument...) {
         self.keyPath = keyPath
@@ -102,7 +102,7 @@ extension Field where Value.Value: GraphQLScalarValue, SubSelection == EmptySubS
     }
 }
 
-extension Field where Value.Value: Schema, SubSelection.T == Value.Value, Value.Argument == Void {
+extension Select where Value.Value: Schema, SubSelection.T == Value.Value, Value.Argument == Void {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
     public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
@@ -113,7 +113,7 @@ extension Field where Value.Value: Schema, SubSelection.T == Value.Value, Value.
     }
 }
 
-extension Field where Value.Value: Schema, SubSelection.T == Value.Value {
+extension Select where Value.Value: Schema, SubSelection.T == Value.Value {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
     public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, arguments: Value.Argument..., @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
@@ -134,7 +134,7 @@ extension Field where Value.Value: Schema, SubSelection.T == Value.Value {
     }
 }
 
-extension Field where Value.Value: Collection, SubSelection.T.QueryableType == Value.Value.Element, Value.Value.Element: GraphQLCompatibleValue, Value.Argument == Void {
+extension Select where Value.Value: Collection, SubSelection.T.QueryableType == Value.Value.Element, Value.Value.Element: GraphQLCompatibleValue, Value.Argument == Void {
     public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
         self.alias = alias
@@ -144,7 +144,7 @@ extension Field where Value.Value: Collection, SubSelection.T.QueryableType == V
     }
 }
 
-extension Field where Value.Value: Collection, SubSelection.T.QueryableType == Value.Value.Element, Value.Value.Element: GraphQLCompatibleValue {
+extension Select where Value.Value: Collection, SubSelection.T.QueryableType == Value.Value.Element, Value.Value.Element: GraphQLCompatibleValue {
     public init(_ keyPath: KeyPath<T.QueryableType, Value>, alias: String? = nil, arguments: Value.Argument..., @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
         self.alias = alias
