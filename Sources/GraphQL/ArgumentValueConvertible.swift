@@ -24,11 +24,19 @@ extension Bool: ArgumentValueConvertible {
 func argumentString(forEnumArgument arg: Any) throws -> String {
     guard !(arg is Void) else { return "" }
     
-    let mirror = Mirror(reflecting: arg)
-    guard let (name, value): (String, Any) = mirror.children.first.flatMap({ child -> (String, Any)? in
-        return (child.label == nil) ? nil : (child.label!, child.value)
-    }) else { return "" }
-    guard let valueString = (value as? ArgumentValueConvertible)?.argumentValueString else { throw GraphQLError.argumentValueNotConvertible }
+    guard let (enumName, enumArgs) = getNameAndValue(from: arg) else { return "" }
     
-    return "\(name):\(valueString)"
+    let valueMirror = Mirror(reflecting: enumArgs)
+    
+//    guard let valueString = (value as? ArgumentValueConvertible)?.argumentValueString else { throw GraphQLError.argumentValueNotConvertible }
+//
+//    return "\(name):\(valueString)"
+    return ""
+}
+
+func getNameAndValue(from object: Any) -> (String, Any)? {
+    let mirror = Mirror(reflecting: object)
+    return mirror.children.first.flatMap({ child -> (String, Any)? in
+        return (child.label == nil) ? nil : (child.label!, child.value)
+    })
 }

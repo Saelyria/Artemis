@@ -34,13 +34,14 @@ public struct Field<T: Schema, Value: AnyFieldValue, SubSelection: FieldAggregat
     
     public func render() -> String {
         if let renderedSubQuery = self.renderedSubSelection {
-            let args: String = self.renderedArguments ?? ""
-            return "\(self.key)\(args) { \(renderedSubQuery) }"
+            let args: String = (self.renderedArguments == nil) ? "" : "(\(self.renderedArguments!))"
+            let name: String = (self.alias == nil) ? T.string(for: self.keyPath) : "\(self.alias!):\(T.string(for: self.keyPath))"
+            return "\(name)\(args){\(renderedSubQuery)}"
         }
         return self.key
     }
     
-    let error: GraphQLError?
+    public let error: GraphQLError?
     
     public func renderDebug() throws -> String {
 //        if let renderedSubQuery = self.renderedSubSelection {

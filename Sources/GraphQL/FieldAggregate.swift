@@ -20,10 +20,15 @@ extension FieldAggregate {
 
 public protocol AnyFieldAggregate {
     var items: [AnyFieldAggregate] { get }
+    var error: GraphQLError? { get }
     func render() -> String
     func renderDebug() -> String
 }
 public extension AnyFieldAggregate {
+    var error: GraphQLError? {
+        return self.items.compactMap { $0.error }.first
+    }
+    
     func render() -> String {
         return "\(self.items.map { "\($0.render())" }.joined(separator: ", "))"
     }
