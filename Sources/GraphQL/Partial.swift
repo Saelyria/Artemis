@@ -23,23 +23,23 @@ public struct Partial<T: GraphQLCompatibleValue> {
 
 public extension Partial where T: Schema {
     subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> F.Value? where F.Value: GraphQLScalarValue {
-        let keyString = T.string(for: keyPath)
+        let keyString = T.QueryableType()[keyPath: keyPath].key
         return self.values[keyString] as? F.Value
     }
     
     subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> F.Value? where F.Value: Collection & GraphQLScalarValue {
-        let keyString = T.string(for: keyPath)
+        let keyString = T.QueryableType()[keyPath: keyPath].key
         return self.values[keyString] as? F.Value
     }
     
     subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> Partial<F.Value>? where F.Value: Schema {
-        let keyString = T.string(for: keyPath)
+        let keyString = T.QueryableType()[keyPath: keyPath].key
         guard let valueDict = self.values[keyString] as? [String: Any] else { return nil }
         return Partial<F.Value>(values: valueDict)
     }
 
     subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> [Partial<F.Value.Element>]? where F.Value: Collection & Schema {
-        let keyString = T.string(for: keyPath)
+        let keyString = T.QueryableType()[keyPath: keyPath].key
         guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
         return valuesArray.map { Partial<F.Value.Element>(values: $0) }
     }

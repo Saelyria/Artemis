@@ -4,17 +4,18 @@ public struct Select<T: Schema, F: AnyField, SubSelection: FieldAggregate>: Fiel
     public typealias Result = F.Value.Result
     
     private let alias: String?
+    private let field: F
     private let keyPath: PartialKeyPath<T.QueryableType>
     private let renderedArguments: String?
     /// The query string of the sub-selection on the requested key. This is `nil` if the key is a scalar value.
     private let renderedSubSelection: String?
-    var key: String { self.alias ?? T.string(for: self.keyPath) }
+    var key: String { self.alias ?? self.field.key }
     public var items: [AnyFieldAggregate] = []
     
     public func render() -> String {
         if let renderedSubQuery = self.renderedSubSelection {
-            let args: String = (self.renderedArguments == nil) ? "" : "(\(self.renderedArguments!))"
-            let name: String = (self.alias == nil) ? T.string(for: self.keyPath) : "\(self.alias!):\(T.string(for: self.keyPath))"
+            let args: String = self.renderedArguments ?? ""
+            let name: String = (self.alias == nil) ? self.field.key : "\(self.alias!):\(self.field.key)"
             return "\(name)\(args){\(renderedSubQuery)}"
         }
         return self.key
@@ -46,7 +47,6 @@ public struct Select<T: Schema, F: AnyField, SubSelection: FieldAggregate>: Fiel
     
     private static func render(arguments: F.Argument) throws -> String {
         return try argumentString(for: arguments)
-//        return try arguments.map { try Value.string(for: $0) }.joined(separator: ", ")
     }
 }
 
@@ -58,6 +58,7 @@ extension Select where F.Value: GraphQLScalarValue, SubSelection == EmptySubSele
         self.renderedSubSelection = nil
         self.renderedArguments = nil
         self.error = nil
+        self.field = T.QueryableType()[keyPath: keyPath]
     }
 }
 
@@ -67,6 +68,7 @@ extension Select where F.Value: GraphQLScalarValue, SubSelection == EmptySubSele
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = nil
+        self.field = T.QueryableType()[keyPath: keyPath]
         
         do {
             self.renderedArguments = try Self.render(arguments: arguments)
@@ -86,6 +88,7 @@ extension Select where F.Value: Schema, SubSelection.T == F.Value, F.Argument ==
         self.renderedSubSelection = subSelection().render()
         self.renderedArguments = nil
         self.error = nil
+        self.field = T.QueryableType()[keyPath: keyPath]
     }
 }
 
@@ -95,6 +98,7 @@ extension Select where F.Value: Schema, SubSelection.T == F.Value {
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = subSelection().render()
+        self.field = T.QueryableType()[keyPath: keyPath]
         do {
             self.renderedArguments = try Self.render(arguments: arguments)
             self.error = nil
@@ -112,6 +116,7 @@ extension Select where F.Value: Collection, SubSelection.T.QueryableType == F.Va
         self.renderedSubSelection = subSelection().render()
         self.renderedArguments = nil
         self.error = nil
+        self.field = T.QueryableType()[keyPath: keyPath]
     }
 }
 
@@ -120,6 +125,7 @@ extension Select where F.Value: Collection, SubSelection.T.QueryableType == F.Va
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = subSelection().render()
+        self.field = T.QueryableType()[keyPath: keyPath]
         do {
             self.renderedArguments = try Self.render(arguments: arguments)
             self.error = nil

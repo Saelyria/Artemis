@@ -5,7 +5,9 @@ public protocol Schema: GraphQLCompatibleValue {
     associatedtype QueryableType: Schema = Self
     associatedtype Result = Partial<Self>
     
-    static func string(for keyPath: PartialKeyPath<QueryableType>) -> String
+    init()
+    
+//    static func string(for keyPath: PartialKeyPath<QueryableType>) -> String
 }
 
 public extension Schema {
@@ -25,9 +27,9 @@ public extension Schema where Result == Partial<Self> {
 extension Array: Schema where Element: Schema {
     public typealias QueryableType = Element.QueryableType
     
-    public static func string(for keyPath: PartialKeyPath<Element.QueryableType>) -> String {
-        return Element.string(for: keyPath)
-    }
+//    public static func string(for keyPath: PartialKeyPath<Element.QueryableType>) -> String {
+//        return Element.string(for: keyPath)
+//    }
     
     public static func createResult(from dict: [String : Any], key: String) throws -> [Partial<Element>] {
         if let value = dict[key], !(value is NSNull) {

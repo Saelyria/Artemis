@@ -3,6 +3,8 @@ import Foundation
 public protocol AnyField {
     associatedtype Value: GraphQLCompatibleValue
     associatedtype Argument = Void
+    
+    var key: String { get }
     static func string(for argument: Argument) throws -> String
 }
 
@@ -10,7 +12,7 @@ public protocol AnyField {
 public struct Field<Value: GraphQLCompatibleValue, ArgType>: AnyField {
     public typealias Argument = ArgType
     
-    let key: String
+    public let key: String
     public var value: Value!
     public init(_ key: String, type valueType: Value.Type, argumentType: ArgType.Type) {
         self.key = key

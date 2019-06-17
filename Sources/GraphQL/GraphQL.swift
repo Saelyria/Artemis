@@ -23,6 +23,7 @@ public struct Query<Q, Fields: FieldAggregate> where Fields.T == Q {
     }
     
     func render() -> String {
-        return "query \(self.name?.appending(" ") ?? ""){ \(self.aggregateFields.render()) }"
+        let nameString = (self.name == nil) ? "" : " \(self.name!)"
+        return "query\(nameString){\(self.aggregateFields.render())}"
     }
 }

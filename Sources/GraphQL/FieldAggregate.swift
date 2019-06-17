@@ -30,7 +30,7 @@ public extension AnyFieldAggregate {
     }
     
     func render() -> String {
-        return "\(self.items.map { "\($0.render())" }.joined(separator: ", "))"
+        return "\(self.items.map { "\($0.render())" }.joined(separator: ","))"
     }
     
     func renderDebug() -> String {
