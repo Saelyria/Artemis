@@ -5,9 +5,6 @@ public protocol AnyFieldValue {
     associatedtype Argument = Void
     static func string(for argument: Argument) throws -> String
 }
-//public extension AnyFieldValue where Self: Schema {
-//    typealias Value = Self
-//}
 public extension AnyFieldValue where Argument == Void {
     static func string(for argument: Argument) -> String {
         return ""
