@@ -42,7 +42,8 @@ public struct Select<T: Schema, F: AnyField, SubSelection: FieldAggregate>: Fiel
     }
     
     public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
-        try Value.createUnsafeResult(from: dict, key: self.key)
+        guard let object: Any = dict[self.key] else { throw GraphQLError.malformattedResponse(reason: "Response didn't include key for \(self.key)") }
+        return try F.Value.createUnsafeResult(from: object, key: self.key)
     }
     
     private static func render(arguments: F.Argument) throws -> String {

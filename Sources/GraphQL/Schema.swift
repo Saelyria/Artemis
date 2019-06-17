@@ -6,40 +6,18 @@ public protocol Schema: GraphQLCompatibleValue {
     associatedtype Result = Partial<Self>
     
     init()
-    
-//    static func string(for keyPath: PartialKeyPath<QueryableType>) -> String
 }
 
 public extension Schema {
-    static func createUnsafeResult<R>(from dict: [String : Any], key: String) throws -> R {
+    static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
         guard R.self == Result.self else { throw GraphQLError.invalidOperation }
-        guard let dictRepresentation = dict[key] as? [String: Any] else { throw GraphQLError.singleItemParseFailure(operation: key) }
+        guard let dictRepresentation = object as? [String: Any] else { throw GraphQLError.singleItemParseFailure(operation: key) }
         return Partial<Self>(values: dictRepresentation) as! R
-    }
-}
-public extension Schema where Result == Partial<Self> {
-    static func createResult(from dict: [String: Any], key: String) throws -> Partial<Self> {
-        guard let dictRepresentation = dict[key] as? [String: Any] else { throw GraphQLError.singleItemParseFailure(operation: key) }
-        return Partial(values: dictRepresentation)
     }
 }
 
 extension Array: Schema where Element: Schema {
     public typealias QueryableType = Element.QueryableType
-    
-//    public static func string(for keyPath: PartialKeyPath<Element.QueryableType>) -> String {
-//        return Element.string(for: keyPath)
-//    }
-    
-    public static func createResult(from dict: [String : Any], key: String) throws -> [Partial<Element>] {
-        if let value = dict[key], !(value is NSNull) {
-            guard let objectsArray = value as? [[String: Any]] else { throw GraphQLError.arrayParseFailure(operation: key) }
-            return objectsArray.map {
-                return Partial(values: $0)
-            }
-        }
-        return []
-    }
 }
 
 extension Array: GraphQLScalarValue where Element: GraphQLScalarValue { }
@@ -47,9 +25,12 @@ extension Array: GraphQLCompatibleValue where Element: GraphQLCompatibleValue {
     public typealias Result = [Element.Result]
     public typealias Value = Self
     
-    public static func createUnsafeResult<R>(from dict: [String : Any], key: String) throws -> R {
+    public static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
         guard R.self == Result.self else { throw GraphQLError.invalidOperation }
-        return dict[key] as! R
+        guard let resultArray = object as? [Any] else { throw GraphQLError.arrayParseFailure(operation: key) }
+        let mappedArray: [Element.Result] = try resultArray.map { try Element.createUnsafeResult(from: $0, key: key) }
+        guard let returnedArray = mappedArray as? R else { throw GraphQLError.arrayParseFailure(operation: key) }
+        return returnedArray
     }
 }
 
@@ -90,16 +71,17 @@ extension Array: GraphQLCompatibleValue where Element: GraphQLCompatibleValue {
 
 public protocol GraphQLCompatibleValue {
     associatedtype Result = Partial<Self>
-    static func createUnsafeResult<R>(from dict: [String: Any], key: String) throws -> R
+    static func createUnsafeResult<R>(from: Any, key: String) throws -> R
 }
 
 public protocol GraphQLScalarValue: GraphQLCompatibleValue {
     associatedtype Result = Self
 }
 public extension GraphQLScalarValue {
-    static func createUnsafeResult<R>(from dict: [String: Any], key: String) throws -> R {
+    static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
         guard R.self == Result.self else { throw GraphQLError.invalidOperation }
-        return dict[key] as! R
+        guard let returnValue = object as? R else { throw GraphQLError.singleItemParseFailure(operation: key) }
+        return returnValue
     }
 }
 
