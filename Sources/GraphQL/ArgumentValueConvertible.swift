@@ -1,26 +1,26 @@
 import Foundation
 
-public protocol ArgumentValueConvertible {
+protocol ArgumentValueConvertible {
     var argumentValueString: String { get }
 }
 
 extension ArgumentValueConvertible where Self: RawRepresentable, Self.RawValue == String {
-    public var argumentValueString: String { return self.rawValue }
+    var argumentValueString: String { return self.rawValue }
 }
 extension String: ArgumentValueConvertible {
-    public var argumentValueString: String { return "\"\(self)\"" }
+    var argumentValueString: String { return "\"\(self)\"" }
 }
 extension Int: ArgumentValueConvertible {
-    public var argumentValueString: String { return "\(self)" }
+    var argumentValueString: String { return "\(self)" }
 }
 extension Float: ArgumentValueConvertible {
-    public var argumentValueString: String { return "\(self)" }
+    var argumentValueString: String { return "\(self)" }
 }
 extension Double: ArgumentValueConvertible {
-    public var argumentValueString: String { return "\(self)" }
+    var argumentValueString: String { return "\(self)" }
 }
 extension Bool: ArgumentValueConvertible {
-    public var argumentValueString: String { return "\(self)" }
+    var argumentValueString: String { return "\(self)" }
 }
 
 func argumentString(for arg: Any) throws -> String {
