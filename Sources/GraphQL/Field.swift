@@ -14,7 +14,7 @@ public struct Field<Value: GraphQLCompatibleValue, ArgType>: AnyField {
     
     public let key: String
     public var value: Value!
-    public init(_ key: String, type valueType: Value.Type, argumentType: ArgType.Type) {
+    public init(_ key: String, type valueType: Value.Type, arguments: ArgType.Type) {
         self.key = key
     }
     
