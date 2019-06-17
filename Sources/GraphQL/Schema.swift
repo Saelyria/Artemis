@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol Schema: GraphQLCompatibleValue { //AnyFieldValue
+public protocol Schema: GraphQLCompatibleValue {
     /// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
     associatedtype QueryableType: Schema = Self
     associatedtype Result = Partial<Self>
@@ -41,7 +41,7 @@ extension Array: Schema where Element: Schema {
 }
 
 extension Array: GraphQLScalarValue where Element: GraphQLScalarValue { }
-extension Array: GraphQLCompatibleValue where Element: GraphQLCompatibleValue { //, AnyFieldValue where
+extension Array: GraphQLCompatibleValue where Element: GraphQLCompatibleValue {
     public typealias Result = [Element.Result]
     public typealias Value = Self
     
@@ -91,7 +91,7 @@ public protocol GraphQLCompatibleValue {
     static func createUnsafeResult<R>(from dict: [String: Any], key: String) throws -> R
 }
 
-public protocol GraphQLScalarValue: GraphQLCompatibleValue { //AnyFieldValue
+public protocol GraphQLScalarValue: GraphQLCompatibleValue {
     associatedtype Result = Self
 }
 public extension GraphQLScalarValue {

@@ -1,32 +1,6 @@
 import Foundation
 
-public protocol AnyFieldValue {
-    associatedtype Value: GraphQLCompatibleValue
-    associatedtype Argument = Void
-    static func string(for argument: Argument) throws -> String
-}
-public extension AnyFieldValue where Argument == Void {
-    static func string(for argument: Argument) -> String {
-        return ""
-    }
-}
-
-//@propertyDelegate
-public struct Field<Value: GraphQLCompatibleValue, ArgType>: AnyFieldValue {
-    public typealias Argument = ArgType
-    
-//    public var value: Value!
-//    public init(_ argumentType: ArgType.Type) { }
-    
-    public static func string(for argument: ArgType) throws -> String {
-        return try argumentString(for: argument)
-    }
-}
-//public extension Field where ArgType == Void {
-//    init() { }
-//}
-
-public struct Select<T: Schema, F: AnyFieldValue, SubSelection: FieldAggregate>: FieldAggregate {
+public struct Select<T: Schema, F: AnyField, SubSelection: FieldAggregate>: FieldAggregate {
     public typealias Result = F.Value.Result
     
     private let alias: String?
