@@ -22,7 +22,7 @@ public struct Field<Value: GraphQLCompatibleValue, ArgType>: AnyFieldValue {
 //    public init(_ argumentType: ArgType.Type) { }
     
     public static func string(for argument: ArgType) throws -> String {
-        return try argumentString(forEnumArgument: argument)
+        return try argumentString(for: argument)
     }
 }
 //public extension Field where ArgType == Void {
@@ -74,7 +74,7 @@ public struct Select<T: Schema, F: AnyFieldValue, SubSelection: FieldAggregate>:
     }
     
     private static func render(arguments: F.Argument) throws -> String {
-        return ""
+        return try argumentString(for: arguments)
 //        return try arguments.map { try Value.string(for: $0) }.joined(separator: ", ")
     }
 }

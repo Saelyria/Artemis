@@ -4,6 +4,9 @@ public protocol ArgumentValueConvertible {
     var argumentValueString: String { get }
 }
 
+extension ArgumentValueConvertible where Self: RawRepresentable, Self.RawValue == String {
+    public var argumentValueString: String { return self.rawValue }
+}
 extension String: ArgumentValueConvertible {
     public var argumentValueString: String { return "\"\(self)\"" }
 }
@@ -20,23 +23,16 @@ extension Bool: ArgumentValueConvertible {
     public var argumentValueString: String { return "\(self)" }
 }
 
-
-func argumentString(forEnumArgument arg: Any) throws -> String {
+func argumentString(for arg: Any) throws -> String {
     guard !(arg is Void) else { return "" }
     
-    guard let (enumName, enumArgs) = getNameAndValue(from: arg) else { return "" }
-    
-    let valueMirror = Mirror(reflecting: enumArgs)
-    
-//    guard let valueString = (value as? ArgumentValueConvertible)?.argumentValueString else { throw GraphQLError.argumentValueNotConvertible }
-//
-//    return "\(name):\(valueString)"
-    return ""
-}
-
-func getNameAndValue(from object: Any) -> (String, Any)? {
-    let mirror = Mirror(reflecting: object)
-    return mirror.children.first.flatMap({ child -> (String, Any)? in
-        return (child.label == nil) ? nil : (child.label!, child.value)
-    })
+    let mirror = Mirror(reflecting: arg)
+    let argString = try mirror.children
+        .compactMap { child -> (String, Any)? in
+            return (child.label == nil) ? nil : (child.label!, child.value)
+        }.map { (label, value) -> String in
+            guard let value = value as? ArgumentValueConvertible else { throw GraphQLError.argumentValueNotConvertible }
+            return "\(label):\(value.argumentValueString)"
+        }.joined(separator: ",")
+    return "(\(argString))"
 }
