@@ -3,5 +3,5 @@ import XCTest
 import GraphQLTests
 
 var tests = [XCTestCaseEntry]()
-tests += GraphQLTests.allTests()
+tests += QueryRenderingTests.allTests()
 XCTMain(tests)
