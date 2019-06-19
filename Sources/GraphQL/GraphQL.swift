@@ -29,9 +29,9 @@ public struct Variable<V> {
     }
 }
 
-@propertyDelegate
+@propertyWrapper
 public struct Argument<Value> {
-    public var value: Value!
+    public var wrappedValue: Value!
     let defaultValue: Value?
     
     public init(default: Value? = nil) {

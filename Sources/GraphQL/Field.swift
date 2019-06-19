@@ -8,12 +8,12 @@ public protocol AnyField {
     static func string(for argument: Argument) throws -> String
 }
 
-@propertyDelegate
+@propertyWrapper
 public struct Field<Value: GraphQLCompatibleValue, ArgType>: AnyField {
     public typealias Argument = ArgType
     
     public let key: String
-    public var value: Value!
+    public var wrappedValue: Value!
     public init(_ key: String, type valueType: Value.Type, arguments: ArgType.Type) {
         self.key = key
     }
