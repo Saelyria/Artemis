@@ -39,21 +39,6 @@ public struct Argument<Value> {
     }
 }
 
-@dynamicMemberLookup
-public struct Arguments<A> {
-    public init() { }
-    
-    public subscript<V>(dynamicMember keyPath: KeyPath<A, V>) -> (V) -> Arguments<A> {
-        return { _ in return self }
-    }
-    
-    public subscript<V>(dynamicMember keyPath: KeyPath<A, V>) -> (Variable<V>) -> Arguments<A> {
-        return { _ in return self }
-    }
-    
-    public static var add: Arguments<A> { return Arguments<A>() }
-}
-
 public func `$`<V>(_ name: String, _ value: V) -> Variable<V> {
     return Variable(name: name, value: value)
 }
