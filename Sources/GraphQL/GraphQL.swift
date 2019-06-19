@@ -19,6 +19,45 @@ public class Graph<Q: Schema> {
     }
 }
 
+public struct Variable<V> {
+    public let name: String
+    public let value: V
+    
+    public init(name: String, value: V) {
+        self.name = name
+        self.value = value
+    }
+}
+
+@propertyDelegate
+public struct Argument<Value> {
+    public var value: Value!
+    let defaultValue: Value?
+    
+    public init(default: Value? = nil) {
+        self.defaultValue = `default`
+    }
+}
+
+@dynamicMemberLookup
+public struct Arguments<A> {
+    public init() { }
+    
+    public subscript<V>(dynamicMember keyPath: KeyPath<A, V>) -> (V) -> Arguments<A> {
+        return { _ in return self }
+    }
+    
+    public subscript<V>(dynamicMember keyPath: KeyPath<A, V>) -> (Variable<V>) -> Arguments<A> {
+        return { _ in return self }
+    }
+    
+    public static var add: Arguments<A> { return Arguments<A>() }
+}
+
+public func `$`<V>(_ name: String, _ value: V) -> Variable<V> {
+    return Variable(name: name, value: value)
+}
+
 public struct Query<QuerySchema, Result> {
     private let name: String?
     let error: GraphQLError?
@@ -33,9 +72,17 @@ public struct Query<QuerySchema, Result> {
         self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
     }
     
-    public init<F: FieldAggregate, Var>(name: String? = nil, variables: Var, @SubSelectionBuilder subSelectionBuilder: (Var) -> F) where F.T == QuerySchema, F.Result == Result {
+    public init<F: FieldAggregate, V1>(name: String? = nil, variables: V1, @SubSelectionBuilder subSelectionBuilder: (V1) -> F) where F.T == QuerySchema, F.Result == Result {
         self.name = name
         let fieldsAggegate = subSelectionBuilder(variables)
+        self.error = fieldsAggegate.error
+        self.renderedSubSelections = fieldsAggegate.render()
+        self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
+    }
+    
+    public init<F: FieldAggregate, V1, V2>(name: String? = nil, variables: V1, _ v2: V2, @SubSelectionBuilder subSelectionBuilder: (V1, V2) -> F) where F.T == QuerySchema, F.Result == Result {
+        self.name = name
+        let fieldsAggegate = subSelectionBuilder(variables, v2)
         self.error = fieldsAggegate.error
         self.renderedSubSelections = fieldsAggegate.render()
         self.resultCreator = { try fieldsAggegate.createResult(from: $0) }

@@ -1,5 +1,6 @@
 import Foundation
 
+@dynamicMemberLookup
 public struct Select<T: Schema, F: AnyField, SubSelection: FieldAggregate>: FieldAggregate {
     public typealias Result = F.Value.Result
     
@@ -24,16 +25,6 @@ public struct Select<T: Schema, F: AnyField, SubSelection: FieldAggregate>: Fiel
     public let error: GraphQLError?
     
     public func renderDebug() throws -> String {
-//        if let renderedSubQuery = self.renderedSubSelection {
-//            var args: String = ""
-//            if !self.arguments.isEmpty {
-//                args = self.arguments.reduce(into: "", { result, arg in
-//                    result.append(T.string(for: arg))
-//                })
-//                args = "(\(args))"
-//            }
-//            return "\(self.key)\(args) {\n\t\(renderedSubQuery)\n}"
-//        }
         return self.key
     }
 
@@ -46,71 +37,33 @@ public struct Select<T: Schema, F: AnyField, SubSelection: FieldAggregate>: Fiel
         return try F.Value.createUnsafeResult(from: object, key: self.key)
     }
     
+    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, V>) -> (V) -> Self {
+        return { _ in return self }
+    }
+    
+    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, V>) -> (Variable<V>) -> Self {
+        return { _ in return self }
+    }
+    
     private static func render(arguments: F.Argument) throws -> String {
         return try argumentString(for: arguments)
     }
 }
 
-extension Select where F.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T>, F.Argument == Void {
+extension Select where F.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T> {
     /// Declares that the given property should be fetched on the queried object.
     public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil) {
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = nil
+        self.field = T.QueryableType()[keyPath: keyPath]
         self.renderedArguments = nil
         self.error = nil
-        self.field = T.QueryableType()[keyPath: keyPath]
-    }
-}
-
-extension Select where F.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T> {
-    /// Declares that the given property should be fetched on the queried object.
-    public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, arguments: F.Argument) {
-        self.keyPath = keyPath
-        self.alias = alias
-        self.renderedSubSelection = nil
-        self.field = T.QueryableType()[keyPath: keyPath]
-        
-        do {
-            self.renderedArguments = try Self.render(arguments: arguments)
-            self.error = nil
-        } catch {
-            self.error = error as? GraphQLError ?? .other(error)
-            self.renderedArguments = nil
-        }
-    }
-}
-
-extension Select where F.Value: Schema, SubSelection.T == F.Value, F.Argument == Void {
-    /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
-    public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
-        self.keyPath = keyPath
-        self.alias = alias
-        self.renderedSubSelection = subSelection().render()
-        self.renderedArguments = nil
-        self.error = nil
-        self.field = T.QueryableType()[keyPath: keyPath]
     }
 }
 
 extension Select where F.Value: Schema, SubSelection.T == F.Value {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
-    public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, arguments: F.Argument, @SubSelectionBuilder subSelection: () -> SubSelection) {
-        self.keyPath = keyPath
-        self.alias = alias
-        self.renderedSubSelection = subSelection().render()
-        self.field = T.QueryableType()[keyPath: keyPath]
-        do {
-            self.renderedArguments = try Self.render(arguments: arguments)
-            self.error = nil
-        } catch {
-            self.error = error as? GraphQLError ?? .other(error)
-            self.renderedArguments = nil
-        }
-    }
-}
-
-extension Select where F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue, F.Argument == Void {
     public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
         self.alias = alias
@@ -122,18 +75,13 @@ extension Select where F.Value: Collection, SubSelection.T.QueryableType == F.Va
 }
 
 extension Select where F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue {
-    public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, arguments: F.Argument, @SubSelectionBuilder subSelection: () -> SubSelection) {
+    public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = subSelection().render()
+        self.renderedArguments = nil
+        self.error = nil
         self.field = T.QueryableType()[keyPath: keyPath]
-        do {
-            self.renderedArguments = try Self.render(arguments: arguments)
-            self.error = nil
-        } catch {
-            self.error = error as? GraphQLError ?? .other(error)
-            self.renderedArguments = nil
-        }
     }
 }
 
