@@ -14,12 +14,10 @@ public struct Select<T: Schema, F: AnyField, SubSelection: FieldAggregate>: Fiel
     public var items: [AnyFieldAggregate] = []
     
     public func render() -> String {
-        if let renderedSubQuery = self.renderedSubSelection {
-            let args: String = self.renderedArguments ?? ""
-            let name: String = (self.alias == nil) ? self.field.key : "\(self.alias!):\(self.field.key)"
-            return "\(name)\(args){\(renderedSubQuery)}"
-        }
-        return self.key
+        let args: String = self.renderedArguments ?? ""
+        let name: String = (self.alias == nil) ? self.field.key : "\(self.alias!):\(self.field.key)"
+        let subSelection = (self.renderedSubSelection == nil) ? "" : "{\(self.renderedSubSelection!)}"
+        return "\(name)\(args)\(subSelection)"        
     }
     
     public let error: GraphQLError?

@@ -24,22 +24,6 @@ public struct Query<QuerySchema, Result> {
         self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
     }
     
-//    public init<F: FieldAggregate, V1>(name: String? = nil, variables: V1, @SubSelectionBuilder subSelectionBuilder: (V1) -> F) where F.T == QuerySchema, F.Result == Result {
-//        self.name = name
-//        let fieldsAggegate = subSelectionBuilder(variables)
-//        self.error = fieldsAggegate.error
-//        self.renderedSubSelections = fieldsAggegate.render()
-//        self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
-//    }
-//    
-//    public init<F: FieldAggregate, V1, V2>(name: String? = nil, variables: V1, _ v2: V2, @SubSelectionBuilder subSelectionBuilder: (V1, V2) -> F) where F.T == QuerySchema, F.Result == Result {
-//        self.name = name
-//        let fieldsAggegate = subSelectionBuilder(variables, v2)
-//        self.error = fieldsAggegate.error
-//        self.renderedSubSelections = fieldsAggegate.render()
-//        self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
-//    }
-    
     func render() -> String {
         let nameString = (self.name == nil) ? "" : " \(self.name!)"
         return "query\(nameString){\(self.renderedSubSelections)}"

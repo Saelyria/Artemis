@@ -5,7 +5,18 @@ public protocol Schema: GraphQLCompatibleValue {
     associatedtype QueryableType: Schema = Self
     associatedtype Result = Partial<Self>
     
+    associatedtype Complete = Void
+    
+    // TODO: figure out how this could work with aliases
+    static func createCompleteInstance(fromPartial: Partial<Self>) -> Complete?
+    
     init()
+}
+
+public extension Schema where Complete == Void {
+    static func createCompleteInstance(fromPartial: Partial<Self>) -> Complete? {
+        return ()
+    }
 }
 
 public extension Schema {

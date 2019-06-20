@@ -1,7 +1,17 @@
 import Foundation
 
 public class ReusableQuery<V, R> {
+    let renderedQuery: String
+    let renderedVariables: [String]
     
+    init(renderedQuery: String, renderedVariables: [String]) {
+        self.renderedQuery = renderedQuery
+        self.renderedVariables = renderedVariables
+    }
+    
+    func render(with variables: V) -> (query: String, variables: String) {
+        return (self.renderedQuery, "")
+    }
 }
 
 public protocol AnyVariable {
@@ -22,12 +32,19 @@ public func `$`<V: GraphQLCompatibleValue>(_ name: String, _ type: V.Type) -> Va
 public class Graph<Q: Schema> {
     public init() { }
     
+    public func register<R>(
+        _ query: () -> Query<Q, R>)
+        -> ReusableQuery<Void, R>
+    {
+        return ReusableQuery(renderedQuery: query().render(), renderedVariables: [])
+    }
+    
     public func register<R, V1: AnyVariable>(
         usingVariables v1: V1,
         _ query: (V1) -> Query<Q, R>)
         -> ReusableQuery<V1.V, R>
     {
-        return ReusableQuery()
+        return ReusableQuery(renderedQuery: query(v1).render(), renderedVariables: [])
     }
     
     public func register<R, V1: AnyVariable, V2: AnyVariable>(
@@ -35,7 +52,7 @@ public class Graph<Q: Schema> {
         _ query: (V1, V2) -> Query<Q, R>)
         -> ReusableQuery<(V1.V, V2.V), R>
     {
-        return ReusableQuery()
+        return ReusableQuery(renderedQuery: query(v1, v2).render(), renderedVariables: [])
     }
     
     public func register<R, V1: AnyVariable, V2: AnyVariable, V3: AnyVariable>(
@@ -43,7 +60,7 @@ public class Graph<Q: Schema> {
         _ query: (V1, V2, V3) -> Query<Q, R>)
         -> ReusableQuery<(V1.V, V2.V, V3.V), R>
     {
-        return ReusableQuery()
+        return ReusableQuery(renderedQuery: query(v1, v2, v3).render(), renderedVariables: [])
     }
     
     public func perform<R>(
