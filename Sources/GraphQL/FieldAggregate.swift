@@ -42,7 +42,7 @@ public extension AnyFieldAggregate {
     }
 }
 
-public struct AggregateOperationItem1
+public struct FieldAggregate1
     <T: Schema, F1: FieldAggregate>
     : FieldAggregate
 {
@@ -60,7 +60,7 @@ public struct AggregateOperationItem1
     }
 }
 
-public struct AggregateOperationItem2
+public struct FieldAggregate2
     <T: Schema, F1: FieldAggregate, F2: FieldAggregate>
     : FieldAggregate
 {
@@ -81,7 +81,7 @@ public struct AggregateOperationItem2
     }
 }
 
-public struct AggregateOperationItem3
+public struct FieldAggregate3
     <T: Schema, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate>
     : FieldAggregate
 {
@@ -103,7 +103,7 @@ public struct AggregateOperationItem3
     }
 }
 
-public struct AggregateOperationItem4
+public struct FieldAggregate4
     <T: Schema, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate>
     : FieldAggregate
 {
@@ -126,7 +126,7 @@ public struct AggregateOperationItem4
     }
 }
 
-public struct AggregateOperationItem5
+public struct FieldAggregate5
     <T: Schema, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate>
     : FieldAggregate
 {
@@ -150,7 +150,7 @@ public struct AggregateOperationItem5
     }
 }
 
-public struct AggregateOperationItem6
+public struct FieldAggregate6
     <T: Schema, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate, F6: FieldAggregate>
     : FieldAggregate
 {
@@ -175,7 +175,7 @@ public struct AggregateOperationItem6
     }
 }
 
-public struct AggregateOperationItem7
+public struct FieldAggregate7
     <T: Schema, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate, F6: FieldAggregate, F7: FieldAggregate>
     : FieldAggregate
 {

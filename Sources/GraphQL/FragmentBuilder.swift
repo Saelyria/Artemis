@@ -1,7 +1,7 @@
 import Foundation
 
 @_functionBuilder
-public struct SubSelectionBuilder {
+public struct FragmentBuilder {
     public static func buildBlock
         <T, F: FieldAggregate>
         (_ f1: F)
@@ -46,7 +46,7 @@ public struct SubSelectionBuilder {
     {
         return FieldAggregate5(T.self, f1, f2, f3, f4, f5)
     }
-
+    
     public static func buildBlock
         <T, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate, F6: FieldAggregate>
         (_ f1: F1, _ f2: F2, _ f3: F3, _ f4: F4, _ f5: F5, _ f6: F6)
