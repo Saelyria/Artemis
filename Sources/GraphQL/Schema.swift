@@ -1,23 +1,49 @@
 import Foundation
 
+public protocol Interface: Schema {
+    
+}
+
+public protocol AnyInterfaces {
+    associatedtype I1; associatedtype I2; associatedtype I3
+}
+public struct Interfaces<I1, I2, I3>: AnyInterfaces {
+    init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type) { }
+}
+public extension Interfaces where I3 == Void {
+    init(_ i1: I1.Type, _ i2: I2.Type) { }
+}
+public extension Interfaces where I2 == Void, I3 == Void {
+    init(_ i1: I1.Type) { }
+}
+public extension Interfaces where I1 == Void, I2 == Void, I3 == Void {
+    init() { }
+}
+
 public protocol Schema: GraphQLCompatibleValue {
     /// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
     associatedtype QueryableType: Schema = Self
     associatedtype Result = Partial<Self>
+    associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void>
     
-    associatedtype Complete = Void
+    static var implements: ImplementedInterfaces { get }
     
     // TODO: figure out how this could work with aliases
-    static func createCompleteInstance(fromPartial: Partial<Self>) -> Complete?
+//    associatedtype Complete = Void
+//    static func createCompleteInstance(fromPartial: Partial<Self>) -> Complete?
     
     init()
 }
 
-public extension Schema where Complete == Void {
-    static func createCompleteInstance(fromPartial: Partial<Self>) -> Complete? {
-        return ()
-    }
+public extension Schema where ImplementedInterfaces == Interfaces<Void, Void, Void> {
+    static var implements: ImplementedInterfaces { return Interfaces() }
 }
+
+//public extension Schema where Complete == Void {
+//    static func createCompleteInstance(fromPartial: Partial<Self>) -> Complete? {
+//        return ()
+//    }
+//}
 
 public extension Schema {
     static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {

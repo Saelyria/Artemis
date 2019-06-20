@@ -1,7 +1,7 @@
 import Foundation
 
 @dynamicMemberLookup
-public struct Add<T, F: AnyField, SubSelection: FieldAggregate> {
+public struct Add<T: Schema, F: AnyField, SubSelection: FieldAggregate>: FieldAggregate {
     public typealias Result = F.Value.Result
     
     private let alias: String?
@@ -41,50 +41,9 @@ public struct Add<T, F: AnyField, SubSelection: FieldAggregate> {
     private static func render(arguments: F.Argument) throws -> String {
         return try argumentString(for: arguments)
     }
-    
-//    public init(_ fragment: Fragment)
 }
 
 extension Add where F.Value: GraphQLScalarValue, SubSelection == EmptySubSelection {
-    /// Declares that the given property should be fetched on the queried object.
-    public init(_ keyPath: KeyPath<T, F>, _ key: String, alias: String? = nil) {
-        self.alias = alias
-        self.renderedSubSelection = nil
-        self.renderedArguments = nil
-        self.error = nil
-//        self.field = T()[keyPath: keyPath]
-        fatalError()
-    }
-}
-
-extension Add where F.Value: Schema, SubSelection.T == F.Value {
-    /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
-    public init(_ keyPath: KeyPath<T, F>, _ key: String, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
-        self.alias = alias
-        self.renderedSubSelection = subSelection().render()
-        self.renderedArguments = nil
-        self.error = nil
-//        self.field = T()[keyPath: keyPath]
-        fatalError()
-    }
-}
-
-extension Add where F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue {
-    public init(_ keyPath: KeyPath<T, F>, _ key: String, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
-        self.alias = alias
-        self.renderedSubSelection = subSelection().render()
-        self.renderedArguments = nil
-        self.error = nil
-//        self.field = T()[keyPath: keyPath]
-        fatalError()
-    }
-}
-
-// MARK: For when the type being queried is a full 'schema' object
-
-extension Add: FieldAggregate, AnyFieldAggregate where T: Schema { }
-
-extension Add where T: Schema, F.Value: GraphQLScalarValue, SubSelection == EmptySubSelection {
     /// Declares that the given property should be fetched on the queried object.
     public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil) {
         self.alias = alias
@@ -95,7 +54,7 @@ extension Add where T: Schema, F.Value: GraphQLScalarValue, SubSelection == Empt
     }
 }
 
-extension Add where T: Schema, F.Value: Schema, SubSelection.T == F.Value {
+extension Add where F.Value: Schema, SubSelection.T == F.Value {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
     public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.alias = alias
@@ -106,7 +65,7 @@ extension Add where T: Schema, F.Value: Schema, SubSelection.T == F.Value {
     }
 }
 
-extension Add where T: Schema, F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue {
+extension Add where F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue {
     public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         self.alias = alias
         self.renderedSubSelection = subSelection().render()
@@ -116,11 +75,28 @@ extension Add where T: Schema, F.Value: Collection, SubSelection.T.QueryableType
     }
 }
 
-public struct EmptySchema: Schema {
-    public init() { }
+public extension Add where SubSelection == EmptySubSelection, F: AnyFragment {
+    init(fragment: F) {
+        self.alias = nil
+        self.renderedSubSelection = nil
+        self.renderedArguments = nil
+        self.error = nil
+        fatalError()
+    }
+    
+//    init<FT, FS>(fragment: Fragment<FT, FS>) where T.ImplementedInterfaces.I1 == FT {
+//        self.alias = nil
+//        self.renderedSubSelection = nil
+//        self.renderedArguments = nil
+//        self.error = nil
+//        fatalError()
+//    }
 }
+
 public struct EmptySubSelection: FieldAggregate {
-    public typealias T = EmptySchema
+    public struct T: Schema {
+        public init() { }
+    }
     public typealias Result = Never
     
     public var items: [AnyFieldAggregate] = []
