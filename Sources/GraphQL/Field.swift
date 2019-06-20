@@ -14,7 +14,7 @@ public struct Field<Value: GraphQLCompatibleValue, ArgType>: AnyField {
     
     public let key: String
     public var wrappedValue: Value!
-    public init(_ key: String, type valueType: Value.Type, arguments: ArgType.Type) {
+    public init(_ key: String, _ arguments: ArgType.Type) {
         self.key = key
     }
     
@@ -23,7 +23,7 @@ public struct Field<Value: GraphQLCompatibleValue, ArgType>: AnyField {
     }
 }
 public extension Field where ArgType == Void {
-    init(_ key: String, type valueType: Value.Type) {
+    init(_ key: String) {
         self.key = key
     }
 }
