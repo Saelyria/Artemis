@@ -1,12 +1,11 @@
 import Foundation
 
 @dynamicMemberLookup
-public struct Select<T: Schema, F: AnyField, SubSelection: FieldAggregate>: FieldAggregate {
+public struct Add<T, F: AnyField, SubSelection: FieldAggregate> {
     public typealias Result = F.Value.Result
     
     private let alias: String?
     private let field: F
-    private let keyPath: PartialKeyPath<T.QueryableType>
     private let renderedArguments: String?
     /// The query string of the sub-selection on the requested key. This is `nil` if the key is a scalar value.
     private let renderedSubSelection: String?
@@ -26,10 +25,6 @@ public struct Select<T: Schema, F: AnyField, SubSelection: FieldAggregate>: Fiel
         return self.key
     }
 
-    public func includedKeyPaths() -> [(String, PartialKeyPath<T.QueryableType>)] {
-        return [(self.key, self.keyPath)]
-    }
-    
     public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
         guard let object: Any = dict[self.key] else { throw GraphQLError.malformattedResponse(reason: "Response didn't include key for \(self.key)") }
         return try F.Value.createUnsafeResult(from: object, key: self.key)
@@ -46,12 +41,52 @@ public struct Select<T: Schema, F: AnyField, SubSelection: FieldAggregate>: Fiel
     private static func render(arguments: F.Argument) throws -> String {
         return try argumentString(for: arguments)
     }
+    
+//    public init(_ fragment: Fragment)
 }
 
-extension Select where F.Value: GraphQLScalarValue, SubSelection == EmptySubSelection<T> {
+extension Add where F.Value: GraphQLScalarValue, SubSelection == EmptySubSelection {
+    /// Declares that the given property should be fetched on the queried object.
+    public init(_ keyPath: KeyPath<T, F>, _ key: String, alias: String? = nil) {
+        self.alias = alias
+        self.renderedSubSelection = nil
+        self.renderedArguments = nil
+        self.error = nil
+//        self.field = T()[keyPath: keyPath]
+        fatalError()
+    }
+}
+
+extension Add where F.Value: Schema, SubSelection.T == F.Value {
+    /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
+    public init(_ keyPath: KeyPath<T, F>, _ key: String, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
+        self.alias = alias
+        self.renderedSubSelection = subSelection().render()
+        self.renderedArguments = nil
+        self.error = nil
+//        self.field = T()[keyPath: keyPath]
+        fatalError()
+    }
+}
+
+extension Add where F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue {
+    public init(_ keyPath: KeyPath<T, F>, _ key: String, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
+        self.alias = alias
+        self.renderedSubSelection = subSelection().render()
+        self.renderedArguments = nil
+        self.error = nil
+//        self.field = T()[keyPath: keyPath]
+        fatalError()
+    }
+}
+
+// MARK: For when the type being queried is a full 'schema' object
+
+extension Add: FieldAggregate, AnyFieldAggregate where T: Schema { }
+
+extension Add where T: Schema, F.Value: GraphQLScalarValue, SubSelection == EmptySubSelection {
     /// Declares that the given property should be fetched on the queried object.
     public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil) {
-        self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = nil
         self.field = T.QueryableType()[keyPath: keyPath]
@@ -60,10 +95,9 @@ extension Select where F.Value: GraphQLScalarValue, SubSelection == EmptySubSele
     }
 }
 
-extension Select where F.Value: Schema, SubSelection.T == F.Value {
+extension Add where T: Schema, F.Value: Schema, SubSelection.T == F.Value {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
     public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
-        self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = subSelection().render()
         self.renderedArguments = nil
@@ -72,9 +106,8 @@ extension Select where F.Value: Schema, SubSelection.T == F.Value {
     }
 }
 
-extension Select where F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue {
+extension Add where T: Schema, F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue {
     public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
-        self.keyPath = keyPath
         self.alias = alias
         self.renderedSubSelection = subSelection().render()
         self.renderedArguments = nil
@@ -83,10 +116,14 @@ extension Select where F.Value: Collection, SubSelection.T.QueryableType == F.Va
     }
 }
 
-public struct EmptySubSelection<T: Schema>: FieldAggregate {
+public struct EmptySchema: Schema {
+    public init() { }
+}
+public struct EmptySubSelection: FieldAggregate {
+    public typealias T = EmptySchema
     public typealias Result = Never
     
-    public var items: [AnyFieldAggregate]
+    public var items: [AnyFieldAggregate] = []
     
     public func includedKeyPaths<T>() -> [(String, PartialKeyPath<T>)] {
         return []

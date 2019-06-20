@@ -4,18 +4,10 @@ public protocol FieldAggregate: AnyFieldAggregate {
     associatedtype T: Schema
     associatedtype Result
     
-    func includedKeyPaths() -> [(String, PartialKeyPath<T.QueryableType>)]
     func createResult(from: [String : Any]) throws -> Result
 }
 extension FieldAggregate {
     public typealias Value = Int
-    public func includedKeyPaths() -> [(String, PartialKeyPath<T.QueryableType>)] {
-        return []
-    }
-    
-    func unsafeIncludedKeyPaths() -> [(String, AnyKeyPath)] {
-        return self.includedKeyPaths()
-    }
 }
 
 public protocol AnyFieldAggregate {
@@ -35,10 +27,6 @@ public extension AnyFieldAggregate {
     
     func renderDebug() -> String {
         return "\(self.items.reduce(into: "", { $0.append("\($1.render())\n") }))"
-    }
-    
-    func unsafeIncludedKeyPaths() -> [(String, AnyKeyPath)] {
-        return []
     }
 }
 
