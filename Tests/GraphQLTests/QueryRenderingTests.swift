@@ -4,7 +4,7 @@ import XCTest
 final class QueryRenderingTests: XCTestCase {
     func testQueryNameRendering() {
         let queryName = "QueryName"
-        let query: Query<QuerySchema, Partial<PersonSchema>> = Query(name: queryName) {
+        let query: Operation<QuerySchema, Partial<PersonSchema>> = Operation(name: queryName) {
             Add(\.me) {
                 Add(\.firstName)
             }
@@ -16,7 +16,7 @@ final class QueryRenderingTests: XCTestCase {
     }
     
     func testQueryMultipleQueryFieldSubSelectionRendering() {
-        let query: Query<QuerySchema, (Partial<PersonSchema>, [Partial<PersonSchema>])> = Query() {
+        let query: Operation<QuerySchema, (Partial<PersonSchema>, [Partial<PersonSchema>])> = Operation() {
             Add(\.me) {
                 Add(\.firstName)
                 Add(\.lastName)
@@ -41,7 +41,7 @@ final class QueryRenderingTests: XCTestCase {
         let firstAlias = "first"
         let secondAlias = "second"
         let nameAlias = "name"
-        let query: Query<QuerySchema, (Partial<PersonSchema>, Partial<PersonSchema>)> = Query() {
+        let query: Operation<QuerySchema, (Partial<PersonSchema>, Partial<PersonSchema>)> = Operation() {
             Add(\.me, alias: firstAlias) {
                 Add(\.firstName, alias: nameAlias)
             }

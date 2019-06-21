@@ -18,12 +18,12 @@ public struct Partial<T: GraphQLCompatibleValue> {
 }
 
 public extension Partial where T: Schema {
-    subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> F.Value? where F.Value: GraphQLScalarValue {
+    subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> F.Value? where F.Value: Scalar {
         let keyString = T.QueryableType()[keyPath: keyPath].key
         return self.values[keyString] as? F.Value
     }
     
-    subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> F.Value? where F.Value: Collection & GraphQLScalarValue {
+    subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> F.Value? where F.Value: Collection & Scalar {
         let keyString = T.QueryableType()[keyPath: keyPath].key
         return self.values[keyString] as? F.Value
     }
@@ -40,11 +40,11 @@ public extension Partial where T: Schema {
         return valuesArray.map { Partial<F.Value.Element>(values: $0) }
     }
     
-    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> F.Value? where F.Value: GraphQLScalarValue {
+    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> F.Value? where F.Value: Scalar {
         return self.values[alias] as? F.Value
     }
     
-    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> F.Value? where F.Value: Collection & GraphQLScalarValue {
+    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> F.Value? where F.Value: Collection & Scalar {
         return self.values[alias] as? F.Value
     }
     

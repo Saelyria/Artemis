@@ -5,18 +5,24 @@ public protocol Interface: Schema {
 }
 
 public protocol AnyInterfaces {
-    associatedtype I1; associatedtype I2; associatedtype I3
+    associatedtype I1; associatedtype I2; associatedtype I3; associatedtype I4; associatedtype I5
 }
-public struct Interfaces<I1, I2, I3>: AnyInterfaces {
+public struct Interfaces<I1, I2, I3, I4, I5>: AnyInterfaces {
     init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type) { }
 }
-public extension Interfaces where I3 == Void {
+public extension Interfaces where I5 == Void {
+    init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type, _ i4: I4.Type) { }
+}
+public extension Interfaces where I5 == Void, I4 == Void {
+    init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type) { }
+}
+public extension Interfaces where I5 == Void, I4 == Void, I3 == Void {
     init(_ i1: I1.Type, _ i2: I2.Type) { }
 }
-public extension Interfaces where I2 == Void, I3 == Void {
+public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void {
     init(_ i1: I1.Type) { }
 }
-public extension Interfaces where I1 == Void, I2 == Void, I3 == Void {
+public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void, I1 == Void {
     init() { }
 }
 
@@ -24,7 +30,7 @@ public protocol Schema: GraphQLCompatibleValue {
     /// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
     associatedtype QueryableType: Schema = Self
     associatedtype Result = Partial<Self>
-    associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void>
+    associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void, Void, Void>
     
     static var implements: ImplementedInterfaces { get }
     
@@ -35,7 +41,7 @@ public protocol Schema: GraphQLCompatibleValue {
     init()
 }
 
-public extension Schema where ImplementedInterfaces == Interfaces<Void, Void, Void> {
+public extension Schema where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
     static var implements: ImplementedInterfaces { return Interfaces() }
 }
 
@@ -57,7 +63,7 @@ extension Array: Schema where Element: Schema {
     public typealias QueryableType = Element.QueryableType
 }
 
-extension Array: GraphQLScalarValue where Element: GraphQLScalarValue { }
+extension Array: Scalar where Element: Scalar { }
 extension Array: GraphQLCompatibleValue where Element: GraphQLCompatibleValue {
     public typealias Result = [Element.Result]
     public typealias Value = Self
@@ -111,10 +117,10 @@ public protocol GraphQLCompatibleValue {
     static func createUnsafeResult<R>(from: Any, key: String) throws -> R
 }
 
-public protocol GraphQLScalarValue: GraphQLCompatibleValue {
+public protocol Scalar: GraphQLCompatibleValue {
     associatedtype Result = Self
 }
-public extension GraphQLScalarValue {
+public extension Scalar {
     static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
         guard R.self == Result.self else { throw GraphQLError.invalidOperation }
         guard let returnValue = object as? R else { throw GraphQLError.singleItemParseFailure(operation: key) }
@@ -122,23 +128,23 @@ public extension GraphQLScalarValue {
     }
 }
 
-extension String: GraphQLScalarValue {
+extension String: Scalar {
     public typealias Result = String
     public typealias Value = String
 }
-extension Int: GraphQLScalarValue {
+extension Int: Scalar {
     public typealias Result = Int
     public typealias Value = Int
 }
-extension Float: GraphQLScalarValue {
+extension Float: Scalar {
     public typealias Result = Float
     public typealias Value = Float
 }
-extension Double: GraphQLScalarValue {
+extension Double: Scalar {
     public typealias Result = Double
     public typealias Value = Double
 }
-extension Bool: GraphQLScalarValue {
+extension Bool: Scalar {
     public typealias Result = Bool
     public typealias Value = Bool
 }

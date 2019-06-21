@@ -1,22 +1,33 @@
 import Foundation
 
 @propertyWrapper
-public struct Argument<Value> {
+public struct Argument<Value: GraphQLCompatibleValue> {
     public var wrappedValue: Value!
     let defaultValue: Value?
+    
+    public init() {
+        self.defaultValue = nil
+    }
     
     public init(default: Value? = nil) {
         self.defaultValue = `default`
     }
 }
 
-public struct Query<QuerySchema, Result> {
+public struct Operation<QuerySchema, Result> {
+    public enum OperationType {
+        case query
+        case mutation
+    }
+    
     private let name: String?
     let error: GraphQLError?
     let resultCreator: ([String: Any]) throws -> Result
     let renderedSubSelections: String
+    public let operationType: OperationType
     
-    public init<F: FieldAggregate>(name: String? = nil, @SubSelectionBuilder subSelectionBuilder: () -> F) where F.T == QuerySchema, F.Result == Result {
+    public init<F: FieldAggregate>(_ type: OperationType, name: String? = nil, @SubSelectionBuilder subSelectionBuilder: () -> F) where F.T == QuerySchema, F.Result == Result {
+        self.operationType = type
         self.name = name
         let fieldsAggegate = subSelectionBuilder()
         self.error = fieldsAggegate.error
