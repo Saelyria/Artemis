@@ -4,25 +4,31 @@ import Foundation
 public struct Add<T: Schema, F: AnyField, SubSelection: FieldAggregate>: FieldAggregate {
     public typealias Result = F.Value.Result
     
-    private let alias: String?
-    private let field: F
-    private let renderedArguments: String?
-    /// The query string of the sub-selection on the requested key. This is `nil` if the key is a scalar value.
-    private let renderedSubSelection: String?
-    var key: String { self.alias ?? self.field.key }
+    private enum FieldType {
+        case field(key: String, alias: String?, renderedArguments: String?, renderedSubSelection: String?)
+        case fragment(rendered: String)
+    }
+    
+    private let fieldType: FieldType
+    var key: String { "" }//self.alias ?? self.field.key }
     public var items: [AnyFieldAggregate] = []
     
     public func render() -> String {
-        let args: String = self.renderedArguments ?? ""
-        let name: String = (self.alias == nil) ? self.field.key : "\(self.alias!):\(self.field.key)"
-        let subSelection = (self.renderedSubSelection == nil) ? "" : "{\(self.renderedSubSelection!)}"
-        return "\(name)\(args)\(subSelection)"        
+        switch self.fieldType {
+        case .field(let key, let alias, let renderedArguments, let renderedSubSelection):
+            let args: String = renderedArguments ?? ""
+            let name: String = (alias == nil) ? key : "\(alias!):\(key)"
+            let subSelection = (renderedSubSelection == nil) ? "" : "{\(renderedSubSelection!)}"
+            return "\(name)\(args)\(subSelection)"
+        case .fragment(let renderedFragment):
+            return renderedFragment
+        }
     }
     
     public let error: GraphQLError?
     
     public func renderDebug() throws -> String {
-        return self.key
+        return ""
     }
 
     public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
@@ -46,10 +52,8 @@ public struct Add<T: Schema, F: AnyField, SubSelection: FieldAggregate>: FieldAg
 extension Add where F.Value: GraphQLScalarValue, SubSelection == EmptySubSelection {
     /// Declares that the given property should be fetched on the queried object.
     public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil) {
-        self.alias = alias
-        self.renderedSubSelection = nil
-        self.field = T.QueryableType()[keyPath: keyPath]
-        self.renderedArguments = nil
+        let field = T.QueryableType()[keyPath: keyPath]
+        self.fieldType = .field(key: field.key, alias: alias, renderedArguments: nil, renderedSubSelection: nil)
         self.error = nil
     }
 }
@@ -57,40 +61,31 @@ extension Add where F.Value: GraphQLScalarValue, SubSelection == EmptySubSelecti
 extension Add where F.Value: Schema, SubSelection.T == F.Value {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
     public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
-        self.alias = alias
-        self.renderedSubSelection = subSelection().render()
-        self.renderedArguments = nil
+        let field = T.QueryableType()[keyPath: keyPath]
+        self.fieldType = .field(key: field.key, alias: alias, renderedArguments: nil, renderedSubSelection: subSelection().render())
         self.error = nil
-        self.field = T.QueryableType()[keyPath: keyPath]
     }
 }
 
 extension Add where F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue {
     public init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
-        self.alias = alias
-        self.renderedSubSelection = subSelection().render()
-        self.renderedArguments = nil
+        let field = T.QueryableType()[keyPath: keyPath]
+        self.fieldType = .field(key: field.key, alias: alias, renderedArguments: nil, renderedSubSelection: subSelection().render())
         self.error = nil
-        self.field = T.QueryableType()[keyPath: keyPath]
     }
 }
 
-public extension Add where SubSelection == EmptySubSelection, F: AnyFragment {
+public extension Add where SubSelection == EmptySubSelection, F: AnyFragment, F.T == T {
     init(fragment: F) {
-        self.alias = nil
-        self.renderedSubSelection = nil
-        self.renderedArguments = nil
+        self.fieldType = .fragment(rendered: fragment.render())
         self.error = nil
-        fatalError()
     }
-    
-//    init<FT, FS>(fragment: Fragment<FT, FS>) where T.ImplementedInterfaces.I1 == FT {
-//        self.alias = nil
-//        self.renderedSubSelection = nil
-//        self.renderedArguments = nil
-//        self.error = nil
-//        fatalError()
-//    }
+}
+public extension Add where SubSelection == EmptySubSelection, F: AnyFragment, F.T == T.ImplementedInterfaces.I1 {
+    init(fragment: F) {
+        self.fieldType = .fragment(rendered: fragment.render())
+        self.error = nil
+    }
 }
 
 public struct EmptySubSelection: FieldAggregate {
