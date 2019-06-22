@@ -19,11 +19,11 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
     public var items: [AnyFieldAggregate] = []
     public let error: GraphQLError?
     
-    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, V>) -> (V) -> Add<T, F, SubSelection> {
+    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (V) -> Add<T, F, SubSelection> {
         return { _ in return self }
     }
     
-    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, V>) -> (Variable<V>) -> Add<T, F, SubSelection> {
+    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (Variable<V>) -> Add<T, F, SubSelection> {
         return { _ in return self }
     }
     

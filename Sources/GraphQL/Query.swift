@@ -2,15 +2,31 @@ import Foundation
 
 @propertyWrapper
 public struct Argument<Value: GraphQLCompatibleValue> {
-    public var wrappedValue: Value!
-    let defaultValue: Value?
-    
-    public init() {
-        self.defaultValue = nil
+    public enum Requirement {
+        case optional
+        case required
     }
     
-    public init(default: Value? = nil) {
+    public let name: String
+    public var wrappedValue: Value?
+    let defaultValue: Value?
+    
+//    public init(initialValue: Value?, _ name: String) {
+//        self.defaultValue = initialValue
+//        self.name = name
+//    }
+    
+    public init(_ name: String, default: Value? = nil) {
+        self.name = name
         self.defaultValue = `default`
+    }
+    
+    func render(value: Value) -> String {
+        return "\(name):\(String(describing: value))"
+    }
+    
+    func render(value: Variable<Value>) -> String {
+        return "\(name):\(value.name)"
     }
 }
 
@@ -65,3 +81,18 @@ public struct Operation<QuerySchema, Result> {
         return try resultCreator(dataDict)
     }
 }
+
+public class ReusableQuery<V, R> {
+    let renderedQuery: String
+    let renderedVariables: [String]
+    
+    init(renderedQuery: String, renderedVariables: [String]) {
+        self.renderedQuery = renderedQuery
+        self.renderedVariables = renderedVariables
+    }
+    
+    func render(with variables: V) -> (query: String, variables: String) {
+        return (self.renderedQuery, "")
+    }
+}
+

@@ -1,19 +1,5 @@
 import Foundation
 
-public class ReusableQuery<V, R> {
-    let renderedQuery: String
-    let renderedVariables: [String]
-    
-    init(renderedQuery: String, renderedVariables: [String]) {
-        self.renderedQuery = renderedQuery
-        self.renderedVariables = renderedVariables
-    }
-    
-    func render(with variables: V) -> (query: String, variables: String) {
-        return (self.renderedQuery, "")
-    }
-}
-
 public protocol AnyVariable {
     associatedtype V: GraphQLCompatibleValue
 }
