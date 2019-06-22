@@ -27,10 +27,6 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
         return { _ in return self }
     }
     
-    private static func render(arguments: F.Argument) throws -> String {
-        return try argumentString(for: arguments)
-    }
-    
     internal init(fieldType: FieldType, error: GraphQLError? = nil) {
         self.fieldType = fieldType
         self.error = error
@@ -80,6 +76,20 @@ extension Add {
     public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
         guard let object: Any = dict[self.key] else { throw GraphQLError.malformattedResponse(reason: "Response didn't include key for \(self.key)") }
         return try F.Value.createUnsafeResult(from: object, key: self.key)
+    }
+    
+    private static func render(arg: F.Argument, value: Any) throws -> String {
+        guard !(arg is Void) else { return "" }
+        
+        let mirror = Mirror(reflecting: arg)
+        let argString = try mirror.children
+            .compactMap { child -> (String, Any)? in
+                return (child.label == nil) ? nil : (child.label!, child.value)
+        }.map { (label, value) -> String in
+            guard let value = value as? ArgumentValueConvertible else { throw GraphQLError.argumentValueNotConvertible }
+            return "\(label):\(value.argumentValueString)"
+        }.joined(separator: ",")
+        return "(\(argString))"
     }
 }
 
