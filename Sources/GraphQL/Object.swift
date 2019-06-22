@@ -28,8 +28,11 @@ public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void
 
 public protocol Object: CompatibleValue {
     /// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
-    associatedtype Schema: Object = Self
+    associatedtype Schema: ObjectSchema
     associatedtype Result = Partial<Self>
+}
+
+public protocol ObjectSchema {
     associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void, Void, Void>
     
     static var implements: ImplementedInterfaces { get }
@@ -37,11 +40,7 @@ public protocol Object: CompatibleValue {
     init()
 }
 
-public protocol ObjectSchema: CompatibleValue {
-    init()
-}
-
-public extension Object where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
+public extension ObjectSchema where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
     static var implements: ImplementedInterfaces { return Interfaces() }
 }
 

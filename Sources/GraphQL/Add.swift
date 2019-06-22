@@ -94,12 +94,10 @@ extension Add {
 }
 
 public struct EmptySubSelection: FieldAggregate {
-//    public struct Schema: ObjectSchema {
-//        public init() { }
-//    }
-    
     public struct T: Object {
-        public init() { }
+        public struct Schema: ObjectSchema {
+            public init() { }
+        }
     }
     public typealias Result = Never
     
