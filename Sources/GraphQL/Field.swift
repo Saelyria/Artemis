@@ -13,7 +13,8 @@ public struct Field<Value: GraphQLCompatibleValue, ArgType>: AnyField {
     public typealias Argument = ArgType
     
     public let key: String
-    public var wrappedValue: Value!
+    public var wrappedValue: Value?
+    
     public init(_ key: String, _ arguments: ArgType.Type) {
         self.key = key
     }

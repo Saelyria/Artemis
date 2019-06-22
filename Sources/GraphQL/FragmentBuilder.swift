@@ -3,65 +3,58 @@ import Foundation
 @_functionBuilder
 public struct FragmentBuilder {
     public static func buildBlock
-        <T, F: FieldAggregate>
+        <F: AnyFragment>
         (_ f1: F)
-        -> FieldAggregate1<T, F>
-        where F.T == T
+        -> F
     {
-        return FieldAggregate1(T.self, f1)
+        return f1
     }
     
     public static func buildBlock
-        <T, F1: FieldAggregate, F2: FieldAggregate>
+        <F1: AnyFragment, F2: AnyFragment>
         (_ f1: F1, _ f2: F2)
-        -> FieldAggregate2<T, F1, F2>
-        where F1.T == T, F2.T == T
+        -> (F1, F2)
     {
-        return FieldAggregate2(T.self, f1, f2)
+        return (f1, f2)
     }
     
     public static func buildBlock
-        <T, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate>
+        <F1: AnyFragment, F2: AnyFragment, F3: AnyFragment>
         (_ f1: F1, _ f2: F2, _ f3: F3)
-        -> FieldAggregate3<T, F1, F2, F3>
-        where F1.T == T, F2.T == T, F3.T == T
+        -> (F1, F2, F3)
     {
-        return FieldAggregate3(T.self, f1, f2, f3)
+        return (f1, f2, f3)
     }
     
     public static func buildBlock
-        <T, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate>
+        <F1: AnyFragment, F2: AnyFragment, F3: AnyFragment, F4: AnyFragment>
         (_ f1: F1, _ f2: F2, _ f3: F3, _ f4: F4)
-        -> FieldAggregate4<T, F1, F2, F3, F4>
-        where F1.T == T, F2.T == T, F3.T == T, F4.T == T
+        -> (F1, F2, F3, F4)
     {
-        return FieldAggregate4(T.self, f1, f2, f3, f4)
+        return (f1, f2, f3, f4)
     }
     
     public static func buildBlock
-        <T, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate>
+        <F1: AnyFragment, F2: AnyFragment, F3: AnyFragment, F4: AnyFragment, F5: AnyFragment>
         (_ f1: F1, _ f2: F2, _ f3: F3, _ f4: F4, _ f5: F5)
-        -> FieldAggregate5<T, F1, F2, F3, F4, F5>
-        where F1.T == T, F2.T == T, F3.T == T, F4.T == T, F5.T == T
+        -> (F1, F2, F3, F4, F5)
     {
-        return FieldAggregate5(T.self, f1, f2, f3, f4, f5)
+        return (f1, f2, f3, f4, f5)
     }
     
     public static func buildBlock
-        <T, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate, F6: FieldAggregate>
+        <F1: AnyFragment, F2: AnyFragment, F3: AnyFragment, F4: AnyFragment, F5: AnyFragment, F6: AnyFragment>
         (_ f1: F1, _ f2: F2, _ f3: F3, _ f4: F4, _ f5: F5, _ f6: F6)
-        -> FieldAggregate6<T, F1, F2, F3, F4, F5, F6>
-        where F1.T == T, F2.T == T, F3.T == T, F4.T == T, F5.T == T, F6.T == T
+        -> (F1, F2, F3, F4, F5, F6)
     {
-        return FieldAggregate6(T.self, f1, f2, f3, f4, f5, f6)
+        return (f1, f2, f3, f4, f5, f6)
     }
     
     public static func buildBlock
-        <T, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate, F6: FieldAggregate, F7: FieldAggregate>
+        <F1: AnyFragment, F2: AnyFragment, F3: AnyFragment, F4: AnyFragment, F5: AnyFragment, F6: AnyFragment, F7: AnyFragment>
         (_ f1: F1, _ f2: F2, _ f3: F3, _ f4: F4, _ f5: F5, _ f6: F6, _ f7: F7)
-        -> FieldAggregate7<T, F1, F2, F3, F4, F5, F6, F7>
-        where F1.T == T, F2.T == T, F3.T == T, F4.T == T, F5.T == T, F6.T == T, F7.T == T
+        -> (F1, F2, F3, F4, F5, F6, F7)
     {
-        return FieldAggregate7(T.self, f1, f2, f3, f4, f5, f6, f7)
+        return (f1, f2, f3, f4, f5, f6, f7)
     }
 }

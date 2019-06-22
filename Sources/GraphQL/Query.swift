@@ -26,10 +26,25 @@ public struct Operation<QuerySchema, Result> {
     let renderedSubSelections: String
     public let operationType: OperationType
     
-    public init<F: FieldAggregate>(_ type: OperationType, name: String? = nil, @SubSelectionBuilder subSelectionBuilder: () -> F) where F.T == QuerySchema, F.Result == Result {
+    public init<F: FieldAggregate>(_ type: OperationType, name: String? = nil, @SubSelectionBuilder _ subSelection: () -> F) where F.T == QuerySchema, F.Result == Result {
         self.operationType = type
         self.name = name
-        let fieldsAggegate = subSelectionBuilder()
+        let fieldsAggegate = subSelection()
+        self.error = fieldsAggegate.error
+        self.renderedSubSelections = fieldsAggegate.render()
+        self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
+    }
+    
+    public init<F: FieldAggregate, FR>(
+        _ type: OperationType,
+        name: String? = nil,
+        @SubSelectionBuilder _ subSelection: (FR) -> F,
+        @FragmentBuilder fragments: () -> FR)
+        where F.T == QuerySchema, F.Result == Result
+    {
+        self.operationType = type
+        self.name = name
+        let fieldsAggegate = subSelection(fragments())
         self.error = fieldsAggegate.error
         self.renderedSubSelections = fieldsAggegate.render()
         self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
