@@ -1,7 +1,7 @@
 import Foundation
 
 @propertyWrapper
-public struct Argument<Value: GraphQLCompatibleValue> {
+public struct Argument<Value: CompatibleValue> {
     public enum Requirement {
         case optional
         case required

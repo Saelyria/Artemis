@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol AnyField {
-    associatedtype Value: GraphQLCompatibleValue
+    associatedtype Value: CompatibleValue
     associatedtype Argument = Void
     
     var key: String { get }
@@ -9,7 +9,7 @@ public protocol AnyField {
 }
 
 @propertyWrapper
-public struct Field<Value: GraphQLCompatibleValue, ArgType>: AnyField {
+public struct Field<Value: CompatibleValue, ArgType>: AnyField {
     public typealias Argument = ArgType
     
     public let key: String

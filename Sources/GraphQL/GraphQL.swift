@@ -1,9 +1,9 @@
 import Foundation
 
 public protocol AnyVariable {
-    associatedtype V: GraphQLCompatibleValue
+    associatedtype V: CompatibleValue
 }
-public struct Variable<V: GraphQLCompatibleValue>: AnyVariable {
+public struct Variable<V: CompatibleValue>: AnyVariable {
     public let name: String
     
     public init(name: String) {
@@ -11,7 +11,7 @@ public struct Variable<V: GraphQLCompatibleValue>: AnyVariable {
     }
 }
 
-public func `$`<V: GraphQLCompatibleValue>(_ name: String, _ type: V.Type) -> Variable<V> {
+public func `$`<V: CompatibleValue>(_ name: String, _ type: V.Type) -> Variable<V> {
     return Variable<V>(name: name)
 }
 

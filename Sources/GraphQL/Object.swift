@@ -26,18 +26,18 @@ public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void
     init() { }
 }
 
-public protocol Object: GraphQLCompatibleValue {
+public protocol Object: CompatibleValue {
     /// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
-    associatedtype QueryableType: Object = Self
+    associatedtype Schema: Object = Self
     associatedtype Result = Partial<Self>
     associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void, Void, Void>
     
     static var implements: ImplementedInterfaces { get }
     
-    // TODO: figure out how this could work with aliases
-//    associatedtype Complete = Void
-//    static func createCompleteInstance(fromPartial: Partial<Self>) -> Complete?
-    
+    init()
+}
+
+public protocol ObjectSchema: CompatibleValue {
     init()
 }
 
@@ -60,11 +60,11 @@ public extension Object {
 }
 
 extension Array: Object where Element: Object {
-    public typealias QueryableType = Element.QueryableType
+    public typealias Schema = Element.Schema
 }
 
 extension Array: Scalar where Element: Scalar { }
-extension Array: GraphQLCompatibleValue where Element: GraphQLCompatibleValue {
+extension Array: CompatibleValue where Element: CompatibleValue {
     public typealias Result = [Element.Result]
     public typealias Value = Self
     
@@ -112,12 +112,12 @@ extension Array: GraphQLCompatibleValue where Element: GraphQLCompatibleValue {
 //extension Optional: GraphQLScalarValue where Wrapped: GraphQLScalarValue { }
 //extension Optional: GraphQLCompatibleValue where Wrapped: GraphQLCompatibleValue { }
 
-public protocol GraphQLCompatibleValue {
+public protocol CompatibleValue {
     associatedtype Result = Partial<Self>
     static func createUnsafeResult<R>(from: Any, key: String) throws -> R
 }
 
-public protocol Scalar: GraphQLCompatibleValue {
+public protocol Scalar: CompatibleValue {
     associatedtype Result = Self
 }
 public extension Scalar {

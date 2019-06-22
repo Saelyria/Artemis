@@ -35,23 +35,23 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
 
 extension Add where F.Value: Scalar, SubSelection == EmptySubSelection {
     /// Declares that the given property should be fetched on the queried object.
-    public convenience init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil) {
-        let field = T.QueryableType()[keyPath: keyPath]
+    public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil) {
+        let field = T.Schema()[keyPath: keyPath]
         self.init(fieldType: .field(key: field.key, alias: alias, renderedArguments: nil, renderedSubSelection: nil))
     }
 }
 
 extension Add where F.Value: Object, SubSelection.T == F.Value {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
-    public convenience init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
-        let field = T.QueryableType()[keyPath: keyPath]
+    public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
+        let field = T.Schema()[keyPath: keyPath]
         self.init(fieldType: .field(key: field.key, alias: alias, renderedArguments: nil, renderedSubSelection: subSelection().render()))
     }
 }
 
-extension Add where F.Value: Collection, SubSelection.T.QueryableType == F.Value.Element, F.Value.Element: GraphQLCompatibleValue {
-    public convenience init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
-        let field = T.QueryableType()[keyPath: keyPath]
+extension Add where F.Value: Collection, SubSelection.T.Schema == F.Value.Element, F.Value.Element: CompatibleValue {
+    public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
+        let field = T.Schema()[keyPath: keyPath]
         self.init(fieldType:  .field(key: field.key, alias: alias, renderedArguments: nil, renderedSubSelection: subSelection().render()))
     }
 }
@@ -94,6 +94,10 @@ extension Add {
 }
 
 public struct EmptySubSelection: FieldAggregate {
+//    public struct Schema: ObjectSchema {
+//        public init() { }
+//    }
+    
     public struct T: Object {
         public init() { }
     }
