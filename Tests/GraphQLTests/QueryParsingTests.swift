@@ -24,6 +24,7 @@ final class QueryParsingTests: XCTestCase {
             return
         }
         
+        XCTAssert(me.values.count == 1)
         XCTAssert(me.firstName == "Aaron")
         XCTAssert(me.age == nil)
         XCTAssert(me.lastName == nil)
@@ -71,6 +72,7 @@ final class QueryParsingTests: XCTestCase {
             return
         }
         
+        XCTAssert(me.values.count == 2)
         XCTAssert(me.firstName == "Aaron")
         XCTAssert(me.lastName == "Bosnjak")
         XCTAssert(me.age == nil)
@@ -78,6 +80,7 @@ final class QueryParsingTests: XCTestCase {
         XCTAssert(me.spouse == nil)
         
         XCTAssert(users.count == 1)
+        XCTAssert(users.first?.values.count == 2)
         XCTAssert(users.first?.firstName == "Ashley")
         XCTAssert(users.first?.lastName == nil)
         XCTAssert(users.first?.age == nil)
@@ -115,6 +118,7 @@ final class QueryParsingTests: XCTestCase {
             return
         }
 
+        XCTAssert(first.values.count == 1)
         XCTAssert(first.firstName == nil)
         XCTAssert(first.lastName == nil)
         XCTAssert(first.age == nil)
@@ -122,6 +126,7 @@ final class QueryParsingTests: XCTestCase {
         XCTAssert(first.spouse == nil)
         XCTAssert(first.get(\.firstName, alias: "name") == "Aaron")
         
+        XCTAssert(first.values.count == 1)
         XCTAssert(second.firstName == nil)
         XCTAssert(second.lastName == "Bielus")
         XCTAssert(second.age == nil)
