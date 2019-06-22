@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol FieldAggregate: AnyFieldAggregate {
-    associatedtype T: Schema
+    associatedtype T: Object
     associatedtype Result
     
     func createResult(from: [String : Any]) throws -> Result
@@ -31,7 +31,7 @@ public extension AnyFieldAggregate {
 }
 
 public struct FieldAggregate1
-    <T: Schema, F1: FieldAggregate>
+    <T: Object, F1: FieldAggregate>
     : FieldAggregate
 {
     public typealias Result = F1.Result
@@ -49,7 +49,7 @@ public struct FieldAggregate1
 }
 
 public struct FieldAggregate2
-    <T: Schema, F1: FieldAggregate, F2: FieldAggregate>
+    <T: Object, F1: FieldAggregate, F2: FieldAggregate>
     : FieldAggregate
 {
     public typealias Result = (F1.Result, F2.Result)
@@ -70,7 +70,7 @@ public struct FieldAggregate2
 }
 
 public struct FieldAggregate3
-    <T: Schema, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate>
+    <T: Object, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate>
     : FieldAggregate
 {
     public typealias Result = (F1.Result, F2.Result, F3.Result)
@@ -92,7 +92,7 @@ public struct FieldAggregate3
 }
 
 public struct FieldAggregate4
-    <T: Schema, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate>
+    <T: Object, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate>
     : FieldAggregate
 {
     public typealias Result = (F1.Result, F2.Result, F3.Result, F4.Result)
@@ -115,7 +115,7 @@ public struct FieldAggregate4
 }
 
 public struct FieldAggregate5
-    <T: Schema, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate>
+    <T: Object, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate>
     : FieldAggregate
 {
     public typealias Result = (F1.Result, F2.Result, F3.Result, F4.Result, F5.Result)
@@ -139,7 +139,7 @@ public struct FieldAggregate5
 }
 
 public struct FieldAggregate6
-    <T: Schema, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate, F6: FieldAggregate>
+    <T: Object, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate, F6: FieldAggregate>
     : FieldAggregate
 {
     public typealias Result = (F1.Result, F2.Result, F3.Result, F4.Result, F5.Result, F6.Result)
@@ -164,7 +164,7 @@ public struct FieldAggregate6
 }
 
 public struct FieldAggregate7
-    <T: Schema, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate, F6: FieldAggregate, F7: FieldAggregate>
+    <T: Object, F1: FieldAggregate, F2: FieldAggregate, F3: FieldAggregate, F4: FieldAggregate, F5: FieldAggregate, F6: FieldAggregate, F7: FieldAggregate>
     : FieldAggregate
 {
     public typealias Result = (F1.Result, F2.Result, F3.Result, F4.Result, F5.Result, F6.Result, F7.Result)

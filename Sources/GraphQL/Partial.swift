@@ -17,7 +17,7 @@ public struct Partial<T: GraphQLCompatibleValue> {
     }
 }
 
-public extension Partial where T: Schema {
+public extension Partial where T: Object {
     subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> F.Value? where F.Value: Scalar {
         let keyString = T.QueryableType()[keyPath: keyPath].key
         return self.values[keyString] as? F.Value
@@ -28,13 +28,13 @@ public extension Partial where T: Schema {
         return self.values[keyString] as? F.Value
     }
     
-    subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> Partial<F.Value>? where F.Value: Schema {
+    subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> Partial<F.Value>? where F.Value: Object {
         let keyString = T.QueryableType()[keyPath: keyPath].key
         guard let valueDict = self.values[keyString] as? [String: Any] else { return nil }
         return Partial<F.Value>(values: valueDict)
     }
 
-    subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> [Partial<F.Value.Element>]? where F.Value: Collection & Schema {
+    subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.QueryableType, F>) -> [Partial<F.Value.Element>]? where F.Value: Collection & Object {
         let keyString = T.QueryableType()[keyPath: keyPath].key
         guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
         return valuesArray.map { Partial<F.Value.Element>(values: $0) }
@@ -48,12 +48,12 @@ public extension Partial where T: Schema {
         return self.values[alias] as? F.Value
     }
     
-    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> Partial<F.Value>? where F.Value: Schema {
+    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> Partial<F.Value>? where F.Value: Object {
         guard let valueDict = self.values[alias] as? [String: Any] else { return nil }
         return Partial<F.Value>(values: valueDict)
     }
     
-    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> [Partial<F.Value.Element>]? where F.Value: Collection & Schema {
+    func get<F: AnyField>(_ keyPath: KeyPath<T.QueryableType, F>, alias: String) -> [Partial<F.Value.Element>]? where F.Value: Collection & Object {
         guard let valuesArray = self.values[alias] as? [[String: Any]] else { return nil }
         return valuesArray.map { Partial<F.Value.Element>(values: $0) }
     }

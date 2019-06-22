@@ -1,6 +1,6 @@
 @testable import GraphQL
 
-struct QuerySchema: Schema {
+struct QuerySchema: Object {
     var me = Field<PersonSchema, Void>("me")
     var user = Field<PersonSchema, PersonArguments>("user", PersonArguments.self)
     var users = Field<[PersonSchema], Void>("users")
@@ -13,14 +13,14 @@ struct QuerySchema: Schema {
     }
 }
 
-struct PersonSchema: Schema {
+struct PersonSchema: Object {
     var firstName = Field<String, Void>("firstName")
     var lastName = Field<String, Void>("lastName")
     var age = Field<Int, Void>("age")
     var pet = Field<AnimalSchema, Void>("pet")
 }
 
-struct AnimalSchema: Schema {
+struct AnimalSchema: Object {
     var name = Field<String, Void>("name")
     var age = Field<Int, Void>("age")
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol Interface: Schema {
+public protocol Interface: Object {
     
 }
 
@@ -26,9 +26,9 @@ public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void
     init() { }
 }
 
-public protocol Schema: GraphQLCompatibleValue {
+public protocol Object: GraphQLCompatibleValue {
     /// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
-    associatedtype QueryableType: Schema = Self
+    associatedtype QueryableType: Object = Self
     associatedtype Result = Partial<Self>
     associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void, Void, Void>
     
@@ -41,7 +41,7 @@ public protocol Schema: GraphQLCompatibleValue {
     init()
 }
 
-public extension Schema where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
+public extension Object where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
     static var implements: ImplementedInterfaces { return Interfaces() }
 }
 
@@ -51,7 +51,7 @@ public extension Schema where ImplementedInterfaces == Interfaces<Void, Void, Vo
 //    }
 //}
 
-public extension Schema {
+public extension Object {
     static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
         guard R.self == Result.self else { throw GraphQLError.invalidOperation }
         guard let dictRepresentation = object as? [String: Any] else { throw GraphQLError.singleItemParseFailure(operation: key) }
@@ -59,7 +59,7 @@ public extension Schema {
     }
 }
 
-extension Array: Schema where Element: Schema {
+extension Array: Object where Element: Object {
     public typealias QueryableType = Element.QueryableType
 }
 

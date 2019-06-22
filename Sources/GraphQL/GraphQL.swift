@@ -29,7 +29,7 @@ public func `$`<V: GraphQLCompatibleValue>(_ name: String, _ type: V.Type) -> Va
     return Variable<V>(name: name)
 }
 
-public class Graph<Q: Schema> {
+public class Graph<Q: Object> {
     public init() { }
     
     public func register<R>(

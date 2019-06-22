@@ -1,7 +1,7 @@
 import Foundation
 
 @dynamicMemberLookup
-public class Add<T: Schema, F: AnyField, SubSelection: FieldAggregate>: FieldAggregate {
+public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAggregate {
     public typealias Result = F.Value.Result
     
     enum FieldType {
@@ -40,7 +40,7 @@ extension Add where F.Value: Scalar, SubSelection == EmptySubSelection {
     }
 }
 
-extension Add where F.Value: Schema, SubSelection.T == F.Value {
+extension Add where F.Value: Object, SubSelection.T == F.Value {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
     public convenience init(_ keyPath: KeyPath<T.QueryableType, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         let field = T.QueryableType()[keyPath: keyPath]
@@ -79,7 +79,7 @@ extension Add {
 }
 
 public struct EmptySubSelection: FieldAggregate {
-    public struct T: Schema {
+    public struct T: Object {
         public init() { }
     }
     public typealias Result = Never
