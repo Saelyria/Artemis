@@ -10,7 +10,7 @@ import Foundation
  */
 @dynamicMemberLookup
 public struct Partial<T: GraphQLCompatibleValue> {
-    private let values: [String: Any]
+    let values: [String: Any]
     
     init(values: [String: Any]) {
         self.values = values

@@ -1,14 +1,20 @@
 import XCTest
 @testable import GraphQL
 
-final class QueryRenderingTests: XCTestCase {
+final class QueryDebugRenderingTests: XCTestCase {
     func testQueryNameRendering() {
         let query = GraphQL.Operation<Query, Partial<Person>>(.query, name: "QueryName") {
             Add(\.me) {
                 Add(\.firstName)
             }
         }
-        XCTAssert(query.render() == "query QueryName{me{firstName}}")
+        XCTAssert(query.render() == """
+        query QueryName {
+            me {
+                firstName
+            }
+        }
+        """)
     }
     
     func testQueryMultipleQueryFieldSubSelectionRendering() {
@@ -23,8 +29,20 @@ final class QueryRenderingTests: XCTestCase {
                 }
             }
         }
-
-        XCTAssert(query.render() == "query{me{firstName,lastName},users{pets{name}}}")
+        
+        XCTAssert(query.render() == """
+        query {
+            me {
+                firstName
+                lastName
+            }
+            users {
+                pets {
+                    name
+                }
+            }
+        }
+        """)
     }
     
     func testQueryAliasRendering() {
@@ -37,13 +55,22 @@ final class QueryRenderingTests: XCTestCase {
             }
         }
         
-        XCTAssert(query.render() == "query{first:me{name:firstName},second:me{lastName}}")
+        XCTAssert(query.render() == """
+        query {
+            first: me {
+                name: firstName
+            }
+            second: me {
+                lastName
+            }
+        }
+        """)
     }
     
     func testQueryArgumentRendering() {
         
     }
-
+    
     static var allTests = [
         ("testQueryNameRendering", testQueryNameRendering),
         ("testQueryMultipleQueryFieldSubSelectionRendering", testQueryMultipleQueryFieldSubSelectionRendering),

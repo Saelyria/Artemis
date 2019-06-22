@@ -10,7 +10,12 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
     }
     
     let fieldType: FieldType
-    var key: String { "" }//self.alias ?? self.field.key }
+    var key: String {
+        switch self.fieldType {
+        case .field(let key, let alias, _, _): return alias ?? key
+        case .fragment(_): return ""
+        }
+    }
     public var items: [AnyFieldAggregate] = []
     public let error: GraphQLError?
     
