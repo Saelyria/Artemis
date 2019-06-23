@@ -91,6 +91,14 @@ extension Optional: SelectionOutput where Wrapped: SelectionOutput {
         return try Wrapped.createUnsafeResult(from: from, key: key)
     }
 }
+extension Optional: SelectionInput where Wrapped: SelectionInput {
+    public func render() -> String {
+        switch self {
+        case .some(let wrapped): return wrapped.render()
+        case .none: return "null"
+        }
+    }
+}
 
 //extension Optional: Queryable where Wrapped: Queryable {
 //    typealias QueryableType = Wrapped.QueryableType

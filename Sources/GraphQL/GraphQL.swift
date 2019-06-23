@@ -15,7 +15,7 @@ public func `$`<V: SelectionInput>(_ name: String, _ type: V.Type) -> Variable<V
     return Variable<V>(name: name)
 }
 
-public class Graph<Q: Object> {
+open class Graph<Q: Object> {
     public init() { }
     
     public func register<R>(
@@ -49,7 +49,7 @@ public class Graph<Q: Object> {
         return ReusableQuery(renderedQuery: query(v1, v2, v3).render(), renderedVariables: [])
     }
     
-    public func perform<R>(
+    open func perform<R>(
         _ query: Operation<Q, R>,
         mock: Data? = nil,
         completion: @escaping (Result<R, GraphQLError>) -> Void)
@@ -68,7 +68,7 @@ public class Graph<Q: Object> {
         }
     }
     
-    public func perform<V, R>(
+    open func perform<V, R>(
         _ reusableQuery: ReusableQuery<V, R>,
         variables: V,
         completion: @escaping (Result<R, GraphQLError>) -> Void)

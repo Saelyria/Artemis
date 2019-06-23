@@ -2,37 +2,7 @@ import XCTest
 @testable import GraphQL
 
 final class QueryParsingTests: XCTestCase {
-    func testQueryNameRendering() {
-        let query = GraphQL.Operation<Query, Partial<Person>>(.query, name: "QueryName") {
-            Add(\.me) {
-                Add(\.firstName)
-            }
-        }
-        
-        let response = Data("""
-        {
-            "data": {
-                "me": {
-                    "firstName": "Aaron"
-                }
-            }
-        }
-        """.utf8)
-        
-        guard let me = try? query.createResult(from: response) else {
-            XCTFail()
-            return
-        }
-        
-        XCTAssert(me.values.count == 1)
-        XCTAssert(me.firstName == "Aaron")
-        XCTAssert(me.age == nil)
-        XCTAssert(me.lastName == nil)
-        XCTAssert(me.pets == nil)
-        XCTAssert(me.spouse == nil)
-    }
-    
-    func testQueryMultipleQueryFieldSubSelectionRendering() {
+    func testQueryMultipleQueryFieldSubSelectionParsing() {
         let query = GraphQL.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
             Add(\.me) {
                 Add(\.firstName)
@@ -90,7 +60,7 @@ final class QueryParsingTests: XCTestCase {
         XCTAssert(users.first?.pets?.first?.age == nil)
     }
     
-    func testQueryAliasRendering() {
+    func testQueryAliasParsing() {
         let query = GraphQL.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
             Add(\.me, alias: "first") {
                 Add(\.firstName, alias: "name")
@@ -132,10 +102,6 @@ final class QueryParsingTests: XCTestCase {
         XCTAssert(second.age == nil)
         XCTAssert(second.pets == nil)
         XCTAssert(second.spouse == nil)
-    }
-    
-    func testQueryArgumentRendering() {
-        
     }
     
     static var allTests = [
