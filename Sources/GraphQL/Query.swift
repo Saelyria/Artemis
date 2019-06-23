@@ -38,6 +38,7 @@ public struct Operation<QuerySchema, Result> {
     
     func render() -> String {
         let nameString = (self.name == nil) ? "" : " \(self.name!)"
+//        let fragmentString = (
         return "query\(nameString){\(self.renderedSubSelections)}"
     }
     

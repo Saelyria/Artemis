@@ -105,8 +105,7 @@ final class QueryParsingTests: XCTestCase {
     }
     
     static var allTests = [
-        ("testQueryNameRendering", testQueryNameRendering),
-        ("testQueryMultipleQueryFieldSubSelectionRendering", testQueryMultipleQueryFieldSubSelectionRendering),
-        ("testQueryAliasRendering", testQueryAliasRendering),
+        ("testQueryMultipleQueryFieldSubSelectionRendering", testQueryMultipleQueryFieldSubSelectionParsing),
+        ("testQueryAliasRendering", testQueryAliasParsing),
     ]
 }

@@ -49,10 +49,33 @@ final class QueryRenderingTests: XCTestCase {
             Add(\.user, alias: "second") {
                 Add(\.lastName)
             }
-//            .id("123")
         }
         
         XCTAssert(query.render() == #"query{first:user(id:\"321\"){name:firstName},second:user{lastName}}"#, query.render())
+    }
+    
+    func testFragmentRendering() {
+        let query = GraphQL.Operation<Query, (Partial<Person>, Partial<Person>)>(.query, { ageField, nameField in
+            Add(\.user) {
+                Add(fieldsOn: nameField)
+                Add(fieldsOn: ageField)
+            }
+            .id("321")
+            Add(\.user, alias: "second") {
+                Add(fieldsOn: ageField)
+            }
+        }, fragments: {
+            Fragment("ageField", on: Person.self) {
+                Add(\.age)
+            }
+            Fragment("nameField", on: Person.self) {
+                Add(\.firstName)
+            }
+        })
+        
+        var expectedString = #"query{user(id:\"321\"){...nameField,...ageField},second:user{...ageField}},"#
+        expectedString.append(#"fragment ageField on Person{age},fragment nameField on Person{firstName}"#)
+        XCTAssert(query.render() == expectedString, query.render())
     }
 
     static var allTests = [
