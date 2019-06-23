@@ -5,26 +5,35 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
     public typealias Result = F.Value.Result
     
     enum FieldType {
-        case field(key: String, alias: String?, renderedArguments: String?, renderedSubSelection: String?)
+        case field(key: String, alias: String?, renderedSubSelection: String?)
         case fragment(rendered: String)
     }
     
     let fieldType: FieldType
     var key: String {
         switch self.fieldType {
-        case .field(let key, let alias, _, _): return alias ?? key
+        case .field(let key, let alias, _): return alias ?? key
         case .fragment(_): return ""
         }
     }
     public var items: [AnyFieldAggregate] = []
     public let error: GraphQLError?
+    private var renderedArguments: [String] = []
     
     public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (V) -> Add<T, F, SubSelection> {
-        return { _ in return self }
+        return { value in
+            let renderedArg = F.Argument()[keyPath: keyPath].render(value: value)
+            self.renderedArguments.append(renderedArg)
+            return self
+        }
     }
     
     public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (Variable<V>) -> Add<T, F, SubSelection> {
-        return { _ in return self }
+        return { variable in
+            let renderedArg = F.Argument()[keyPath: keyPath].render(value: variable)
+            self.renderedArguments.append(renderedArg)
+            return self
+        }
     }
     
     internal init(fieldType: FieldType, error: GraphQLError? = nil) {
@@ -37,7 +46,7 @@ extension Add where F.Value: Scalar, SubSelection == EmptySubSelection {
     /// Declares that the given property should be fetched on the queried object.
     public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil) {
         let field = T.Schema()[keyPath: keyPath]
-        self.init(fieldType: .field(key: field.key, alias: alias, renderedArguments: nil, renderedSubSelection: nil))
+        self.init(fieldType: .field(key: field.key, alias: alias, renderedSubSelection: nil))
     }
 }
 
@@ -45,22 +54,28 @@ extension Add where F.Value: Object, SubSelection.T == F.Value {
     /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
     public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         let field = T.Schema()[keyPath: keyPath]
-        self.init(fieldType: .field(key: field.key, alias: alias, renderedArguments: nil, renderedSubSelection: subSelection().render()))
+        self.init(fieldType: .field(key: field.key, alias: alias, renderedSubSelection: subSelection().render()))
     }
 }
 
-extension Add where F.Value: Collection, SubSelection.T.Schema == F.Value.Element, F.Value.Element: CompatibleValue {
+extension Add where F.Value: Collection, SubSelection.T.Schema == F.Value.Element, F.Value.Element: SelectionOutput {
     public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         let field = T.Schema()[keyPath: keyPath]
-        self.init(fieldType:  .field(key: field.key, alias: alias, renderedArguments: nil, renderedSubSelection: subSelection().render()))
+        self.init(fieldType:  .field(key: field.key, alias: alias, renderedSubSelection: subSelection().render()))
     }
 }
 
 extension Add {
     public func render() -> String {
         switch self.fieldType {
-        case .field(let key, let alias, let renderedArguments, let renderedSubSelection):
-            let args: String = renderedArguments ?? ""
+        case .field(let key, let alias, let renderedSubSelection):
+            let args: String
+            if self.renderedArguments.isEmpty {
+                args = ""
+            } else {
+                args = "(\(self.renderedArguments.joined(separator: ",")))"
+            }
+            
             let name: String = (alias == nil) ? key : "\(alias!):\(key)"
             let subSelection = (renderedSubSelection == nil) ? "" : "{\(renderedSubSelection!)}"
             return "\(name)\(args)\(subSelection)"
@@ -76,20 +91,6 @@ extension Add {
     public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
         guard let object: Any = dict[self.key] else { throw GraphQLError.malformattedResponse(reason: "Response didn't include key for \(self.key)") }
         return try F.Value.createUnsafeResult(from: object, key: self.key)
-    }
-    
-    private static func render(arg: F.Argument, value: Any) throws -> String {
-        guard !(arg is Void) else { return "" }
-        
-        let mirror = Mirror(reflecting: arg)
-        let argString = try mirror.children
-            .compactMap { child -> (String, Any)? in
-                return (child.label == nil) ? nil : (child.label!, child.value)
-        }.map { (label, value) -> String in
-            guard let value = value as? ArgumentValueConvertible else { throw GraphQLError.argumentValueNotConvertible }
-            return "\(label):\(value.argumentValueString)"
-        }.joined(separator: ",")
-        return "(\(argString))"
     }
 }
 

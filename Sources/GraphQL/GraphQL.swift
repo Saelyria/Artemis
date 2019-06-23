@@ -1,9 +1,9 @@
 import Foundation
 
 public protocol AnyVariable {
-    associatedtype V: CompatibleValue
+    associatedtype V: SelectionInput
 }
-public struct Variable<V: CompatibleValue>: AnyVariable {
+public struct Variable<V: SelectionInput>: AnyVariable {
     public let name: String
     
     public init(name: String) {
@@ -11,7 +11,7 @@ public struct Variable<V: CompatibleValue>: AnyVariable {
     }
 }
 
-public func `$`<V: CompatibleValue>(_ name: String, _ type: V.Type) -> Variable<V> {
+public func `$`<V: SelectionInput>(_ name: String, _ type: V.Type) -> Variable<V> {
     return Variable<V>(name: name)
 }
 

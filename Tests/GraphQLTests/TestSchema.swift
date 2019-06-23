@@ -3,15 +3,15 @@
 final class Query: Object, ObjectSchema {
     typealias Schema = Query
     
-    var me = Field<Person, Void>("me")
+    var me = Field<Person, NoArguments>("me")
     var user = Field<Person, PersonArguments>("user", PersonArguments.self)
-    var users = Field<[Person], Void>("users")
-    var number = Field<Int, Void>("number")
-    var numbers = Field<[Int], Void>("numbers")
+    var users = Field<[Person], NoArguments>("users")
+    var number = Field<Int, NoArguments>("number")
+    var numbers = Field<[Int], NoArguments>("numbers")
     
-    struct PersonArguments {
-        let id: String
-        let number: Int = 1
+    struct PersonArguments: ArgumentsList {
+        var id = Argument<String>("id")
+        let number = Argument<Int>("number", default: 10)
     }
 }
 
@@ -23,17 +23,17 @@ struct Person {
 
 extension Person: Object {
     final class Schema: ObjectSchema {
-        var firstName = Field<String, Void>("firstName")
-        var lastName = Field<String, Void>("lastName")
-        var age = Field<Int, Void>("age")
-        var pets = Field<[Animal], Void>("pets")
-        var spouse = Field<Person, Void>("spouse")
+        var firstName = Field<String, NoArguments>("firstName")
+        var lastName = Field<String, NoArguments>("lastName")
+        var age = Field<Int, NoArguments>("age")
+        var pets = Field<[Animal], NoArguments>("pets")
+        var spouse = Field<Person, NoArguments>("spouse")
     }
 }
 
 final class Animal: Object, ObjectSchema {
     typealias Schema = Animal
     
-    var name = Field<String, Void>("name")
-    var age = Field<Int, Void>("age")
+    var name = Field<String, NoArguments>("name")
+    var age = Field<Int, NoArguments>("age")
 }

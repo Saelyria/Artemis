@@ -9,7 +9,7 @@ import Foundation
  safe way using `KeyPath` objects.
  */
 @dynamicMemberLookup
-public struct Partial<T: CompatibleValue> {
+public struct Partial<T: SelectionOutput> {
     let values: [String: Any]
     
     init(values: [String: Any]) {

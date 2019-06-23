@@ -41,7 +41,18 @@ final class QueryRenderingTests: XCTestCase {
     }
     
     func testQueryArgumentRendering() {
+        let query = GraphQL.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+            Add(\.user, alias: "first") {
+                Add(\.firstName, alias: "name")
+            }
+            .id("321")
+            Add(\.user, alias: "second") {
+                Add(\.lastName)
+            }
+//            .id("123")
+        }
         
+        XCTAssert(query.render() == #"query{first:user(id:\"321\"){name:firstName},second:user{lastName}}"#, query.render())
     }
 
     static var allTests = [

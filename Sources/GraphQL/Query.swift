@@ -1,35 +1,5 @@
 import Foundation
 
-@propertyWrapper
-public struct Argument<Value: CompatibleValue> {
-    public enum Requirement {
-        case optional
-        case required
-    }
-    
-    public let name: String
-    public var wrappedValue: Value?
-    let defaultValue: Value?
-    
-//    public init(initialValue: Value?, _ name: String) {
-//        self.defaultValue = initialValue
-//        self.name = name
-//    }
-    
-    public init(_ name: String, default: Value? = nil) {
-        self.name = name
-        self.defaultValue = `default`
-    }
-    
-    func render(value: Value) -> String {
-        return "\(name):\(String(describing: value))"
-    }
-    
-    func render(value: Variable<Value>) -> String {
-        return "\(name):\(value.name)"
-    }
-}
-
 public struct Operation<QuerySchema, Result> {
     public enum OperationType {
         case query

@@ -9,7 +9,7 @@ public protocol AnyFragment: FieldAggregate, AnyField {
 }
 
 public struct Fragment<T: Object>: AnyFragment  {
-    public typealias Argument = Void
+    public typealias Argument = NoArguments
     
     public var key: String = ""
     public typealias Result = Never
@@ -28,7 +28,7 @@ public struct Fragment<T: Object>: AnyFragment  {
         fatalError()
     }
     
-    public static func string(for argument: ()) throws -> String {
+    public static func string(for argument: NoArguments) throws -> String {
         return ""
     }
 }
