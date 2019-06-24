@@ -23,6 +23,8 @@ struct Person {
 
 extension Person: Object {
     final class Schema: ObjectSchema {
+        static let implements = Interfaces(LivingThing.self)
+        
         var firstName = Field<String, NoArguments>("firstName")
         var lastName = Field<String, NoArguments>("lastName")
         var age = Field<Int, NoArguments>("age")
@@ -32,8 +34,10 @@ extension Person: Object {
 }
 
 final class Animal: Object, ObjectSchema {
-    typealias Schema = Animal
-    
     var name = Field<String, NoArguments>("name")
+    var age = Field<Int, NoArguments>("age")
+}
+
+final class LivingThing: Interface {
     var age = Field<Int, NoArguments>("age")
 }
