@@ -4,11 +4,12 @@ import Foundation
 //    return fragment.subSelection
 //}
 
-public protocol AnyFragment: FieldAggregate, AnyField {
+public protocol FragmentProtocol: FieldAggregate, AnyField { //AnyFragmentAggregate
     var name: String { get }
+    func render() -> String
 }
 
-public struct Fragment<T: Object>: AnyFragment  {
+public struct Fragment<T: Object>: FragmentProtocol {
     public typealias Argument = NoArguments
     
     public var key: String = ""

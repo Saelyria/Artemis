@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Operation<QuerySchema, Result> {
+public struct Operation<Schema, Result> {
     public enum OperationType {
         case query
         case mutation
@@ -10,36 +10,40 @@ public struct Operation<QuerySchema, Result> {
     let error: GraphQLError?
     let resultCreator: ([String: Any]) throws -> Result
     let renderedSubSelections: String
+    let renderedFragments: String?
     public let operationType: OperationType
     
-    public init<F: FieldAggregate>(_ type: OperationType, name: String? = nil, @SubSelectionBuilder _ subSelection: () -> F) where F.T == QuerySchema, F.Result == Result {
+    public init<F: FieldAggregate>(_ type: OperationType, name: String? = nil, @SubSelectionBuilder _ subSelection: () -> F) where F.T == Schema, F.Result == Result {
         self.operationType = type
         self.name = name
         let fieldsAggegate = subSelection()
         self.error = fieldsAggegate.error
         self.renderedSubSelections = fieldsAggegate.render()
         self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
+        self.renderedFragments = nil
     }
     
     public init<F: FieldAggregate, FR>(
         _ type: OperationType,
         name: String? = nil,
         @SubSelectionBuilder _ subSelection: (FR) -> F,
-        @FragmentBuilder fragments: () -> FR)
-        where F.T == QuerySchema, F.Result == Result
+        @FragmentBuilder fragments: () -> (String, FR))
+        where F.T == Schema, F.Result == Result
     {
         self.operationType = type
         self.name = name
-        let fieldsAggegate = subSelection(fragments())
+        let (renderedFrags, frags) = fragments()
+        let fieldsAggegate = subSelection(frags)
         self.error = fieldsAggegate.error
         self.renderedSubSelections = fieldsAggegate.render()
         self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
+        self.renderedFragments = renderedFrags
     }
     
     func render() -> String {
         let nameString = (self.name == nil) ? "" : " \(self.name!)"
-//        let fragmentString = (
-        return "query\(nameString){\(self.renderedSubSelections)}"
+        let fragmentString = (self.renderedFragments == nil) ? "" : ",\(self.renderedFragments!)"
+        return "query\(nameString){\(self.renderedSubSelections)}\(fragmentString)"
     }
     
     func createResult(from data: Data) throws -> Result {
