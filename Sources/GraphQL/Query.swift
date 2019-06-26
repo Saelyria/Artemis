@@ -61,7 +61,6 @@ public struct Operation<Schema, Result> {
         
         var tabs = ""
         var isOnArgumentsLine = false
-        var isOnFirstLine = true
         var previousChar: Character?
         for char in ugly {
             if char == "(" {
@@ -74,7 +73,6 @@ public struct Operation<Schema, Result> {
                 } else {
                     result.append(tabs)
                 }
-                isOnFirstLine = false
                 isOnArgumentsLine = false
                 result.append(char)
                 result.append("\n")
