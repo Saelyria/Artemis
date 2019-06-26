@@ -62,14 +62,14 @@ public struct Operation<Schema, Result> {
         var tabs = ""
         var isOnArgumentsLine = false
         var isOnFirstLine = true
-        let operationIncludedName = ugly.hasPrefix("query")
+        var previousChar: Character?
         for char in ugly {
             if char == "(" {
                 isOnArgumentsLine = true
             }
             
             if char == "{" {
-                if operationIncludedName || !isOnFirstLine {
+                if previousChar != nil && previousChar != "\n" && previousChar != " " {
                     result.append(" ")
                 } else {
                     result.append(tabs)
@@ -99,6 +99,7 @@ public struct Operation<Schema, Result> {
             } else {
                 result.append(char)
             }
+            previousChar = char
         }
         
         return result
