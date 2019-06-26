@@ -24,7 +24,7 @@ final class QueryRenderingTests: XCTestCase {
             }
         }
 
-        XCTAssert(query.render() == "query{me{firstName,lastName},users{pets{name}}}")
+        XCTAssert(query.render() == "{me{firstName,lastName},users{pets{name}}}")
     }
     
     func testQueryAliasRendering() {
@@ -37,7 +37,7 @@ final class QueryRenderingTests: XCTestCase {
             }
         }
         
-        XCTAssert(query.render() == "query{first:me{name:firstName},second:me{lastName}}")
+        XCTAssert(query.render() == "{first:me{name:firstName},second:me{lastName}}")
     }
     
     func testQueryArgumentRendering() {
@@ -46,12 +46,13 @@ final class QueryRenderingTests: XCTestCase {
                 Add(\.firstName, alias: "name")
             }
             .id("321")
+            .number(15)
             Add(\.user, alias: "second") {
                 Add(\.lastName)
             }
         }
         
-        XCTAssert(query.render() == #"query{first:user(id:\"321\"){name:firstName},second:user{lastName}}"#, query.render())
+        XCTAssert(query.render() == #"{first:user(id:\"321\",number:15){name:firstName},second:user{lastName}}"#, query.render())
     }
     
     func testFragmentRendering() {
@@ -74,7 +75,7 @@ final class QueryRenderingTests: XCTestCase {
             }
         })
         
-        var expectedString = #"query{user(id:\"321\"){...nameFields,...ageField},second:user{...ageField}},"#
+        var expectedString = #"{user(id:\"321\"){...nameFields,...ageField},second:user{...ageField}},"#
         expectedString.append(#"fragment ageField on LivingThing{age},fragment nameFields on Person{firstName,lastName}"#)
         XCTAssert(query.render() == expectedString, query.render())
     }

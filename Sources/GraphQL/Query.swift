@@ -42,8 +42,66 @@ public struct Operation<Schema, Result> {
     
     func render() -> String {
         let nameString = (self.name == nil) ? "" : " \(self.name!)"
+        let opName: String
+        if self.operationType == .query && nameString.isEmpty {
+            opName = ""
+        } else if self.operationType == .query {
+            opName = "query\(nameString)"
+        } else {
+            opName = "mutation\(nameString)"
+        }
         let fragmentString = (self.renderedFragments == nil) ? "" : ",\(self.renderedFragments!)"
-        return "query\(nameString){\(self.renderedSubSelections)}\(fragmentString)"
+        return "\(opName){\(self.renderedSubSelections)}\(fragmentString)"
+    }
+    
+    func renderDebug() -> String {
+        let ugly = self.render()
+    
+        var result: String = ""
+        
+        var tabs = ""
+        var isOnArgumentsLine = false
+        var isOnFirstLine = true
+        let operationIncludedName = ugly.hasPrefix("query")
+        for char in ugly {
+            if char == "(" {
+                isOnArgumentsLine = true
+            }
+            
+            if char == "{" {
+                if operationIncludedName || !isOnFirstLine {
+                    result.append(" ")
+                } else {
+                    result.append(tabs)
+                }
+                isOnFirstLine = false
+                isOnArgumentsLine = false
+                result.append(char)
+                result.append("\n")
+                tabs.append("   ")
+                result.append(tabs)
+            } else if char == "," {
+                if isOnArgumentsLine {
+                    result.append(", ")
+                } else {
+                    result.append("\n")
+                    result.append(tabs)
+                }
+            } else if char == "}" {
+                tabs.removeLast(3)
+                result.append("\n")
+                result.append(tabs)
+                result.append(char)
+            } else if char == ":" {
+                result.append(": ")
+            } else if char == "\\" {
+                continue
+            } else {
+                result.append(char)
+            }
+        }
+        
+        return result
     }
     
     func createResult(from data: Data) throws -> Result {

@@ -84,10 +84,6 @@ extension Add {
         }
     }
     
-    public func renderDebug() throws -> String {
-        return ""
-    }
-    
     public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
         guard let object: Any = dict[self.key] else { throw GraphQLError.malformattedResponse(reason: "Response didn't include key for \(self.key)") }
         return try F.Value.createUnsafeResult(from: object, key: self.key)
@@ -109,10 +105,6 @@ public struct EmptySubSelection: FieldAggregate {
     }
     
     public func render() -> String {
-        return ""
-    }
-    
-    public func renderDebug() -> String {
         return ""
     }
     

@@ -8,11 +8,11 @@ final class QueryDebugRenderingTests: XCTestCase {
                 Add(\.firstName)
             }
         }
-        XCTAssert(query.render() == """
+        XCTAssert(query.renderDebug() == """
         query QueryName {
-            me {
-                firstName
-            }
+           me {
+              firstName
+           }
         }
         """)
     }
@@ -30,17 +30,17 @@ final class QueryDebugRenderingTests: XCTestCase {
             }
         }
         
-        XCTAssert(query.render() == """
-        query {
-            me {
-                firstName
-                lastName
-            }
-            users {
-                pets {
-                    name
-                }
-            }
+        XCTAssert(query.renderDebug() == """
+        {
+           me {
+              firstName
+              lastName
+           }
+           users {
+              pets {
+                 name
+              }
+           }
         }
         """)
     }
@@ -55,20 +55,40 @@ final class QueryDebugRenderingTests: XCTestCase {
             }
         }
         
-        XCTAssert(query.render() == """
-        query {
-            first: me {
-                name: firstName
-            }
-            second: me {
-                lastName
-            }
+        XCTAssert(query.renderDebug() == """
+        {
+           first: me {
+              name: firstName
+           }
+           second: me {
+              lastName
+           }
         }
         """)
     }
     
     func testQueryArgumentRendering() {
+        let query = GraphQL.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+            Add(\.user, alias: "first") {
+                Add(\.firstName, alias: "name")
+            }
+            .id("321")
+                .number(15)
+            Add(\.user, alias: "second") {
+                Add(\.lastName)
+            }
+        }
         
+        XCTAssert(query.renderDebug() == """
+        {
+           first: user(id: \"321\", number: 15) {
+              name: firstName
+           }
+           second: user {
+              lastName
+           }
+        }
+        """)
     }
     
     static var allTests = [

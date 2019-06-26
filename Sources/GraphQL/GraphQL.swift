@@ -58,6 +58,7 @@ open class Graph<Q: Object> {
             assertionFailure("Built query was not valid - \(error)")
         }
         print(query.render())
+        print(query.renderDebug())
         if let data = mock {
             do {
                 let result = try query.createResult(from: data)
