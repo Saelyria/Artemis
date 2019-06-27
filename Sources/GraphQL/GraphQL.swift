@@ -1,5 +1,9 @@
 import Foundation
 
+public protocol NetworkDelegate {
+    func send(document: String, completion: @escaping (Result<Data, Error>) -> Void)
+}
+
 public protocol AnyVariable {
     associatedtype V: SelectionInput
 }
