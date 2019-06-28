@@ -48,12 +48,6 @@ public extension ObjectSchema where ImplementedInterfaces == Interfaces<Void, Vo
     static var implements: ImplementedInterfaces { return Interfaces() }
 }
 
-//public extension Schema where Complete == Void {
-//    static func createCompleteInstance(fromPartial: Partial<Self>) -> Complete? {
-//        return ()
-//    }
-//}
-
 public extension Object {
     static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
         guard R.self == Result.self else { throw GraphQLError.invalidOperation }
@@ -178,7 +172,7 @@ extension String: Scalar {
     public typealias Result = String
     public typealias Value = String
     public func render() -> String {
-        return "\\\"\(self)\\\""
+        return "\"\(self)\""
     }
 }
 extension Int: Scalar {

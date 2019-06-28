@@ -83,5 +83,6 @@ public enum GraphQLError: Error {
     case arrayParseFailure(operation: String)
     /// The type of the associated value of an argument enum case wasn't convertible to a string.
     case argumentValueNotConvertible
+    case invalidRequest(reasons: [String])
     case other(Error)
 }

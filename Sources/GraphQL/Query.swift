@@ -107,6 +107,10 @@ public struct Operation<Schema, Result> {
         guard let jsonResult = try? JSONSerialization.jsonObject(with: data, options: .mutableLeaves) as? [String: Any] else {
             throw GraphQLError.malformattedResponse(reason: "Data wasn't a JSON object")
         }
+        if let errors = jsonResult["errors"] as? [[String: Any]] {
+            let errorMessages = errors.map { $0["message"] as? String }.compactMap { $0 }
+            throw GraphQLError.invalidRequest(reasons: errorMessages)
+        }
         guard let dataDict = jsonResult["data"] as? [String: Any] else {
             throw GraphQLError.malformattedResponse(reason: "JSON result didn't include a 'data' object")
         }
@@ -127,4 +131,3 @@ public class ReusableQuery<V, R> {
         return (self.renderedQuery, "")
     }
 }
-

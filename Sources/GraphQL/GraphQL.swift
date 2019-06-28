@@ -20,7 +20,15 @@ public func `$`<V: SelectionInput>(_ name: String, _ type: V.Type) -> Variable<V
 }
 
 open class Graph<Q: Object> {
-    public init() { }
+    public let networkDelegate: NetworkDelegate
+    
+    public init(endpoint: URL) {
+        self.networkDelegate = HTTPNetworkingDelegate(endpoint: endpoint)
+    }
+    
+    public init(networkDelegate: NetworkDelegate) {
+        self.networkDelegate = networkDelegate
+    }
     
     public func register<R>(
         _ query: () -> Operation<Q, R>)
@@ -61,14 +69,28 @@ open class Graph<Q: Object> {
         if let error = query.error {
             assertionFailure("Built query was not valid - \(error)")
         }
-        print(query.render())
-        print(query.renderDebug())
         if let data = mock {
             do {
                 let result = try query.createResult(from: data)
                 completion(.success(result))
             } catch {
                 completion(.failure(error as! GraphQLError))
+            }
+        } else {
+            print("Fetching query:\n\(query.renderDebug())")
+            self.networkDelegate.send(document: query.render()) { rawResult in
+                do {
+                    let data = try rawResult.get()
+                    if let object = try? JSONSerialization.jsonObject(with: data, options: []),
+                    let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
+                    let prettyPrintedString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
+                        print("Received response:\n\(prettyPrintedString)")
+                    }
+                    let result = try query.createResult(from: data)
+                    completion(.success(result))
+                } catch {
+                    completion(.failure(error as? GraphQLError ?? GraphQLError.other(error)))
+                }
             }
         }
     }
@@ -82,3 +104,12 @@ open class Graph<Q: Object> {
     }
 }
 
+private extension Data {
+    var prettyPrintedJSONString: NSString? {
+        guard let object = try? JSONSerialization.jsonObject(with: self, options: []),
+            let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
+            let prettyPrintedString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) else { return nil }
+        
+        return prettyPrintedString
+    }
+}
