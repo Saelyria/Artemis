@@ -4,7 +4,7 @@ Blueprint is a GraphQL library for Swift that lets you interact with a GraphQL b
 no `Data` or `[String: Any]` responses you need to parse though manually. Blueprint uses `KeyPath` objects to keep track of types used 
 in queries, so this:
 
-```
+```swift
 // Blueprint                            // Rendered GraphQL query
 Operation(.query) {                     // query {
     Add(\.country, alias: "canada") {   //    canada: country(code: "CA") {
@@ -19,7 +19,7 @@ Operation(.query) {                     // query {
 ...results in a `Partial<Country>` object that you can interact with the same keypaths and type inference as a normal `Country` instance. 
 Blueprint will populate the response object with the fetched data - so this query (and its response) are handled like this:
 
-```
+```swift
 let api = Graph<Query>()
 
 api.perform(query) { result in
