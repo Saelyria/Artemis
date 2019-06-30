@@ -168,6 +168,15 @@ public extension Scalar {
     }
 }
 
+public protocol Enum: Scalar, RawRepresentable where Self.RawValue == String, Self.Result == String { }
+public extension Enum {
+    func render() -> String {
+        return self.rawValue
+    }
+}
+
+public typealias ID = String
+
 extension String: Scalar {
     public typealias Result = String
     public typealias Value = String

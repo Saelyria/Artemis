@@ -7,7 +7,7 @@ in queries, so this:
 ```swift
 // Blueprint                            // Rendered GraphQL query
 Operation(.query) {                     // query {
-    Add(\.country, alias: "canada") {   //    canada: country(code: "CA") {
+    Add(\.allFilms, alias: "films") {   //    films: allFilms(code: "CA") {
         Add(\.name)                     //       name
         Add(\.continent) {              //       continent {
             Add(\.name)                 //          name
