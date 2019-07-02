@@ -1,8 +1,6 @@
 import Foundation
 
-public protocol Interface: Object, ObjectSchema {
-    
-}
+public protocol Interface: Object, ObjectSchema { }
 
 public protocol AnyInterfaces {
     associatedtype I1; associatedtype I2; associatedtype I3; associatedtype I4; associatedtype I5
@@ -172,6 +170,13 @@ public protocol Enum: Scalar, RawRepresentable where Self.RawValue == String, Se
 public extension Enum {
     func render() -> String {
         return self.rawValue
+    }
+}
+
+public protocol Input: SelectionInput { }
+public extension Input {
+    func render() -> String {
+        return ""
     }
 }
 
