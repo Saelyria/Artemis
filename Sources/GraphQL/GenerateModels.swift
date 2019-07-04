@@ -199,7 +199,9 @@ private func createField(line: String) -> _Field {
             .split(separator: ",").map { String($0) }
         for arg in args {
             let nameAndType = arg.split(separator: ":").map { String($0) }
-            field.arguments.append(_Field._Argument(name: nameAndType[0], type: nameAndType[1]))
+            let name = nameAndType[0]
+            let type = getSwiftType(forType: nameAndType[1])
+            field.arguments.append(_Field._Argument(name: name, type: type))
         }
     }
     
@@ -210,7 +212,7 @@ private func createField(line: String) -> _Field {
         .split(separator: ":").map { String($0) }
     field.name = nameAndType[0]
     if nameAndType.count > 1 {
-        field.type = nameAndType[1]
+        field.type = getSwiftType(forType: nameAndType[1])
     }
 
     return field
@@ -257,7 +259,7 @@ private func createSwiftLines(forObject object: _Entity) -> [String] {
             var argumentsNameChars = Array(field.name.appending("Arguments"))
             argumentsNameChars[0] = Character(argumentsNameChars[0].uppercased())
             let argumentsStructName = String(argumentsNameChars)
-            lines.append("   var \(field.name) = Field<\(field.type), \(argumentsStructName)>(\"\(field.name)\")")
+            lines.append("   var \(field.name) = Field<\(field.type), \(argumentsStructName)>(\"\(field.name)\", \(argumentsStructName).self)")
             lines.append(contentsOf: createArgumentsStruct(forField: field, name: argumentsStructName))
         }
     }
@@ -282,4 +284,18 @@ private func createSwiftLines(forEnum enumEntity: _Entity) -> [String] {
     }
     lines.append("}")
     return lines
+}
+
+private func getSwiftType(forType type: String) -> String {
+    if type.contains("]") {
+        
+    }
+    
+    if type.contains("!") {
+        field.type = nameAndType[1].replacingOccurrences(of: "!", with: "")
+    } else {
+        field.type = nameAndType[1].appending("?")
+    }
+    
+    return type
 }
