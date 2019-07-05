@@ -7,6 +7,7 @@ private class _Entity {
         case `enum` = "enum"
         case scalar = "scalar"
         case schema = "schema"
+        case interface = "interface"
     }
     var name: String = ""
     var fields: [_Field] = []
@@ -68,8 +69,12 @@ func getLinesGroupedByEntity(in lines: [Substring]) -> [[String]] {
             isBuildingDocumentation.toggle()
         }
         
+        if line.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("scalar") {
+            linesGroupedByEntity.append([String(line)])
+        }
+        
         // Once we encounter an opening curly brace, create a new 'temp entity' (i.e. string array)
-        if ((line.contains("{") && !isBuildingDocumentation) || line.hasPrefix("\"\"\"")) && entityLinesBeingAddedTo == nil {
+        else if ((line.contains("{") && !isBuildingDocumentation) || line.hasPrefix("\"\"\"")) && entityLinesBeingAddedTo == nil {
             entityLinesBeingAddedTo = [String(line)]
         }
         // When we encounter the closing curly brace for an entity, add that line, add the 'temp entity' to the full
@@ -97,6 +102,8 @@ private func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Enti
         
         var fieldDocumentation: [String] = []
         var isBuildingDocumentation = false
+        var fieldBeingBuilt: String?
+        var fieldArgumentsBeingBuilt: [String] = []
         for line in lines {
             if line.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("\"\"\"") {
                 isBuildingDocumentation.toggle()
@@ -119,7 +126,7 @@ private func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Enti
                 }
             }
             // If it's the declaration line, we can get the entity type, name, and implemented interfaces of the entity
-            else if line.contains("{") {
+            else if line.contains("{") || line.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("scalar") {
                 let (type, name, interfaces) = getTypeNameAndInterfacesForEntity(line: line)
                 entity.entityType = type
                 entity.name = name
@@ -127,10 +134,42 @@ private func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Enti
             }
             // Otherwise, we're building a field.
             else if !line.contains("}") && !line.replacingOccurrences(of: "\"\"\"", with: "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                let field = createField(line: line)
-                field.documentation = fieldDocumentation
-                fieldDocumentation = []
-                entity.fields.append(field)
+                /// If the line contains a left bracket, it's the the first line of a field, so create a new 'field being built'.
+                /// However, make sure to keep going to the next if...
+                if line.contains("(") {
+                    fieldBeingBuilt = line
+                }
+ 
+                /// If the line (also) contains a right bracket, it's the last line of a field - add up all the arguments that
+                /// were built, append this final line, and add a new field to the entity.
+                if line.contains(")") {
+                    if !line.contains("(") {
+                        fieldBeingBuilt?.append(fieldArgumentsBeingBuilt.joined(separator: ","))
+                        fieldBeingBuilt?.append(line)
+                    }
+                    let field = createField(line: fieldBeingBuilt!)
+                    field.documentation = fieldDocumentation
+                    fieldDocumentation = []
+                    fieldArgumentsBeingBuilt = []
+                    entity.fields.append(field)
+                    fieldBeingBuilt = nil
+                }
+                /// Otherwise, if the line didn't contain a right or left bracket, it's either an argument for a multi-line
+                /// field, or it's a single-line field with no arguments.
+                else if !line.contains("(") {
+                    /// If we're not already building a field, it's a single-line, arugment-less field. Just build it and add it.
+                    if fieldBeingBuilt == nil {
+                        let field = createField(line: line)
+                        field.documentation = fieldDocumentation
+                        fieldDocumentation = []
+                        fieldArgumentsBeingBuilt = []
+                        entity.fields.append(field)
+                        fieldBeingBuilt = nil
+                    } else {
+                        /// Otherwise, it's an argument to a field build built - add it to the array of fields.
+                        fieldArgumentsBeingBuilt.append(line.trimmingCharacters(in: .whitespacesAndNewlines))
+                    }
+                }
             }
         }
         
@@ -149,6 +188,8 @@ private func getTypeNameAndInterfacesForEntity(line: String) -> (type: _Entity._
     let lineSplitByImplements = line.components(separatedBy: "implements")
     var nameComponent = lineSplitByImplements[0]
     
+    let line = line.trimmingCharacters(in: .whitespacesAndNewlines)
+    
     // Check the prefix of the 'name component' of the line to determine the type of the entity. When the type is
     // determined, remove the entity type from the 'name component'.
     if line.hasPrefix(_Entity._EntityType.object.rawValue) {
@@ -166,6 +207,9 @@ private func getTypeNameAndInterfacesForEntity(line: String) -> (type: _Entity._
     } else if line.hasPrefix(_Entity._EntityType.schema.rawValue) {
         nameComponent = nameComponent.replacingOccurrences(of: _Entity._EntityType.schema.rawValue, with: "")
         type = .schema
+    } else if line.hasPrefix(_Entity._EntityType.interface.rawValue) {
+        nameComponent = nameComponent.replacingOccurrences(of: _Entity._EntityType.interface.rawValue, with: "")
+        type = .interface
     }
     
     // Then, remove any whitespace in the 'name component' to get the name of the entity.
@@ -234,6 +278,8 @@ private func createSwiftTypeLines(from entity: _Entity) -> [String] {
         return createSwiftLines(forInput: entity)
     case .scalar:
         return createSwiftLines(forScalar: entity)
+    case .interface:
+        return createSwiftLines(forInterface: entity)
     case .schema:
         return []
     }
@@ -260,12 +306,12 @@ private func createSwiftLines(forObject object: _Entity) -> [String] {
             lines.append("   */")
         }
         if field.arguments.isEmpty {
-            lines.append("   var \(field.name) = Field<\(field.type), NoArguments>(\"\(field.name)\")")
+            lines.append("   var \(getValidPropertyName(forName: field.name)) = Field<\(field.type), NoArguments>(\"\(field.name)\")")
         } else {
             var argumentsNameChars = Array(field.name.appending("Arguments"))
             argumentsNameChars[0] = Character(argumentsNameChars[0].uppercased())
             let argumentsStructName = String(argumentsNameChars)
-            lines.append("   var \(field.name) = Field<\(field.type), \(argumentsStructName)>(\"\(field.name)\", \(argumentsStructName).self)")
+            lines.append("   var \(getValidPropertyName(forName: field.name)) = Field<\(field.type), \(argumentsStructName)>(\"\(field.name)\", \(argumentsStructName).self)")
             lines.append(contentsOf: createArgumentsStruct(forField: field, name: argumentsStructName))
         }
     }
@@ -274,9 +320,9 @@ private func createSwiftLines(forObject object: _Entity) -> [String] {
 }
 private func createArgumentsStruct(forField field: _Field, name: String) -> [String] {
     var lines: [String] = []
-    lines.append("   struct \(name): ArgumentsList {")
+    lines.append("   final class \(name): ArgumentsList {")
     for argument in field.arguments {
-        lines.append("      var \(argument.name) = Argument<\(argument.type)>(\"\(argument.name)\")")
+        lines.append("      var \(getValidPropertyName(forName: argument.name)) = Argument<\(argument.type)>(\"\(argument.name)\")")
     }
     lines.append("   }")
     return lines
@@ -286,7 +332,7 @@ private func createSwiftLines(forEnum enumEntity: _Entity) -> [String] {
     var lines: [String] = []
     lines.append("enum \(enumEntity.name): String, Enum {")
     for field in enumEntity.fields {
-        lines.append("   \(field.name) = \"\(field.name)\"")
+        lines.append("   case \(field.name) = \"\(field.name)\"")
     }
     lines.append("}")
     return lines
@@ -299,15 +345,18 @@ private func createSwiftLines(forInput input: _Entity) -> [String] {
         lines.append(contentsOf: input.documentation.map { " \($0)" })
         lines.append("*/")
     }
-    lines.append("struct \(input.name): Input {")
+    lines.append("final class \(input.name): Input {")
     for field in input.fields {
-        lines.append("\n")
         if !field.documentation.isEmpty {
             lines.append("   /**")
             lines.append(contentsOf: field.documentation.map { "    \($0)" })
             lines.append("   */")
         }
-        lines.append("   var \(field.name): \(field.type)")
+        var fieldType: String = field.type
+        if field.type.last != "?" {
+            fieldType.append("!")
+        }
+        lines.append("   var \(getValidPropertyName(forName: field.name)): \(fieldType)")
     }
     lines.append("}")
     return lines
@@ -315,6 +364,35 @@ private func createSwiftLines(forInput input: _Entity) -> [String] {
 
 private func createSwiftLines(forScalar scalar: _Entity) -> [String] {
     return ["typealias \(scalar.name) = String"]
+}
+
+private func createSwiftLines(forInterface object: _Entity) -> [String] {
+    var lines: [String] = []
+    if !object.documentation.isEmpty {
+        lines.append("/**")
+        lines.append(contentsOf: object.documentation.map { " \($0)" })
+        lines.append("*/")
+    }
+    lines.append("final class \(object.name): Interface {")
+    for field in object.fields {
+        lines.append("\n")
+        if !field.documentation.isEmpty {
+            lines.append("   /**")
+            lines.append(contentsOf: field.documentation.map { "    \($0)" })
+            lines.append("   */")
+        }
+        if field.arguments.isEmpty {
+            lines.append("   var \(getValidPropertyName(forName: field.name)) = Field<\(field.type), NoArguments>(\"\(field.name)\")")
+        } else {
+            var argumentsNameChars = Array(field.name.appending("Arguments"))
+            argumentsNameChars[0] = Character(argumentsNameChars[0].uppercased())
+            let argumentsStructName = String(argumentsNameChars)
+            lines.append("   var \(getValidPropertyName(forName: field.name)) = Field<\(field.type), \(argumentsStructName)>(\"\(field.name)\", \(argumentsStructName).self)")
+            lines.append(contentsOf: createArgumentsStruct(forField: field, name: argumentsStructName))
+        }
+    }
+    lines.append("}")
+    return lines
 }
 
 private func getSwiftType(forType type: String) -> String {
@@ -350,7 +428,7 @@ private func getValidPropertyName(forName name: String) -> String {
     
     var invalidNameTemplate: String?
     if name == "class" {
-        invalidNameTemplate = createTemplate(invalidName: "class")
+        invalidNameTemplate = "`class`"
     } else if name == "self" {
         invalidNameTemplate = createTemplate(invalidName: "self")
     } else if name == "type" {
