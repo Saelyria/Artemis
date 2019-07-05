@@ -58,6 +58,10 @@ func getLinesGroupedByEntity(in lines: [Substring]) -> [[String]] {
     var entityLinesBeingAddedTo: [String]?
     var isBuildingDocumentation = false
     for line in lines {
+        // Ignore comment lines (and don't treat them as documentation, either)
+        if line.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("#") {
+            continue
+        }
         // if the line contains """ and it's not a single-line comment (e.g. """Documentation"""), flag that we're building
         // documentation.
         if line.contains("\"\"\"") && !(line.trimmingCharacters(in: .whitespacesAndNewlines).hasSuffix("\"\"\"") && line.count > 3) {
@@ -226,8 +230,10 @@ private func createSwiftTypeLines(from entity: _Entity) -> [String] {
         return createSwiftLines(forObject: entity)
     case .enum:
         return createSwiftLines(forEnum: entity)
-    case .input: fallthrough
-    case .scalar: fallthrough
+    case .input:
+        return createSwiftLines(forInput: entity)
+    case .scalar:
+        return createSwiftLines(forScalar: entity)
     case .schema:
         return []
     }
@@ -286,16 +292,73 @@ private func createSwiftLines(forEnum enumEntity: _Entity) -> [String] {
     return lines
 }
 
+private func createSwiftLines(forInput input: _Entity) -> [String] {
+    var lines: [String] = []
+    if !input.documentation.isEmpty {
+        lines.append("/**")
+        lines.append(contentsOf: input.documentation.map { " \($0)" })
+        lines.append("*/")
+    }
+    lines.append("struct \(input.name): Input {")
+    for field in input.fields {
+        lines.append("\n")
+        if !field.documentation.isEmpty {
+            lines.append("   /**")
+            lines.append(contentsOf: field.documentation.map { "    \($0)" })
+            lines.append("   */")
+        }
+        lines.append("   var \(field.name): \(field.type)")
+    }
+    lines.append("}")
+    return lines
+}
+
+private func createSwiftLines(forScalar scalar: _Entity) -> [String] {
+    return ["typealias \(scalar.name) = String"]
+}
+
 private func getSwiftType(forType type: String) -> String {
     if type.contains("]") {
-        
+        var arrayElementType = type
+        if type.hasSuffix("!") {
+            arrayElementType.removeLast()
+            arrayElementType = arrayElementType.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+            arrayElementType = "[\(getSwiftType(forType: arrayElementType))]"
+        } else {
+            arrayElementType = arrayElementType.trimmingCharacters(in: CharacterSet(charactersIn: "[]"))
+            arrayElementType = "[\(getSwiftType(forType: arrayElementType))]?"
+        }
+        return arrayElementType
     }
     
+    let optionalsAccountedType: String
     if type.contains("!") {
-        field.type = nameAndType[1].replacingOccurrences(of: "!", with: "")
+        optionalsAccountedType = type.replacingOccurrences(of: "!", with: "")
     } else {
-        field.type = nameAndType[1].appending("?")
+        optionalsAccountedType = type.appending("?")
+    }
+    return optionalsAccountedType
+        .replacingOccurrences(of: "Boolean", with: "Bool")
+}
+
+private func getValidPropertyName(forName name: String) -> String {
+    func createTemplate(invalidName: String) -> String {
+        var template = "<#invalid property name '\(invalidName)' - provide a new name"
+        template.append("#>")
+        return template
     }
     
-    return type
+    var invalidNameTemplate: String?
+    if name == "class" {
+        invalidNameTemplate = createTemplate(invalidName: "class")
+    } else if name == "self" {
+        invalidNameTemplate = createTemplate(invalidName: "self")
+    } else if name == "type" {
+        invalidNameTemplate = createTemplate(invalidName: "type")
+    } else if name == "struct" {
+        invalidNameTemplate = createTemplate(invalidName: "struct")
+    } else if name == "struct" {
+        invalidNameTemplate = createTemplate(invalidName: "struct")
+    }
+    return invalidNameTemplate ?? name
 }
