@@ -9,10 +9,12 @@ let package = Package(
     ],
     products: [
         .library(name: "GraphQL", targets: ["GraphQL"]),
+        .executable(name: "graphql-generate", targets: ["GraphQL-Generate"])
     ],
     dependencies: [],
     targets: [
         .target(name: "GraphQL", dependencies: []),
         .testTarget(name: "GraphQLTests", dependencies: ["GraphQL"]),
+        .target(name: "GraphQL-Generate", dependencies: [])
     ]
 )
