@@ -14,7 +14,7 @@ let package = Package(
     dependencies: [],
     targets: [
         .target(name: "GraphQL", dependencies: []),
+        .target(name: "GraphQL-Generate", dependencies: ["GraphQL"]),
         .testTarget(name: "GraphQLTests", dependencies: ["GraphQL"]),
-        .target(name: "GraphQL-Generate", dependencies: [])
     ]
 )

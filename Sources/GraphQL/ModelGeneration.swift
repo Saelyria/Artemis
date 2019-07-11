@@ -1,6 +1,6 @@
 import Foundation
 
-private class _Entity {
+class _Entity {
     enum _EntityType: String {
         case object = "type"
         case input = "input"
@@ -16,7 +16,7 @@ private class _Entity {
     var documentation: [String] = []
 }
 
-private class _Field {
+class _Field {
     struct _Argument {
         let name: String
         let type: String
@@ -28,11 +28,10 @@ private class _Field {
     var arguments: [_Argument] = []
 }
 
-
 public func generateSwiftFile(from graphQLFile: String) -> String {
     // First, create an array of each line of the file
     let lines = graphQLFile.split(separator: "\n")
-
+    
     let linesGroupedByEntity: [[String]] = getLinesGroupedByEntity(in: lines)
     let entities: [_Entity] = createEntities(fromGroupedLines: linesGroupedByEntity)
     
@@ -72,19 +71,19 @@ func getLinesGroupedByEntity(in lines: [Substring]) -> [[String]] {
         if line.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("scalar") {
             linesGroupedByEntity.append([String(line)])
         }
-        
-        // Once we encounter an opening curly brace, create a new 'temp entity' (i.e. string array)
+            
+            // Once we encounter an opening curly brace, create a new 'temp entity' (i.e. string array)
         else if ((line.contains("{") && !isBuildingDocumentation) || line.hasPrefix("\"\"\"")) && entityLinesBeingAddedTo == nil {
             entityLinesBeingAddedTo = [String(line)]
         }
-        // When we encounter the closing curly brace for an entity, add that line, add the 'temp entity' to the full
-        // 'lines grouped by entity', and clear the 'temp entity' so whitespace between entities are removed
+            // When we encounter the closing curly brace for an entity, add that line, add the 'temp entity' to the full
+            // 'lines grouped by entity', and clear the 'temp entity' so whitespace between entities are removed
         else if line.trimmingCharacters(in: .whitespacesAndNewlines) == "}" && !isBuildingDocumentation {
             entityLinesBeingAddedTo?.append(String(line))
             linesGroupedByEntity.append(entityLinesBeingAddedTo!)
             entityLinesBeingAddedTo = nil
         }
-        // Otherwise, add lines to the 'temp entity', if it exists.
+            // Otherwise, add lines to the 'temp entity', if it exists.
         else {
             entityLinesBeingAddedTo?.append(String(line))
         }
@@ -93,7 +92,7 @@ func getLinesGroupedByEntity(in lines: [Substring]) -> [[String]] {
     return linesGroupedByEntity
 }
 
-private func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Entity] {
+func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Entity] {
     var entities: [_Entity] = []
     
     // Each array of strings is a group of lines associated with an entity - map them into full 'entity' objects.
@@ -114,32 +113,32 @@ private func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Enti
                 if entity.name == "" && !docLine.isEmpty {
                     entity.documentation.append(docLine)
                 }
-                // Otherwise, store the field documentation in the temp 'field documentation' variable for use when the
-                // field object is actually made
+                    // Otherwise, store the field documentation in the temp 'field documentation' variable for use when the
+                    // field object is actually made
                 else if !docLine.isEmpty {
                     fieldDocumentation.append(docLine)
                 }
                 // reset the 'is building docs' flag if the """ is at the end of a doc line.
                 if line.trimmingCharacters(in: .whitespacesAndNewlines).count > 3 &&
-                line.trimmingCharacters(in: .whitespacesAndNewlines).hasSuffix("\"\"\"") {
+                    line.trimmingCharacters(in: .whitespacesAndNewlines).hasSuffix("\"\"\"") {
                     isBuildingDocumentation = false
                 }
             }
-            // If it's the declaration line, we can get the entity type, name, and implemented interfaces of the entity
+                // If it's the declaration line, we can get the entity type, name, and implemented interfaces of the entity
             else if line.contains("{") || line.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("scalar") {
                 let (type, name, interfaces) = getTypeNameAndInterfacesForEntity(line: line)
                 entity.entityType = type
                 entity.name = name
                 entity.interfaces = interfaces
             }
-            // Otherwise, we're building a field.
+                // Otherwise, we're building a field.
             else if !line.contains("}") && !line.replacingOccurrences(of: "\"\"\"", with: "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                 /// If the line contains a left bracket, it's the the first line of a field, so create a new 'field being built'.
                 /// However, make sure to keep going to the next if...
                 if line.contains("(") {
                     fieldBeingBuilt = line
                 }
- 
+                
                 /// If the line (also) contains a right bracket, it's the last line of a field - add up all the arguments that
                 /// were built, append this final line, and add a new field to the entity.
                 if line.contains(")") {
@@ -154,8 +153,8 @@ private func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Enti
                     entity.fields.append(field)
                     fieldBeingBuilt = nil
                 }
-                /// Otherwise, if the line didn't contain a right or left bracket, it's either an argument for a multi-line
-                /// field, or it's a single-line field with no arguments.
+                    /// Otherwise, if the line didn't contain a right or left bracket, it's either an argument for a multi-line
+                    /// field, or it's a single-line field with no arguments.
                 else if !line.contains("(") {
                     /// If we're not already building a field, it's a single-line, arugment-less field. Just build it and add it.
                     if fieldBeingBuilt == nil {
@@ -179,11 +178,11 @@ private func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Enti
     return entities
 }
 
-private func getTypeNameAndInterfacesForEntity(line: String) -> (type: _Entity._EntityType, name: String, interfaces: [String]) {
+func getTypeNameAndInterfacesForEntity(line: String) -> (type: _Entity._EntityType, name: String, interfaces: [String]) {
     var type: _Entity._EntityType = .object
     var name: String = ""
     var interfaces: [String] = []
-
+    
     // Split the given line by the 'implements' keyword (will remove the keyword)
     let lineSplitByImplements = line.components(separatedBy: "implements")
     var nameComponent = lineSplitByImplements[0]
@@ -230,7 +229,7 @@ private func getTypeNameAndInterfacesForEntity(line: String) -> (type: _Entity._
     return (type, name, interfaces)
 }
 
-private func createField(line: String) -> _Field {
+func createField(line: String) -> _Field {
     let field = _Field()
     var lineWithArgsRemoved: String = line
     
@@ -239,7 +238,7 @@ private func createField(line: String) -> _Field {
     // be split by their colon to get the name and type of the argument.
     if let argsRange = line.range(of: #"\((.*?)\)"#, options: .regularExpression) {
         lineWithArgsRemoved.removeSubrange(argsRange)
-
+        
         let args = String(line[argsRange])
             .replacingOccurrences(of: " ", with: "")
             .replacingOccurrences(of: "(", with: "")
@@ -262,13 +261,13 @@ private func createField(line: String) -> _Field {
     if nameAndType.count > 1 {
         field.type = getSwiftType(forType: nameAndType[1])
     }
-
+    
     return field
 }
 
 // MARK: - Swift types generation from intermediate entities
 
-private func createSwiftTypeLines(from entity: _Entity) -> [String] {
+func createSwiftTypeLines(from entity: _Entity) -> [String] {
     switch entity.entityType {
     case .object:
         return createSwiftLines(forObject: entity)
@@ -286,7 +285,7 @@ private func createSwiftTypeLines(from entity: _Entity) -> [String] {
 }
 
 /// Creates the lines of Swift code for a class representing the given intermediate entity.
-private func createSwiftLines(forObject object: _Entity) -> [String] {
+func createSwiftLines(forObject object: _Entity) -> [String] {
     var lines: [String] = []
     if !object.documentation.isEmpty {
         lines.append("/**")
@@ -318,7 +317,7 @@ private func createSwiftLines(forObject object: _Entity) -> [String] {
     lines.append("}")
     return lines
 }
-private func createArgumentsStruct(forField field: _Field, name: String) -> [String] {
+func createArgumentsStruct(forField field: _Field, name: String) -> [String] {
     var lines: [String] = []
     lines.append("   final class \(name): ArgumentsList {")
     for argument in field.arguments {
@@ -328,17 +327,27 @@ private func createArgumentsStruct(forField field: _Field, name: String) -> [Str
     return lines
 }
 
-private func createSwiftLines(forEnum enumEntity: _Entity) -> [String] {
+func createSwiftLines(forEnum enumEntity: _Entity) -> [String] {
     var lines: [String] = []
+    if !enumEntity.documentation.isEmpty {
+        lines.append("/**")
+        lines.append(contentsOf: enumEntity.documentation.map { " \($0)" })
+        lines.append("*/")
+    }
     lines.append("enum \(enumEntity.name): String, Enum {")
     for field in enumEntity.fields {
+        if !field.documentation.isEmpty {
+            lines.append("   /**")
+            lines.append(contentsOf: field.documentation.map { "    \($0)" })
+            lines.append("   */")
+        }
         lines.append("   case \(field.name) = \"\(field.name)\"")
     }
     lines.append("}")
     return lines
 }
 
-private func createSwiftLines(forInput input: _Entity) -> [String] {
+func createSwiftLines(forInput input: _Entity) -> [String] {
     var lines: [String] = []
     if !input.documentation.isEmpty {
         lines.append("/**")
@@ -362,11 +371,11 @@ private func createSwiftLines(forInput input: _Entity) -> [String] {
     return lines
 }
 
-private func createSwiftLines(forScalar scalar: _Entity) -> [String] {
+func createSwiftLines(forScalar scalar: _Entity) -> [String] {
     return ["typealias \(scalar.name) = String"]
 }
 
-private func createSwiftLines(forInterface object: _Entity) -> [String] {
+func createSwiftLines(forInterface object: _Entity) -> [String] {
     var lines: [String] = []
     if !object.documentation.isEmpty {
         lines.append("/**")
@@ -395,7 +404,7 @@ private func createSwiftLines(forInterface object: _Entity) -> [String] {
     return lines
 }
 
-private func getSwiftType(forType type: String) -> String {
+func getSwiftType(forType type: String) -> String {
     if type.contains("]") {
         var arrayElementType = type
         if type.hasSuffix("!") {
@@ -419,7 +428,7 @@ private func getSwiftType(forType type: String) -> String {
         .replacingOccurrences(of: "Boolean", with: "Bool")
 }
 
-private func getValidPropertyName(forName name: String) -> String {
+func getValidPropertyName(forName name: String) -> String {
     func createTemplate(invalidName: String) -> String {
         var template = "<#invalid property name '\(invalidName)' - provide a new name"
         template.append("#>")
@@ -440,3 +449,15 @@ private func getValidPropertyName(forName name: String) -> String {
     }
     return invalidNameTemplate ?? name
 }
+
+private let reservedKeywords = ["associatedtype", "class", "deinit", "enum", "extension",
+                                "fileprivate", "func", "import", "init", "inout", "internal", "let", "open",
+                                "operator", "private", "protocol", "public", "static", "struct", "subscript",
+                                "typealias", "var", "break", "case", "continue", "default", "defer", "do",
+                                "else", "fallthrough", "for", "guard", "if", "in", "repeat", "return",
+                                "switch", "where", "while", "as", "Any", "catch", "false", "is", "nil",
+                                "rethrows", "super", "self", "Self", "throw", "throws", "true", "try",
+                                "associativity", "convenience", "dynamic", "didSet", "final", "get", "infix",
+                                "indirect", "lazy", "left", "mutating", "none", "nonmutating", "optional",
+                                "override", "postfix", "precedence", "prefix", "Protocol", "required", "right",
+                                "set", "Type", "unowned", "weak", "willSet"]
