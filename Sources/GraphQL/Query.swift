@@ -105,7 +105,11 @@ public struct Operation<Schema, Result> {
     
     func createResult(from data: Data) throws -> Result {
         guard let jsonResult = try? JSONSerialization.jsonObject(with: data, options: .mutableLeaves) as? [String: Any] else {
-            throw GraphQLError.malformattedResponse(reason: "Data wasn't a JSON object")
+            if let dataString = String(data: data, encoding: .utf8) {
+                throw GraphQLError.malformattedResponse(reason: "Data wasn't a JSON object: '\(dataString)'")
+            } else {
+                throw GraphQLError.malformattedResponse(reason: "Data wasn't a JSON object")
+            }
         }
         if let errors = jsonResult["errors"] as? [[String: Any]] {
             let errorMessages = errors.map { $0["message"] as? String }.compactMap { $0 }

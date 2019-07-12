@@ -93,7 +93,7 @@ func getLinesGroupedByEntity(in lines: [Substring]) -> [[String]] {
 }
 
 func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Entity] {
-    var entities: [_Entity] = []
+    var entities: [_Entity?] = []
     
     // Each array of strings is a group of lines associated with an entity - map them into full 'entity' objects.
     entities = groupedLines.map { lines in
@@ -172,10 +172,13 @@ func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Entity] {
             }
         }
         
-        return entity
+        if entity.entityType != .schema {
+            return entity
+        }
+        return nil
     }
     
-    return entities
+    return entities.compactMap { $0 }
 }
 
 func getTypeNameAndInterfacesForEntity(line: String) -> (type: _Entity._EntityType, name: String, interfaces: [String]) {

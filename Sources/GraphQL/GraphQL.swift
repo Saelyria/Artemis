@@ -22,8 +22,8 @@ public func `$`<V: SelectionInput>(_ name: String, _ type: V.Type) -> Variable<V
 open class Graph<Q: Object> {
     public let networkDelegate: NetworkDelegate
     
-    public init(endpoint: URL) {
-        self.networkDelegate = HTTPNetworkingDelegate(endpoint: endpoint)
+    public init(endpoint: URL, method: HTTPNetworkingDelegate.Method = .post) {
+        self.networkDelegate = HTTPNetworkingDelegate(endpoint: endpoint, method: method)
     }
     
     public init(networkDelegate: NetworkDelegate) {

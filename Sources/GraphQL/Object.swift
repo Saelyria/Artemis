@@ -92,6 +92,33 @@ extension Optional: SelectionInput where Wrapped: SelectionInput {
     }
 }
 
+extension Optional: Object where Wrapped: Object {
+    public typealias Schema = Wrapped.Schema
+}
+extension Optional: Scalar where Wrapped: Scalar {
+    
+}
+extension Optional: Input where Wrapped: Input {
+    
+}
+extension Optional: RawRepresentable where Wrapped: RawRepresentable, Wrapped.RawValue == String {
+    public init?(rawValue: String) {
+        if let wrapped = Wrapped.init(rawValue: rawValue) {
+            self = .some(wrapped)
+        }
+        self = .none
+    }
+    
+    public var rawValue: String {
+        switch self {
+        case .some(let wrapped): return wrapped.rawValue
+        case .none: return ""
+        }
+    }
+}
+
+extension Optional: Enum where Wrapped: Enum { }
+
 //extension Optional: Queryable where Wrapped: Queryable {
 //    typealias QueryableType = Wrapped.QueryableType
 //    typealias Args = Wrapped.Args
