@@ -1,5 +1,5 @@
 import XCTest
-@testable import GraphQL
+@testable import Artemis
 
 final class CodeGenTests: XCTestCase {
     func testGroupsLinesByEntity() {
@@ -13,6 +13,9 @@ final class CodeGenTests: XCTestCase {
         # comment that should be ignored
         \"\"\" documentation comment that should NOT be ignored \"\"\"
         input SomeSecondType {
+            \"\"\"
+            some comment
+            \"\"\"
             field: Int
         }
         """
@@ -20,7 +23,7 @@ final class CodeGenTests: XCTestCase {
         let groupedLines = getLinesGroupedByEntity(in: schema.split(separator: "\n"))
         XCTAssert(groupedLines.count == 2)
         XCTAssert(groupedLines[0].count == 4)
-        XCTAssert(groupedLines[1].count == 4)
+        XCTAssert(groupedLines[1].count == 7)
     }
     
     func testExtractsTypeNameAndTypeAndInterfaces() {

@@ -1,9 +1,9 @@
 import XCTest
-@testable import GraphQL
+@testable import Artemis
 
 final class QueryRenderingTests: XCTestCase {
     func testQueryNameRendering() {
-        let query = GraphQL.Operation<Query, Partial<Person>>(.query, name: "QueryName") {
+        let query = Artemis.Operation<Query, Partial<Person>>(.query, name: "QueryName") {
             Add(\.me) {
                 Add(\.firstName)
             }
@@ -12,7 +12,7 @@ final class QueryRenderingTests: XCTestCase {
     }
     
     func testQueryMultipleQueryFieldSubSelectionRendering() {
-        let query = GraphQL.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
+        let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
             Add(\.me) {
                 Add(\.firstName)
                 Add(\.lastName)
@@ -28,7 +28,7 @@ final class QueryRenderingTests: XCTestCase {
     }
     
     func testQueryAliasRendering() {
-        let query = GraphQL.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
             Add(\.me, alias: "first") {
                 Add(\.firstName, alias: "name")
             }
@@ -41,7 +41,7 @@ final class QueryRenderingTests: XCTestCase {
     }
     
     func testQueryArgumentRendering() {
-        let query = GraphQL.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
             Add(\.user, alias: "first") {
                 Add(\.firstName, alias: "name")
             }
@@ -56,7 +56,7 @@ final class QueryRenderingTests: XCTestCase {
     }
     
     func testFragmentRendering() {
-        let query = GraphQL.Operation<Query, (Partial<Person>, Partial<Person>)>(.query, { ageFragment, namesFragment in
+        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query, { ageFragment, namesFragment in
             Add(\.user) {
                 Add(fieldsOn: namesFragment)
                 Add(fieldsOn: ageFragment)

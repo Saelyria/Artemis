@@ -1,4 +1,4 @@
-@testable import GraphQL
+@testable import Artemis
 
 final class Query: Object, ObjectSchema {
     typealias Schema = Query

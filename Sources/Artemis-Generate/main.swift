@@ -1,5 +1,5 @@
 import Foundation
-import GraphQL
+import Artemis
 
 guard let inputFileIndex = CommandLine.arguments.firstIndex(where: { $0.hasPrefix("-i") || $0.hasPrefix("--input") }) else {
     fatalError("No path to the schema file was specified")

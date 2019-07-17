@@ -3,18 +3,18 @@
 import PackageDescription
 
 let package = Package(
-    name: "GraphQL",
+    name: "Artemis",
     platforms: [
         .macOS(.v10_13), .iOS(.v9),
     ],
     products: [
-        .library(name: "GraphQL", targets: ["GraphQL"]),
-        .executable(name: "graphql-generate", targets: ["GraphQL-Generate"])
+        .library(name: "Artemis", targets: ["Artemis"]),
+        .executable(name: "artemis-generate", targets: ["Artemis-Generate"])
     ],
     dependencies: [],
     targets: [
-        .target(name: "GraphQL", dependencies: []),
-        .target(name: "GraphQL-Generate", dependencies: ["GraphQL"]),
-        .testTarget(name: "GraphQLTests", dependencies: ["GraphQL"]),
+        .target(name: "Artemis", dependencies: []),
+        .target(name: "Artemis-Generate", dependencies: ["Artemis"]),
+        .testTarget(name: "ArtemisTests", dependencies: ["Artemis"]),
     ]
 )

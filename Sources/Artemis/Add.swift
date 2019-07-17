@@ -36,9 +36,33 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
         }
     }
     
+    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> ( (InputBuilder<V>) -> Void ) -> Add<T, F, SubSelection> where V: Input {
+        return { inputBuilder in
+            inputBuilder(InputBuilder(add: { _ in }))
+            return self
+        }
+    }
+    
     internal init(fieldType: FieldType, error: GraphQLError? = nil) {
         self.fieldType = fieldType
         self.error = error
+    }
+}
+
+@dynamicMemberLookup
+public class InputBuilder<I: Input> {
+    private var add: (_ renderedInput: String) -> Void
+    
+    init(add: @escaping (String) -> Void) {
+        self.add = add
+    }
+    
+    public subscript<V>(dynamicMember keyPath: KeyPath<I, Argument<V>>) -> (V) -> Void {
+        return { value in
+//            let renderedArg = F.Argument()[keyPath: keyPath].render(value: value)
+//            self.renderedArguments.append(renderedArg)
+//            return self
+        }
     }
 }
 

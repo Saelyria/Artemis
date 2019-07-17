@@ -1,9 +1,9 @@
 import XCTest
-@testable import GraphQL
+@testable import Artemis
 
 final class QueryParsingTests: XCTestCase {
     func testQueryMultipleQueryFieldSubSelectionParsing() {
-        let query = GraphQL.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
+        let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
             Add(\.me) {
                 Add(\.firstName)
                 Add(\.lastName)
@@ -61,7 +61,7 @@ final class QueryParsingTests: XCTestCase {
     }
     
     func testQueryAliasParsing() {
-        let query = GraphQL.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
             Add(\.me, alias: "first") {
                 Add(\.firstName, alias: "name")
             }

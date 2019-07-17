@@ -1,9 +1,9 @@
 import XCTest
-@testable import GraphQL
+@testable import Artemis
 
 final class QueryDebugRenderingTests: XCTestCase {
     func testQueryNameRendering() {
-        let query = GraphQL.Operation<Query, Partial<Person>>(.query, name: "QueryName") {
+        let query = Artemis.Operation<Query, Partial<Person>>(.query, name: "QueryName") {
             Add(\.me) {
                 Add(\.firstName)
             }
@@ -18,7 +18,7 @@ final class QueryDebugRenderingTests: XCTestCase {
     }
     
     func testQueryMultipleQueryFieldSubSelectionRendering() {
-        let query = GraphQL.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
+        let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
             Add(\.me) {
                 Add(\.firstName)
                 Add(\.lastName)
@@ -46,7 +46,7 @@ final class QueryDebugRenderingTests: XCTestCase {
     }
     
     func testQueryAliasRendering() {
-        let query = GraphQL.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
             Add(\.me, alias: "first") {
                 Add(\.firstName, alias: "name")
             }
@@ -68,7 +68,7 @@ final class QueryDebugRenderingTests: XCTestCase {
     }
     
     func testQueryArgumentRendering() {
-        let query = GraphQL.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
             Add(\.user, alias: "first") {
                 Add(\.firstName, alias: "name")
             }
