@@ -1,19 +1,19 @@
 # Artemis
 
 Artemis is a GraphQL library for Swift that lets you interact with a GraphQL backend entirely in Swift - no unsafe queries made of strings,
-no `Data` or `[String: Any]` responses you need to parse though manually. Blueprint uses `KeyPath` objects to keep track of types used 
+no `Data` or `[String: Any]` responses you need to parse though manually. Artemis uses `KeyPath` objects to keep track of types used 
 in queries, so this:
 
 ```swift
-// Blueprint                            // Rendered GraphQL query
-Operation(.query) {                     // query {
-    Add(\.country, alias: "canada") {   //    canada: country(code: "CA") {
-        Add(\.name)                     //       name
-        Add(\.continent) {              //       continent {
-            Add(\.name)                 //          name
-        }                               //       }
-    }.code("CA")                        //    }
-}                                       // }
+// Artemis                                  // Rendered GraphQL query
+Operation(.query) {                         query {
+    Add(\.country, alias: "canada") {           canada: country(code: "CA") {
+        Add(\.name)                                 name
+        Add(\.continent) {                          continent {
+            Add(\.name)                                 name
+        }                                           }
+    }.code("CA")                                }
+}                                           }
 ```
 
 ...results in a `Partial<Country>` object that you can interact with using the same keypaths and type inference as a normal `Country` 
@@ -27,6 +27,7 @@ api.perform(query) { result in
     case .success(let country):
         country.name // "Canada"
         country.continent?.name // "North America"
+        country.languages // nil
     case .failure(let error):
         // error handling
     }
