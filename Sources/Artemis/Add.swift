@@ -1,7 +1,16 @@
 import Foundation
 
+/**
+ A type that adds a field to a selection set.
+ 
+ Instances of this type are created inside an operation's selection set to specify the fields that are being queried
+ for on the operation. They are created using `KeyPath` objects of the type being queried. If the value of the keypath
+ is an object (i.e. non-scalar value), an additional sub-selection builder of `Add` objects is also given to the `Add`
+ instance.
+ */
 @dynamicMemberLookup
 public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAggregate {
+   /// The type of result object that adding this field gives when its surrounding operation is performed.
     public typealias Result = F.Value.Result
     
     enum FieldType {
@@ -19,7 +28,14 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
     public var items: [AnyFieldAggregate] = []
     public let error: GraphQLError?
     private var renderedArguments: [String] = []
+   
+   /**
+    Adds an argument to the queried field.
     
+    `Add` instances can have arguments (of their wrapped field's `Argument` associated type) as callable keypaths. The
+    arguments use the same keypath name as the property on the field's `Argument` and the resulting closure is called
+    with the argument's value type.
+    */
     public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (V) -> Add<T, F, SubSelection> {
         return { value in
             let renderedArg = F.Argument()[keyPath: keyPath].render(value: value)
@@ -27,7 +43,14 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
             return self
         }
     }
+   
+   /**
+    Adds an argument wrapped as a variable to the queried field.
     
+    `Add` instances can have arguments (of their wrapped field's `Argument` associated type) as callable keypaths. The
+    arguments use the same keypath name as the property on the field's `Argument` and the resulting closure is called
+    with the argument's value type.
+    */
     public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (Variable<V>) -> Add<T, F, SubSelection> {
         return { variable in
             let renderedArg = F.Argument()[keyPath: keyPath].render(value: variable)
@@ -57,7 +80,7 @@ public class InputBuilder<I: Input> {
         self.add = add
     }
     
-    public subscript<V>(dynamicMember keyPath: KeyPath<I, Argument<V>>) -> (V) -> Void {
+    public subscript<V, T>(dynamicMember keyPath: KeyPath<I, Field<V, T>>) -> (V) -> Void {
         return { value in
 //            let renderedArg = F.Argument()[keyPath: keyPath].render(value: value)
 //            self.renderedArguments.append(renderedArg)

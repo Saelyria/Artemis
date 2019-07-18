@@ -7,6 +7,7 @@ public protocol ArgumentsList {
 @propertyWrapper
 public struct Argument<Value: SelectionInput> {
     public let name: String
+	public var projectedValue: Self { return self }
     public var wrappedValue: Value?
     let defaultValue: Value?
     
