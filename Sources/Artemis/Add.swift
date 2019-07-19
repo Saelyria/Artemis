@@ -1,13 +1,13 @@
 import Foundation
 
 /**
- A type that adds a field to a selection set.
+A type that adds a field to a selection set.
  
- Instances of this type are created inside an operation's selection set to specify the fields that are being queried
- for on the operation. They are created using `KeyPath` objects of the type being queried. If the value of the keypath
- is an object (i.e. non-scalar value), an additional sub-selection builder of `Add` objects is also given to the `Add`
- instance.
- */
+Instances of this type are created inside an operation's selection set to specify the fields that are being queried
+for on the operation. They are created using `KeyPath` objects of the type being queried. If the value of the keypath
+is an object (i.e. non-scalar value), an additional sub-selection builder of `Add` objects is also given to the `Add`
+instance.
+*/
 @dynamicMemberLookup
 public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAggregate {
    /// The type of result object that adding this field gives when its surrounding operation is performed.
@@ -32,9 +32,8 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
    /**
     Adds an argument to the queried field.
     
-    `Add` instances can have arguments (of their wrapped field's `Argument` associated type) as callable keypaths. The
-    arguments use the same keypath name as the property on the field's `Argument` and the resulting closure is called
-    with the argument's value type.
+    This keypath returns a closure that is called with the value to supply for the argument. Keypaths usable with this
+	subscript method are keypaths on the field's `Argument` type.
     */
     public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (V) -> Add<T, F, SubSelection> {
         return { value in
@@ -47,9 +46,8 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
    /**
     Adds an argument wrapped as a variable to the queried field.
     
-    `Add` instances can have arguments (of their wrapped field's `Argument` associated type) as callable keypaths. The
-    arguments use the same keypath name as the property on the field's `Argument` and the resulting closure is called
-    with the argument's value type.
+    This keypath returns a closure that is called with a `Variable` wrapping the value to supply for the argument.
+	Keypaths usable with this subscript method are keypaths on the field's `Argument` type.
     */
     public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (Variable<V>) -> Add<T, F, SubSelection> {
         return { variable in
@@ -59,9 +57,25 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
         }
     }
     
-    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> ( (InputBuilder<V>) -> Void ) -> Add<T, F, SubSelection> where V: Input {
+	/**
+	Adds an 'input' object argument to the queried field.
+	 
+	This keypath returns a closure that is called with a closure that builds the input object to supply for the
+	argument. This second closure is passed in an 'input builder' object that values of the input object can be added
+	to via callable keypaths. It will generally look something like this:
+	
+	```
+	Add(\.somePath) {
+		...
+	}
+	.inputObject { $0.propOnInput(1); $0.otherProp("") }
+	```
+	where the `$0` is referring to the 'input builder' object. The methods we are calling on it are keypaths on the
+	input object type.
+	 */
+    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> ( (InputBuilder<V>) -> String ) -> Add<T, F, SubSelection> where V: Input {
         return { inputBuilder in
-            inputBuilder(InputBuilder(add: { _ in }))
+            inputBuilder(InputBuilder())
             return self
         }
     }
@@ -74,17 +88,12 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
 
 @dynamicMemberLookup
 public class InputBuilder<I: Input> {
-    private var add: (_ renderedInput: String) -> Void
-    
-    init(add: @escaping (String) -> Void) {
-        self.add = add
-    }
-    
-    public subscript<V, T>(dynamicMember keyPath: KeyPath<I, Field<V, T>>) -> (V) -> Void {
+    public subscript<V, T>(dynamicMember keyPath: KeyPath<I, Field<V, T>>) -> (V) -> String {
         return { value in
 //            let renderedArg = F.Argument()[keyPath: keyPath].render(value: value)
 //            self.renderedArguments.append(renderedArg)
 //            return self
+			return ""
         }
     }
 }

@@ -7,7 +7,7 @@ public protocol ArgumentsList {
 @propertyWrapper
 public struct Argument<Value: SelectionInput> {
     public let name: String
-	public var projectedValue: Self { return self }
+	public var projectedValue: Argument<Value> { return self }
     public var wrappedValue: Value?
     let defaultValue: Value?
     
@@ -47,6 +47,7 @@ public struct Field<Value: SelectionOutput, ArgType: ArgumentsList>: AnyField {
     
     public let key: String
     public var wrappedValue: Value?
+	public var projectedValue: Field<Value, ArgType> { return self }
     
     public init(_ key: String, _ arguments: ArgType.Type) {
         self.key = key

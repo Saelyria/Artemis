@@ -81,11 +81,11 @@ open class Graph<Q: Object> {
             self.networkDelegate.send(document: query.render()) { rawResult in
                 do {
                     let data = try rawResult.get()
-                    if let object = try? JSONSerialization.jsonObject(with: data, options: []),
-                    let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
-                    let prettyPrintedString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
-                        print("Received response:\n\(prettyPrintedString)")
-                    }
+//                    if let object = try? JSONSerialization.jsonObject(with: data, options: []),
+//                    let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
+//                    let prettyPrintedString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
+//                        print("Received response:\n\(prettyPrintedString)")
+//                    }
                     let result = try query.createResult(from: data)
                     completion(.success(result))
                 } catch {

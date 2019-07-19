@@ -12,7 +12,7 @@ import Foundation
 public struct Partial<T: SelectionOutput> {
     let values: [String: Any]
     
-    init(values: [String: Any]) {
+    public init(values: [String: Any]) {
         self.values = values
     }
 }
