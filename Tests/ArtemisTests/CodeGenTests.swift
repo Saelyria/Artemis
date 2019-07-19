@@ -138,7 +138,7 @@ final class CodeGenTests: XCTestCase {
         /**
          documentation comment that should NOT be ignored
         */
-        final class SomeInput: Input {
+        final class SomeInput: Input, ObjectSchema {
            var field: Int?
         }
 

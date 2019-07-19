@@ -357,7 +357,7 @@ func createSwiftLines(forInput input: _Entity) -> [String] {
         lines.append(contentsOf: input.documentation.map { " \($0)" })
         lines.append("*/")
     }
-    lines.append("final class \(input.name): Input {")
+    lines.append("final class \(input.name): Input, ObjectSchema {")
     for field in input.fields {
         if !field.documentation.isEmpty {
             lines.append("   /**")

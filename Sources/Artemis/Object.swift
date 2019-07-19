@@ -200,7 +200,7 @@ public extension Enum {
     }
 }
 
-public protocol Input: SelectionInput { }
+public protocol Input: SelectionInput, Object { }
 public extension Input {
     func render() -> String {
         return ""

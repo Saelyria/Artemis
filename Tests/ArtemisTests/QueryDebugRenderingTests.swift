@@ -73,7 +73,7 @@ final class QueryDebugRenderingTests: XCTestCase {
                 Add(\.firstName, alias: "name")
             }
             .id("321")
-                .number(15)
+			.number(15)
             Add(\.user, alias: "second") {
                 Add(\.lastName)
             }

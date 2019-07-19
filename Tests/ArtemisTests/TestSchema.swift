@@ -4,21 +4,27 @@ final class Query: Object, ObjectSchema {
     typealias Schema = Query
     
     var me = Field<Person, NoArguments>("me")
-    var user = Field<Person, PersonArguments>("user", PersonArguments.self)
+    var user = Field<Person, UserArguments>("user", UserArguments.self)
+    struct UserArguments: ArgumentsList {
+        var id = Argument<String>("id")
+        let number = Argument<Int>("number", default: 10)
+		var input = Argument<UserInput>("input")
+    }
     var users = Field<[Person], NoArguments>("users")
     var number = Field<Int, NoArguments>("number")
     var numbers = Field<[Int], NoArguments>("numbers")
-    
-    struct PersonArguments: ArgumentsList {
-        var id = Argument<String>("id")
-        let number = Argument<Int>("number", default: 10)
-    }
 }
 
 struct Person {
     let id: String
     let name: String
     let age: Int
+}
+
+final class UserInput: Input, ObjectSchema {
+	var prop = Field<Int, NoArguments>("prop")
+	var prop2 = Field<String, NoArguments>("prop2")
+	var nested = Field<UserInput, NoArguments>("nested")
 }
 
 extension Person: Object {
