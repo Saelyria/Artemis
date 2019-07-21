@@ -1,5 +1,7 @@
 import Foundation
 
+extension String: Error { }
+
 class _Entity {
     enum _EntityType: String {
         case object = "type"
@@ -28,12 +30,12 @@ class _Field {
     var arguments: [_Argument] = []
 }
 
-public func generateSwiftFile(from graphQLFile: String) -> String {
+public func generateSwiftFile(from graphQLFile: String) throws -> String {
     // First, create an array of each line of the file
     let lines = graphQLFile.split(separator: "\n")
     
     let linesGroupedByEntity: [[String]] = getLinesGroupedByEntity(in: lines)
-    let entities: [_Entity] = createEntities(fromGroupedLines: linesGroupedByEntity)
+    let entities: [_Entity] = try createEntities(fromGroupedLines: linesGroupedByEntity)
     
     var swiftFileLines: [String] = []
     for entity in entities {
@@ -92,11 +94,11 @@ func getLinesGroupedByEntity(in lines: [Substring]) -> [[String]] {
     return linesGroupedByEntity
 }
 
-func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Entity] {
+func createEntities(fromGroupedLines groupedLines: [[String]]) throws -> [_Entity] {
     var entities: [_Entity?] = []
     
     // Each array of strings is a group of lines associated with an entity - map them into full 'entity' objects.
-    entities = groupedLines.map { lines in
+    entities = try groupedLines.map { lines in
         let entity = _Entity()
         
         var fieldDocumentation: [String] = []
@@ -126,7 +128,10 @@ func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Entity] {
             }
                 // If it's the declaration line, we can get the entity type, name, and implemented interfaces of the entity
             else if line.contains("{") || line.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("scalar") {
-                let (type, name, interfaces) = getTypeNameAndInterfacesForEntity(line: line)
+				guard !line.hasPrefix("{") else {
+					throw "Invalid schema - opening curly braces for types must be on the same line"
+				}
+                let (type, name, interfaces) = try getTypeNameAndInterfacesForEntity(line: line)
                 entity.entityType = type
                 entity.name = name
                 entity.interfaces = interfaces
@@ -146,7 +151,7 @@ func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Entity] {
                         fieldBeingBuilt?.append(fieldArgumentsBeingBuilt.joined(separator: ","))
                         fieldBeingBuilt?.append(line)
                     }
-                    let field = createField(line: fieldBeingBuilt!)
+                    let field = try createField(line: fieldBeingBuilt!)
                     field.documentation = fieldDocumentation
                     fieldDocumentation = []
                     fieldArgumentsBeingBuilt = []
@@ -158,7 +163,7 @@ func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Entity] {
                 else if !line.contains("(") {
                     /// If we're not already building a field, it's a single-line, arugment-less field. Just build it and add it.
                     if fieldBeingBuilt == nil {
-                        let field = createField(line: line)
+                        let field = try createField(line: line)
                         field.documentation = fieldDocumentation
                         fieldDocumentation = []
                         fieldArgumentsBeingBuilt = []
@@ -181,7 +186,7 @@ func createEntities(fromGroupedLines groupedLines: [[String]]) -> [_Entity] {
     return entities.compactMap { $0 }
 }
 
-func getTypeNameAndInterfacesForEntity(line: String) -> (type: _Entity._EntityType, name: String, interfaces: [String]) {
+func getTypeNameAndInterfacesForEntity(line: String) throws -> (type: _Entity._EntityType, name: String, interfaces: [String]) {
     var type: _Entity._EntityType = .object
     var name: String = ""
     var interfaces: [String] = []
@@ -212,13 +217,18 @@ func getTypeNameAndInterfacesForEntity(line: String) -> (type: _Entity._EntityTy
     } else if line.hasPrefix(_Entity._EntityType.interface.rawValue) {
         nameComponent = nameComponent.replacingOccurrences(of: _Entity._EntityType.interface.rawValue, with: "")
         type = .interface
-    }
+	} else {
+		throw "Couldn't determine the entity type from line '\(line)'"
+	}
     
     // Then, remove any whitespace in the 'name component' to get the name of the entity.
     nameComponent = nameComponent
         .replacingOccurrences(of: " ", with: "")
         .replacingOccurrences(of: "{", with: "")
     name = nameComponent
+	guard name.isEmpty == false else {
+		throw "Couldn't determine the name of the type from line '\(line)'"
+	}
     
     // Next, get the implemented interfaces. We can do this by just removing whitespace/the opening curly brace on the
     // second item in the split line and splitting them by commas.
@@ -232,7 +242,7 @@ func getTypeNameAndInterfacesForEntity(line: String) -> (type: _Entity._EntityTy
     return (type, name, interfaces)
 }
 
-func createField(line: String) -> _Field {
+func createField(line: String) throws -> _Field {
     let field = _Field()
     var lineWithArgsRemoved: String = line
     
@@ -249,6 +259,9 @@ func createField(line: String) -> _Field {
             .split(separator: ",").map { String($0) }
         for arg in args {
             let nameAndType = arg.split(separator: ":").map { String($0) }
+			guard arg.contains(":"), nameAndType.count == 2 else {
+				throw "Argument line from line '\(line)' was invalid"
+			}
             let name = nameAndType[0]
             let type = getSwiftType(forType: nameAndType[1])
             field.arguments.append(_Field._Argument(name: name, type: type))
