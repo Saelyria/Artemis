@@ -20,7 +20,12 @@ if let outputFileIndex = CommandLine.arguments.firstIndex(where: { $0.hasPrefix(
     outputFile = CommandLine.arguments[outputFileIndex+1]
 }
 
-let output = generateSwiftFile(from: schema)
+var output: String = ""
+do {
+	output = try generateSwiftFile(from: schema)
+} catch {
+	fatalError(error.localizedDescription)
+}
 
 if let outputFile = outputFile {
     guard let outputUrl = URL(string: outputFile) else {
