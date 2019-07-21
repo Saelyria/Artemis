@@ -101,5 +101,8 @@ final class QueryRenderingTests: XCTestCase {
         ("testQueryNameRendering", testQueryNameRendering),
         ("testQueryMultipleQueryFieldSubSelectionRendering", testQueryMultipleQueryFieldSubSelectionRendering),
         ("testQueryAliasRendering", testQueryAliasRendering),
+		("testQueryArgumentRendering", testQueryArgumentRendering),
+		("testInputArgumentRendering", testInputArgumentRendering),
+		("testFragmentRendering", testFragmentRendering)
     ]
 }

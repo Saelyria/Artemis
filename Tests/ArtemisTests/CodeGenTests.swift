@@ -28,7 +28,7 @@ final class CodeGenTests: XCTestCase {
     
     func testExtractsTypeNameAndTypeAndInterfaces() {
         var line = "type SomeType implements SomeInterface, SomeSecondInterface {"
-        var (type, name, interfaces) = getTypeNameAndInterfacesForEntity(line: line)
+        var (type, name, interfaces) = try! getTypeNameAndInterfacesForEntity(line: line)
         XCTAssert(type == .object)
         XCTAssert(name == "SomeType")
         XCTAssert(interfaces.count == 2)
@@ -36,25 +36,25 @@ final class CodeGenTests: XCTestCase {
         XCTAssert(interfaces[1] == "SomeSecondInterface")
         
         line = "input SomeInput {"
-        (type, name, interfaces) = getTypeNameAndInterfacesForEntity(line: line)
+        (type, name, interfaces) = try! getTypeNameAndInterfacesForEntity(line: line)
         XCTAssert(type == .input)
         XCTAssert(name == "SomeInput")
         XCTAssert(interfaces.isEmpty)
         
         line = "enum SomeEnum {"
-        (type, name, interfaces) = getTypeNameAndInterfacesForEntity(line: line)
+        (type, name, interfaces) = try! getTypeNameAndInterfacesForEntity(line: line)
         XCTAssert(type == .enum)
         XCTAssert(name == "SomeEnum")
         XCTAssert(interfaces.isEmpty)
         
         line = "scalar SomeScalar"
-        (type, name, interfaces) = getTypeNameAndInterfacesForEntity(line: line)
+        (type, name, interfaces) = try! getTypeNameAndInterfacesForEntity(line: line)
         XCTAssert(type == .scalar)
         XCTAssert(name == "SomeScalar")
         XCTAssert(interfaces.isEmpty)
         
         line = "interface SomeInterface"
-        (type, name, interfaces) = getTypeNameAndInterfacesForEntity(line: line)
+        (type, name, interfaces) = try! getTypeNameAndInterfacesForEntity(line: line)
         XCTAssert(type == .interface)
         XCTAssert(name == "SomeInterface")
         XCTAssert(interfaces.isEmpty)
@@ -79,7 +79,7 @@ final class CodeGenTests: XCTestCase {
             "}"
         ]
         
-        let entities = createEntities(fromGroupedLines: [lines1, lines2])
+        let entities = try! createEntities(fromGroupedLines: [lines1, lines2])
         XCTAssert(entities.count == 2)
         
         XCTAssert(entities[0].entityType == .object)
@@ -121,7 +121,7 @@ final class CodeGenTests: XCTestCase {
         }
         """
         
-        let swiftFile = generateSwiftFile(from: schema)
+        let swiftFile = try! generateSwiftFile(from: schema)
         XCTAssert(swiftFile == """
         final class SomeType: Object, ObjectSchema {
            static let implements = Interfaces(SomeInterface.self)
@@ -162,5 +162,7 @@ final class CodeGenTests: XCTestCase {
     static var allTests = [
         ("testGroupsLinesByEntity", testGroupsLinesByEntity),
         ("testExtractsTypeNameAndTypeAndInterfaces", testExtractsTypeNameAndTypeAndInterfaces),
+		("testCreatesEntityFromGroupedLines", testCreatesEntityFromGroupedLines),
+		("testSwiftFileGeneration", testSwiftFileGeneration)
     ]
 }
