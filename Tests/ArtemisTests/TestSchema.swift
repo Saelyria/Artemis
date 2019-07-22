@@ -4,7 +4,7 @@ final class Query: Object, ObjectSchema {
     typealias Schema = Query
     
     var me = Field<Person, NoArguments>("me")
-    var user = Field<Person, UserArguments>("user", UserArguments.self)
+    var user = Field<Person, UserArguments>("user")
     struct UserArguments: ArgumentsList {
         var id = Argument<String>("id")
         let number = Argument<Int>("number", default: 10)

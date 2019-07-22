@@ -32,7 +32,7 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
    /**
     Adds an argument to the queried field.
     
-    This keypath returns a closure that is called with the value to supply for the argument. Keypaths usable with this
+    This subscript returns a closure that is called with the value to supply for the argument. Keypaths usable with this
 	subscript method are keypaths on the field's `Argument` type.
     */
     public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (V) -> Add<T, F, SubSelection> {
@@ -46,7 +46,7 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
    /**
     Adds an argument wrapped as a variable to the queried field.
     
-    This keypath returns a closure that is called with a `Variable` wrapping the value to supply for the argument.
+    This subscript returns a closure that is called with a `Variable` wrapping the value to supply for the argument.
 	Keypaths usable with this subscript method are keypaths on the field's `Argument` type.
     */
     public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (Variable<V>) -> Add<T, F, SubSelection> {
@@ -103,6 +103,9 @@ the closure on that argument, where it is called with the keypaths of the wrappe
 public class InputBuilder<I: Input> {
 	internal var addedInputFields: [String] = []
 	
+	/**
+	Adds the given property value to the input object.
+	*/
 	public subscript<V: Scalar, T>(dynamicMember keyPath: KeyPath<I.Schema, Field<V, T>>) -> (V) -> Void {
         return { value in
 			let key = I.Schema()[keyPath: keyPath].key
@@ -110,6 +113,9 @@ public class InputBuilder<I: Input> {
         }
     }
 	
+	/**
+	Adds the given property input object value to the input object.
+	*/
     public subscript<V, T>(dynamicMember keyPath: KeyPath<I.Schema, Field<V, T>>) -> ( (InputBuilder<V>) -> Void ) -> Void where V: Input {
         return { inputBuilder in
 			let b = InputBuilder<V>()
@@ -122,7 +128,13 @@ public class InputBuilder<I: Input> {
 }
 
 extension Add where F.Value: Scalar, SubSelection == EmptySubSelection {
-    /// Declares that the given property should be fetched on the queried object.
+    /**
+	Adds the given field to the operation.
+	
+	- parameter keyPath: The keypath referring to the field on the object type. The `Value` associated type of this
+		keypath object must be a GraphQL 'scalar' type.
+	- parameter alias: The alias to use for this field in the rendered GraphQL document.
+	*/
     public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil) {
         let field = T.Schema()[keyPath: keyPath]
         self.init(fieldType: .field(key: field.key, alias: alias, renderedSubSelection: nil))
@@ -130,7 +142,15 @@ extension Add where F.Value: Scalar, SubSelection == EmptySubSelection {
 }
 
 extension Add where F.Value: Object, SubSelection.T == F.Value {
-    /// Declares that the given property should be fetched on the queried object, only retrieving the given properties on the property.
+    /**
+	Adds the given field to the operation.
+	
+	- parameter keyPath: The keypath referring to the field on the object type. The `Value` associated type of this
+		keypath object must be a GraphQL 'object' type.
+	- parameter alias: The alias to use for this field in the rendered GraphQL document.
+	- parameter subSelection: A function builder that additional `Add` components can be given in to select fields on
+		this `Add` instance's returned value.
+	*/
     public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         let field = T.Schema()[keyPath: keyPath]
         self.init(fieldType: .field(key: field.key, alias: alias, renderedSubSelection: subSelection().render()))
@@ -138,6 +158,15 @@ extension Add where F.Value: Object, SubSelection.T == F.Value {
 }
 
 extension Add where F.Value: Collection, SubSelection.T.Schema == F.Value.Element, F.Value.Element: SelectionOutput {
+    /**
+	Adds the given field to the operation.
+	
+	- parameter keyPath: The keypath referring to the field on the object type. The `Value` associated type of this
+		keypath object must be a GraphQL 'object' type.
+	- parameter alias: The alias to use for this field in the rendered GraphQL document.
+	- parameter subSelection: A function builder that additional `Add` components can be given in to select fields on
+		this `Add` instance's returned value.
+	*/
     public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         let field = T.Schema()[keyPath: keyPath]
         self.init(fieldType:  .field(key: field.key, alias: alias, renderedSubSelection: subSelection().render()))
@@ -145,6 +174,9 @@ extension Add where F.Value: Collection, SubSelection.T.Schema == F.Value.Elemen
 }
 
 extension Add {
+	/**
+	Renders this field and its sub-selected fields into a string that can be added to a document.
+	*/
     public func render() -> String {
         switch self.fieldType {
         case .field(let key, let alias, let renderedSubSelection):
@@ -163,12 +195,18 @@ extension Add {
         }
     }
     
+	/**
+	Creates the appropriate response object type (likely a `Partial` object specialized with this instance's `Value`
+	type) from the response JSON.
+	*/
     public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
         guard let object: Any = dict[self.key] else { throw GraphQLError.malformattedResponse(reason: "Response didn't include key for \(self.key)") }
         return try F.Value.createUnsafeResult(from: object, key: self.key)
     }
 }
 
+/// A type that can be used as the sub-selection type for `Add` instances whose value type is a scalar (so can't include
+/// a sub-selection).
 public struct EmptySubSelection: FieldAggregate {
     public struct T: Object {
         public struct Schema: ObjectSchema {

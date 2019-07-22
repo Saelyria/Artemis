@@ -326,7 +326,7 @@ func createSwiftLines(forObject object: _Entity) -> [String] {
             var argumentsNameChars = Array(field.name.appending("Arguments"))
             argumentsNameChars[0] = Character(argumentsNameChars[0].uppercased())
             let argumentsStructName = String(argumentsNameChars)
-            lines.append("   var \(getValidPropertyName(forName: field.name)) = Field<\(field.type), \(argumentsStructName)>(\"\(field.name)\", \(argumentsStructName).self)")
+            lines.append("   var \(getValidPropertyName(forName: field.name)) = Field<\(field.type), \(argumentsStructName)>(\"\(field.name)\")")
             lines.append(contentsOf: createArgumentsStruct(forField: field, name: argumentsStructName))
         }
     }
@@ -412,7 +412,7 @@ func createSwiftLines(forInterface object: _Entity) -> [String] {
             var argumentsNameChars = Array(field.name.appending("Arguments"))
             argumentsNameChars[0] = Character(argumentsNameChars[0].uppercased())
             let argumentsStructName = String(argumentsNameChars)
-            lines.append("   var \(getValidPropertyName(forName: field.name)) = Field<\(field.type), \(argumentsStructName)>(\"\(field.name)\", \(argumentsStructName).self)")
+            lines.append("   var \(getValidPropertyName(forName: field.name)) = Field<\(field.type), \(argumentsStructName)>(\"\(field.name)\")")
             lines.append(contentsOf: createArgumentsStruct(forField: field, name: argumentsStructName))
         }
     }

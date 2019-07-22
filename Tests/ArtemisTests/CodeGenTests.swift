@@ -128,7 +128,7 @@ final class CodeGenTests: XCTestCase {
 
            var field1 = Field<Int, NoArguments>("field1")
 
-           var field2 = Field<String?, Field2Arguments>("field2", Field2Arguments.self)
+           var field2 = Field<String?, Field2Arguments>("field2")
            final class Field2Arguments: ArgumentsList {
               var arg1 = Argument<Int>("arg1")
               var arg2 = Argument<Int?>("arg2")
