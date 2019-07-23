@@ -4,20 +4,20 @@ public protocol NetworkDelegate {
     func send(document: String, completion: @escaping (Result<Data, Error>) -> Void)
 }
 
-public protocol AnyVariable {
-    associatedtype V: SelectionInput
-}
-public struct Variable<V: SelectionInput>: AnyVariable {
-    public let name: String
-    
-    public init(name: String) {
-        self.name = name
-    }
-}
-
-public func `$`<V: SelectionInput>(_ name: String, _ type: V.Type) -> Variable<V> {
-    return Variable<V>(name: name)
-}
+//public protocol AnyVariable {
+//    associatedtype V: SelectionInput
+//}
+//public struct Variable<V: SelectionInput>: AnyVariable {
+//    public let name: String
+//
+//    public init(name: String) {
+//        self.name = name
+//    }
+//}
+//
+//public func `$`<V: SelectionInput>(_ name: String, _ type: V.Type) -> Variable<V> {
+//    return Variable<V>(name: name)
+//}
 
 open class Graph<Q: Object> {
     public let networkDelegate: NetworkDelegate
@@ -30,36 +30,36 @@ open class Graph<Q: Object> {
         self.networkDelegate = networkDelegate
     }
     
-    public func register<R>(
-        _ query: () -> Operation<Q, R>)
-        -> ReusableQuery<Void, R>
-    {
-        return ReusableQuery(renderedQuery: query().render(), renderedVariables: [])
-    }
-    
-    public func register<R, V1: AnyVariable>(
-        usingVariables v1: V1,
-        _ query: (V1) -> Operation<Q, R>)
-        -> ReusableQuery<V1.V, R>
-    {
-        return ReusableQuery(renderedQuery: query(v1).render(), renderedVariables: [])
-    }
-    
-    public func register<R, V1: AnyVariable, V2: AnyVariable>(
-        usingVariables v1: V1, _ v2: V2,
-        _ query: (V1, V2) -> Operation<Q, R>)
-        -> ReusableQuery<(V1.V, V2.V), R>
-    {
-        return ReusableQuery(renderedQuery: query(v1, v2).render(), renderedVariables: [])
-    }
-    
-    public func register<R, V1: AnyVariable, V2: AnyVariable, V3: AnyVariable>(
-        usingVariables v1: V1, _ v2: V2, _ v3: V3,
-        _ query: (V1, V2, V3) -> Operation<Q, R>)
-        -> ReusableQuery<(V1.V, V2.V, V3.V), R>
-    {
-        return ReusableQuery(renderedQuery: query(v1, v2, v3).render(), renderedVariables: [])
-    }
+//    public func register<R>(
+//        _ query: () -> Operation<Q, R>)
+//        -> ReusableQuery<Void, R>
+//    {
+//        return ReusableQuery(renderedQuery: query().render(), renderedVariables: [])
+//    }
+//
+//    public func register<R, V1: AnyVariable>(
+//        usingVariables v1: V1,
+//        _ query: (V1) -> Operation<Q, R>)
+//        -> ReusableQuery<V1.V, R>
+//    {
+//        return ReusableQuery(renderedQuery: query(v1).render(), renderedVariables: [])
+//    }
+//
+//    public func register<R, V1: AnyVariable, V2: AnyVariable>(
+//        usingVariables v1: V1, _ v2: V2,
+//        _ query: (V1, V2) -> Operation<Q, R>)
+//        -> ReusableQuery<(V1.V, V2.V), R>
+//    {
+//        return ReusableQuery(renderedQuery: query(v1, v2).render(), renderedVariables: [])
+//    }
+//
+//    public func register<R, V1: AnyVariable, V2: AnyVariable, V3: AnyVariable>(
+//        usingVariables v1: V1, _ v2: V2, _ v3: V3,
+//        _ query: (V1, V2, V3) -> Operation<Q, R>)
+//        -> ReusableQuery<(V1.V, V2.V, V3.V), R>
+//    {
+//        return ReusableQuery(renderedQuery: query(v1, v2, v3).render(), renderedVariables: [])
+//    }
     
     open func perform<R>(
         _ query: Operation<Q, R>,
@@ -95,13 +95,13 @@ open class Graph<Q: Object> {
         }
     }
     
-    open func perform<V, R>(
-        _ reusableQuery: ReusableQuery<V, R>,
-        variables: V,
-        completion: @escaping (Result<R, GraphQLError>) -> Void)
-    {
-        
-    }
+//    open func perform<V, R>(
+//        _ reusableQuery: ReusableQuery<V, R>,
+//        variables: V,
+//        completion: @escaping (Result<R, GraphQLError>) -> Void)
+//    {
+//        
+//    }
 }
 
 private extension Data {

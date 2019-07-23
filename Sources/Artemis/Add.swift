@@ -49,13 +49,13 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
     This subscript returns a closure that is called with a `Variable` wrapping the value to supply for the argument.
 	Keypaths usable with this subscript method are keypaths on the field's `Argument` type.
     */
-    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (Variable<V>) -> Add<T, F, SubSelection> {
-        return { variable in
-            let renderedArg = F.Argument()[keyPath: keyPath].render(value: variable)
-            self.renderedArguments.append(renderedArg)
-            return self
-        }
-    }
+//    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (Variable<V>) -> Add<T, F, SubSelection> {
+//        return { variable in
+//            let renderedArg = F.Argument()[keyPath: keyPath].render(value: variable)
+//            self.renderedArguments.append(renderedArg)
+//            return self
+//        }
+//    }
     
 	/**
 	Adds an 'input' object argument to the queried field.
