@@ -1,12 +1,30 @@
 import Foundation
 
+/**
+A protocol that identifies a type as being a GraphQL 'scalar'.
+ 
+'Scalars' are base types like `String`, `Int`, or `Bool` that can be used as the leaves for an operation.
+ */
+public protocol Scalar: SelectionOutput, SelectionInput {
+    associatedtype Result = Self
+}
+
+/**
+A protocol that identifies a type as being a GraphQL 'interface'.
+
+'Interfaces' in GraphQL are like Swift protocols that GraphQL types can declare that they implement. In Artemis, GraphQL
+types declare their conformance to interfaces via their static `implements` property.
+*/
 public protocol Interface: Object, ObjectSchema { }
 
-public protocol AnyInterfaces {
-    associatedtype I1; associatedtype I2; associatedtype I3; associatedtype I4; associatedtype I5
-}
+/**
+A type used for objects to declare the interfaces that they implement.
+*/
 public struct Interfaces<I1, I2, I3, I4, I5>: AnyInterfaces {
     init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type) { }
+}
+public protocol AnyInterfaces {
+    associatedtype I1; associatedtype I2; associatedtype I3; associatedtype I4; associatedtype I5
 }
 public extension Interfaces where I5 == Void {
     init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type, _ i4: I4.Type) { }
@@ -24,6 +42,9 @@ public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void
     init() { }
 }
 
+/**
+An object that acts as the schema for a GraphQL 'object' or 'type'.
+*/
 public protocol Object: SelectionOutput {
     /// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
     associatedtype Schema: ObjectSchema
@@ -177,14 +198,6 @@ public protocol SelectionInput {
     func render() -> String
 }
 
-/**
- A protocol that identifies as a type as being a GraphQL 'scalar'.
- 
- 'Scalars' are base types like `String`, `Int`, or `Bool` that can be used as the leaves or an operation.
- */
-public protocol Scalar: SelectionOutput, SelectionInput {
-    associatedtype Result = Self
-}
 public extension Scalar {
     static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
         guard R.self == Result.self else { throw GraphQLError.invalidOperation }

@@ -40,6 +40,9 @@ public struct Operation<Schema, Result> {
         self.renderedFragments = renderedFrags
     }
     
+	/**
+	Renders the operation and its sub-selected fields into a string that can be added to a document.
+	*/
     func render() -> String {
         let nameString = (self.name == nil) ? "" : " \(self.name!)"
         let opName: String
@@ -54,6 +57,9 @@ public struct Operation<Schema, Result> {
         return "\(opName){\(self.renderedSubSelections)}\(fragmentString)"
     }
     
+	/**
+	Renders the operation and its sub-selected fields into a pretty-printed string for debugging.
+	*/
     func renderDebug() -> String {
         let ugly = self.render()
     
@@ -103,6 +109,9 @@ public struct Operation<Schema, Result> {
         return result
     }
     
+	/**
+	Creates the expected result type from the given raw data.
+	*/
     func createResult(from data: Data) throws -> Result {
         guard let jsonResult = try? JSONSerialization.jsonObject(with: data, options: .mutableLeaves) as? [String: Any] else {
             if let dataString = String(data: data, encoding: .utf8) {
@@ -122,16 +131,16 @@ public struct Operation<Schema, Result> {
     }
 }
 
-public class ReusableQuery<V, R> {
-    let renderedQuery: String
-    let renderedVariables: [String]
-    
-    init(renderedQuery: String, renderedVariables: [String]) {
-        self.renderedQuery = renderedQuery
-        self.renderedVariables = renderedVariables
-    }
-    
-    func render(with variables: V) -> (query: String, variables: String) {
-        return (self.renderedQuery, "")
-    }
-}
+//public class ReusableQuery<V, R> {
+//    let renderedQuery: String
+//    let renderedVariables: [String]
+//
+//    init(renderedQuery: String, renderedVariables: [String]) {
+//        self.renderedQuery = renderedQuery
+//        self.renderedVariables = renderedVariables
+//    }
+//
+//    func render(with variables: V) -> (query: String, variables: String) {
+//        return (self.renderedQuery, "")
+//    }
+//}

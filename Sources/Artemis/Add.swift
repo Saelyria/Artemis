@@ -175,7 +175,7 @@ extension Add where F.Value: Collection, SubSelection.T.Schema == F.Value.Elemen
 
 extension Add {
 	/**
-	Renders this field and its sub-selected fields into a string that can be added to a document.
+	Renders this added field and its sub-selected fields into a string that can be added to a document.
 	*/
     public func render() -> String {
         switch self.fieldType {

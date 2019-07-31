@@ -1,5 +1,8 @@
 import Foundation
 
+/**
+A function builder type that builds selection sets from `Add` instances.
+*/
 @_functionBuilder
 public struct SubSelectionBuilder {
     public static func buildBlock

@@ -42,6 +42,5 @@ api.perform(query) { result in
 ```
 
 Don't let this simple example sell Artemis short, though - it includes full support for fragments, arguments, mutations, multiple query fields, 
-and ability to send over HTTP or over a custom networking setup, and generating your model objects from GraphQL schema documents so
-you can get up and running with a new API in minutes. It's also very light (requiring only `Foundation`), so supports iOS, macOS, or 
-anywhere else Swift and Foundation can run.
+and code generation from GraphQL schema documents so you can get up and running with a new API in minutes. It's also very light 
+(requiring only `Foundation`), so supports iOS, macOS, or anywhere else Swift and Foundation can run.

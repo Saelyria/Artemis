@@ -7,7 +7,7 @@
 		<key>Artemis.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<key>GraphQL-GenerateTests.xcscheme_^#shared#^_</key>
 		<dict>
@@ -32,6 +32,16 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>Artemis</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>ArtemisTests</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>GraphQL</key>
 		<dict>
 			<key>primary</key>
