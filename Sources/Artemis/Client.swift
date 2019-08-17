@@ -69,7 +69,7 @@ open class Client<Q: Object> {
 		or other values to be customized. The request object will already be populated with the GraphQL document,
 		default headers, and the endpoint.
 	*/
-	public init(endpoint: URL, method: HTTPNetworkingDelegate.Method = .post, requestBuilder: @escaping (_ request: URLRequest) -> Void) {
+	public init(endpoint: URL, method: HTTPNetworkingDelegate.Method = .post, requestBuilder: ((_ request: URLRequest) -> Void)? = nil) {
 		self.networkDelegate = HTTPNetworkingDelegate(endpoint: endpoint, method: .post)
 	}
     

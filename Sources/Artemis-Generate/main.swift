@@ -24,7 +24,7 @@ var output: String = ""
 do {
 	output = try generateSwiftFile(from: schema)
 } catch {
-	fatalError(error.localizedDescription)
+	fatalError("\(error)")
 }
 
 if let outputFile = outputFile {
@@ -37,5 +37,5 @@ if let outputFile = outputFile {
         fatalError("Failed to write to the specified output '\(outputFile)'")
     }
 } else {
-    print(output)
+    fatalError(output)
 }

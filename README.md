@@ -27,9 +27,9 @@ Operation(.query) {                         query {
 instance. Artemis will populate the response object with the fetched data - so this query (and its response) are handled like this:
 
 ```swift
-let api = Graph<Query>()
+let client = Client<Query>()
 
-api.perform(query) { result in
+client.perform(query) { result in
     switch result {
     case .success(let country):
         country.name // "Canada"

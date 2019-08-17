@@ -226,7 +226,7 @@ func getTypeNameAndInterfacesForEntity(line: String) throws -> (type: _Entity._E
         .replacingOccurrences(of: " ", with: "")
         .replacingOccurrences(of: "{", with: "")
     name = nameComponent
-	guard name.isEmpty == false else {
+	guard name.isEmpty == false || type == .schema else {
 		throw "Couldn't determine the name of the type from line '\(line)'"
 	}
     
