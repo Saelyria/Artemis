@@ -121,8 +121,9 @@ final class CodeGenTests: XCTestCase {
         }
         """
         
-        let swiftFile = try! generateSwiftFile(from: schema)
-        XCTAssert(swiftFile == """
+		let swiftFiles = try! generateSwiftFiles(from: schema)
+		XCTAssert(swiftFiles[0].filename == "SomeType")
+        XCTAssert(swiftFiles[0].content == """
         final class SomeType: Object, ObjectSchema {
            static let implements = Interfaces(SomeInterface.self)
 
@@ -135,28 +136,39 @@ final class CodeGenTests: XCTestCase {
            }
         }
 
-        /**
-         documentation comment that should NOT be ignored
-        */
-        final class SomeInput: Input, ObjectSchema {
-           var field: Int?
-        }
+        """, "First generated swift file was '\(swiftFiles[0])'")
+		
+		XCTAssert(swiftFiles[1].filename == "SomeInput")
+		XCTAssert(swiftFiles[1].content == """
+		/**
+		 documentation comment that should NOT be ignored
+		*/
+		final class SomeInput: Input, ObjectSchema {
+		   var field: Int?
+		}
 
-        final class SomeInterface: Interface {
+		""", "Second generated swift file was '\(swiftFiles[1])'")
+		
+		XCTAssert(swiftFiles[2].filename == "SomeInterface")
+		XCTAssert(swiftFiles[2].content == """
+		final class SomeInterface: Interface {
 
-           var field1 = Field<Int, NoArguments>("field1")
-        }
+		   var field1 = Field<Int, NoArguments>("field1")
+		}
 
-        enum SomeEnum: String, Enum {
-           /**
-            some comment
-           */
-           case case1 = "case1"
-           case case2 = "case2"
-        }
+		""", "Third generated swift file was '\(swiftFiles[2])'")
+		
+		XCTAssert(swiftFiles[3].filename == "SomeEnum")
+		XCTAssert(swiftFiles[3].content == """
+		enum SomeEnum: String, Enum {
+		   /**
+		    some comment
+		   */
+		   case case1 = "case1"
+		   case case2 = "case2"
+		}
 
-        
-        """, "Generated swift file was '\(swiftFile)'")
+		""", "Fourth generated swift file was '\(swiftFiles[3])'")
     }
 
     static var allTests = [

@@ -52,17 +52,14 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "--input "
+            argument = "--input /Users/aaronbosnjak/Developer/GraphQL/GraphQLWorkspace/star-wars-schema.graphql"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--output /Users/aaronbosnjak/Developer/GraphQL/GraphQLWorkspace/Models"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "XCODE-THING"
-            value = "$(PROJECT_DIR)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

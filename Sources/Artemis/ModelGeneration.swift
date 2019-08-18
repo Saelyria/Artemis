@@ -30,25 +30,22 @@ class _Field {
     var arguments: [_Argument] = []
 }
 
-public func generateSwiftFile(from graphQLFile: String) throws -> String {
+public func generateSwiftFiles(from graphQLFile: String) throws -> [(filename: String, content: String)] {
     // First, create an array of each line of the file
     let lines = graphQLFile.split(separator: "\n")
     
     let linesGroupedByEntity: [[String]] = getLinesGroupedByEntity(in: lines)
     let entities: [_Entity] = try createEntities(fromGroupedLines: linesGroupedByEntity)
-    
-    var swiftFileLines: [String] = []
-    for entity in entities {
-        swiftFileLines.append(contentsOf: createSwiftTypeLines(from: entity))
-        swiftFileLines.append("\n")
-    }
-    
-    return swiftFileLines.reduce(into: "") { (result, line) in
-        result.append(line)
-        if line != "\n" {
-            result.append("\n")
-        }
-    }
+
+	return entities.map { entity in
+		let content = createSwiftTypeLines(from: entity).reduce(into: "") { (result, line) in
+			result.append(line)
+			if line != "\n" {
+				result.append("\n")
+			}
+		}
+		return (filename: entity.name, content: content)
+	}
 }
 
 // MARK: - Intermediate entity generation from GraphQL schema
