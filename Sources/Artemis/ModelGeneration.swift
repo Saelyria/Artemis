@@ -38,12 +38,13 @@ public func generateSwiftFiles(from graphQLFile: String) throws -> [(filename: S
     let entities: [_Entity] = try createEntities(fromGroupedLines: linesGroupedByEntity)
 
 	return entities.map { entity in
-		let content = createSwiftTypeLines(from: entity).reduce(into: "") { (result, line) in
+		var content = createSwiftTypeLines(from: entity).reduce(into: "") { (result, line) in
 			result.append(line)
 			if line != "\n" {
 				result.append("\n")
 			}
 		}
+		content = "import Artemis\n\n\(content)"
 		return (filename: entity.name, content: content)
 	}
 }
