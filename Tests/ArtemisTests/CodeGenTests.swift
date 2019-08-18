@@ -124,22 +124,26 @@ final class CodeGenTests: XCTestCase {
 		let swiftFiles = try! generateSwiftFiles(from: schema)
 		XCTAssert(swiftFiles[0].filename == "SomeType")
         XCTAssert(swiftFiles[0].content == """
-        final class SomeType: Object, ObjectSchema {
-           static let implements = Interfaces(SomeInterface.self)
+		import Artemis
 
-           var field1 = Field<Int, NoArguments>("field1")
+		final class SomeType: Object, ObjectSchema {
+		   static let implements = Interfaces(SomeInterface.self)
 
-           var field2 = Field<String?, Field2Arguments>("field2")
-           final class Field2Arguments: ArgumentsList {
-              var arg1 = Argument<Int>("arg1")
-              var arg2 = Argument<Int?>("arg2")
-           }
-        }
+		   var field1 = Field<Int, NoArguments>("field1")
 
-        """, "First generated swift file was '\(swiftFiles[0])'")
+		   var field2 = Field<String?, Field2Arguments>("field2")
+		   final class Field2Arguments: ArgumentsList {
+		      var arg1 = Argument<Int>("arg1")
+		      var arg2 = Argument<Int?>("arg2")
+		   }
+		}
+
+		""", "First generated swift file was '\(swiftFiles[0])'")
 		
 		XCTAssert(swiftFiles[1].filename == "SomeInput")
 		XCTAssert(swiftFiles[1].content == """
+		import Artemis
+
 		/**
 		 documentation comment that should NOT be ignored
 		*/
@@ -151,6 +155,8 @@ final class CodeGenTests: XCTestCase {
 		
 		XCTAssert(swiftFiles[2].filename == "SomeInterface")
 		XCTAssert(swiftFiles[2].content == """
+		import Artemis
+
 		final class SomeInterface: Interface {
 
 		   var field1 = Field<Int, NoArguments>("field1")
@@ -160,6 +166,8 @@ final class CodeGenTests: XCTestCase {
 		
 		XCTAssert(swiftFiles[3].filename == "SomeEnum")
 		XCTAssert(swiftFiles[3].content == """
+		import Artemis
+
 		enum SomeEnum: String, Enum {
 		   /**
 		    some comment
