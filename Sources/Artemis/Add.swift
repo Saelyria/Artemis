@@ -15,7 +15,7 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
     
     enum FieldType {
         case field(key: String, alias: String?, renderedSubSelection: String?)
-        case fragment(rendered: String)
+		case fragment(inline: String, rendered: String)
     }
     
     let fieldType: FieldType
@@ -26,6 +26,16 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
         }
     }
     public var items: [AnyFieldAggregate] = []
+	public var renderedFragmentDeclarations: [String] {
+		var frags: [String] = []
+		switch self.fieldType {
+		case .fragment(_, let rendered):
+			frags = [rendered]
+		case .field: break
+		}
+		frags.append(contentsOf: self.items.flatMap { $0.renderedFragmentDeclarations })
+		return frags
+	}
     public let error: GraphQLError?
     private var renderedArguments: [String] = []
    
@@ -87,8 +97,9 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
         }
     }
     
-    internal init(fieldType: FieldType, error: GraphQLError? = nil) {
+	internal init(fieldType: FieldType, items: [AnyFieldAggregate], error: GraphQLError? = nil) {
         self.fieldType = fieldType
+		self.items = items
         self.error = error
     }
 }
@@ -137,7 +148,7 @@ extension Add where F.Value: Scalar, SubSelection == EmptySubSelection {
 	*/
     public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil) {
         let field = T.Schema()[keyPath: keyPath]
-        self.init(fieldType: .field(key: field.key, alias: alias, renderedSubSelection: nil))
+		self.init(fieldType: .field(key: field.key, alias: alias, renderedSubSelection: nil), items: [])
     }
 }
 
@@ -153,7 +164,8 @@ extension Add where F.Value: Object, SubSelection.T == F.Value {
 	*/
     public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         let field = T.Schema()[keyPath: keyPath]
-        self.init(fieldType: .field(key: field.key, alias: alias, renderedSubSelection: subSelection().render()))
+		let ss = subSelection()
+		self.init(fieldType: .field(key: field.key, alias: alias, renderedSubSelection: ss.render()), items: ss.items)
     }
 }
 
@@ -169,7 +181,8 @@ extension Add where F.Value: Collection, SubSelection.T.Schema == F.Value.Elemen
 	*/
     public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil, @SubSelectionBuilder subSelection: () -> SubSelection) {
         let field = T.Schema()[keyPath: keyPath]
-        self.init(fieldType:  .field(key: field.key, alias: alias, renderedSubSelection: subSelection().render()))
+		let ss = subSelection()
+		self.init(fieldType:  .field(key: field.key, alias: alias, renderedSubSelection: ss.render()), items: ss.items)
     }
 }
 
@@ -190,8 +203,8 @@ extension Add {
             let name: String = (alias == nil) ? key : "\(alias!):\(key)"
             let subSelection = (renderedSubSelection == nil) ? "" : "{\(renderedSubSelection!)}"
             return "\(name)\(args)\(subSelection)"
-        case .fragment(let renderedFragment):
-            return renderedFragment
+        case .fragment(let renderedInlineFragment, _):
+            return renderedInlineFragment
         }
     }
     

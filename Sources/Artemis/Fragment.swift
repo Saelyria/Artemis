@@ -4,11 +4,14 @@ import Foundation
 //    return fragment.subSelection
 //}
 
-public protocol FragmentProtocol: FieldAggregate, AnyField { //AnyFragmentAggregate
+public protocol FragmentProtocol: FieldAggregate, AnyField {
     var name: String { get }
     func render() -> String
 }
 
+/**
+An object representing a GraphQL 'fragment' that can be added to a sub-selection.
+*/
 public struct Fragment<T: Object>: FragmentProtocol {
     public typealias Argument = NoArguments
     
@@ -19,9 +22,15 @@ public struct Fragment<T: Object>: FragmentProtocol {
     let renderedSubSelection: String
     public var items: [AnyFieldAggregate] = []
     
+	/**
+	Creates a new frament usable in a sub-selection with the given name, on the given type, selecting the properties
+	in the given sub-selection function builder result.
+	*/
     public init<SubSelection: FieldAggregate>(_ name: String, on: T.Type, @SubSelectionBuilder subSelection: () -> SubSelection) where SubSelection.T == T {
         self.name = name
-        self.renderedSubSelection = subSelection().render()
+		let ss = subSelection()
+        self.renderedSubSelection = ss.render()
+		self.items = ss.items
     }
     
     public func render() -> String {

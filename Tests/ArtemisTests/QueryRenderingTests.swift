@@ -73,7 +73,15 @@ final class QueryRenderingTests: XCTestCase {
 	}
     
     func testFragmentRendering() {
-        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query, { ageFragment, namesFragment in
+		let ageFragment = Fragment("ageField", on: LivingThing.self) {
+			 Add(\.age)
+		 }
+		 let namesFragment = Fragment("nameFields", on: Person.self) {
+			 Add(\.firstName)
+			 Add(\.lastName)
+		 }
+		
+        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
             Add(\.user) {
                 Add(fieldsOn: namesFragment)
                 Add(fieldsOn: ageFragment)
@@ -82,18 +90,10 @@ final class QueryRenderingTests: XCTestCase {
             Add(\.user, alias: "second") {
                 Add(fieldsOn: ageFragment)
             }
-        }, fragments: {
-            Fragment("ageField", on: LivingThing.self) {
-                Add(\.age)
-            }
-            Fragment("nameFields", on: Person.self) {
-                Add(\.firstName)
-                Add(\.lastName)
-            }
-        })
+        }
         
         var expectedString = #"{user(id:"321"){...nameFields,...ageField},second:user{...ageField}},"#
-        expectedString.append(#"fragment ageField on LivingThing{age},fragment nameFields on Person{firstName,lastName}"#)
+        expectedString.append(#"fragment nameFields on Person{firstName,lastName},fragment ageField on LivingThing{age}"#)
         XCTAssert(query.render() == expectedString, query.render())
     }
 

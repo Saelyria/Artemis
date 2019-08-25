@@ -4,27 +4,27 @@ import Foundation
 
 public extension Add where SubSelection == EmptySubSelection, F: FragmentProtocol, F.T.Schema.ImplementedInterfaces.I1 == T {
     convenience init(fieldsOn fragment: F) {
-        self.init(fieldType: .fragment(rendered: "...\(fragment.name)"))
+		self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }
 public extension Add where SubSelection == EmptySubSelection, F: FragmentProtocol, F.T.Schema.ImplementedInterfaces.I2 == T {
     convenience init(fieldsOn fragment: F) {
-        self.init(fieldType: .fragment(rendered: "...\(fragment.name)"))
+        self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }
 public extension Add where SubSelection == EmptySubSelection, F: FragmentProtocol, F.T.Schema.ImplementedInterfaces.I3 == T {
     convenience init(fieldsOn fragment: F) {
-        self.init(fieldType: .fragment(rendered: "...\(fragment.name)"))
+        self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }
 public extension Add where SubSelection == EmptySubSelection, F: FragmentProtocol, F.T.Schema.ImplementedInterfaces.I4 == T {
     convenience init(fieldsOn fragment: F) {
-        self.init(fieldType: .fragment(rendered: "...\(fragment.name)"))
+        self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }
 public extension Add where SubSelection == EmptySubSelection, F: FragmentProtocol, F.T.Schema.ImplementedInterfaces.I5 == T {
     convenience init(fieldsOn fragment: F) {
-        self.init(fieldType: .fragment(rendered: "...\(fragment.name)"))
+        self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }
 
@@ -33,31 +33,31 @@ public extension Add where SubSelection == EmptySubSelection, F: FragmentProtoco
 
 public extension Add where SubSelection == EmptySubSelection, F: FragmentProtocol, F.T == T {
     convenience init(fieldsOn fragment: F) {
-        self.init(fieldType: .fragment(rendered: "...\(fragment.name)"))
+        self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }
 public extension Add where SubSelection == EmptySubSelection, F: FragmentProtocol, F.T == T.Schema.ImplementedInterfaces.I1 {
     convenience init(fieldsOn fragment: F) {
-        self.init(fieldType: .fragment(rendered: "...\(fragment.name)"))
+        self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }
 public extension Add where SubSelection == EmptySubSelection, F: FragmentProtocol, F.T == T.Schema.ImplementedInterfaces.I2 {
     convenience init(fieldsOn fragment: F) {
-        self.init(fieldType: .fragment(rendered: "...\(fragment.name)"))
+        self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }
 public extension Add where SubSelection == EmptySubSelection, F: FragmentProtocol, F.T == T.Schema.ImplementedInterfaces.I3 {
     convenience init(fieldsOn fragment: F) {
-        self.init(fieldType: .fragment(rendered: "...\(fragment.name)"))
+        self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }
 public extension Add where SubSelection == EmptySubSelection, F: FragmentProtocol, F.T == T.Schema.ImplementedInterfaces.I4 {
     convenience init(fieldsOn fragment: F) {
-        self.init(fieldType: .fragment(rendered: "...\(fragment.name)"))
+        self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }
 public extension Add where SubSelection == EmptySubSelection, F: FragmentProtocol, F.T == T.Schema.ImplementedInterfaces.I5 {
     convenience init(fieldsOn fragment: F) {
-        self.init(fieldType: .fragment(rendered: "...\(fragment.name)"))
+        self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }

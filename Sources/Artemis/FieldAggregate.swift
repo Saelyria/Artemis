@@ -12,10 +12,15 @@ extension FieldAggregate {
 
 public protocol AnyFieldAggregate {
     var items: [AnyFieldAggregate] { get }
+	var renderedFragmentDeclarations: [String] { get }
     var error: GraphQLError? { get }
     func render() -> String
 }
 public extension AnyFieldAggregate {
+	var renderedFragmentDeclarations: [String] {
+		return self.items.flatMap { $0.renderedFragmentDeclarations }
+	}
+	
     var error: GraphQLError? {
         return self.items.compactMap { $0.error }.first
     }

@@ -10,7 +10,7 @@ public struct Operation<Schema, Result> {
     let error: GraphQLError?
     let resultCreator: ([String: Any]) throws -> Result
     let renderedSubSelections: String
-    let renderedFragments: String?
+    let renderedFragments: String
     public let operationType: OperationType
     
     public init<F: FieldAggregate>(_ type: OperationType, name: String? = nil, @SubSelectionBuilder _ subSelection: () -> F) where F.T == Schema, F.Result == Result {
@@ -20,24 +20,7 @@ public struct Operation<Schema, Result> {
         self.error = fieldsAggegate.error
         self.renderedSubSelections = fieldsAggegate.render()
         self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
-        self.renderedFragments = nil
-    }
-    
-    public init<F: FieldAggregate, FR>(
-        _ type: OperationType,
-        name: String? = nil,
-        @SubSelectionBuilder _ subSelection: (FR) -> F,
-        @FragmentBuilder fragments: () -> (String, FR))
-        where F.T == Schema, F.Result == Result
-    {
-        self.operationType = type
-        self.name = name
-        let (renderedFrags, frags) = fragments()
-        let fieldsAggegate = subSelection(frags)
-        self.error = fieldsAggegate.error
-        self.renderedSubSelections = fieldsAggegate.render()
-        self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
-        self.renderedFragments = renderedFrags
+		self.renderedFragments = Set(fieldsAggegate.renderedFragmentDeclarations).joined(separator: ",")
     }
     
 	/**
@@ -53,7 +36,7 @@ public struct Operation<Schema, Result> {
         } else {
             opName = "mutation\(nameString)"
         }
-        let fragmentString = (self.renderedFragments == nil) ? "" : ",\(self.renderedFragments!)"
+        let fragmentString = (self.renderedFragments.isEmpty) ? "" : ",\(self.renderedFragments)"
         return "\(opName){\(self.renderedSubSelections)}\(fragmentString)"
     }
     
