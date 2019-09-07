@@ -9,7 +9,7 @@ let package = Package(
     ],
     products: [
         .library(name: "Artemis", targets: ["Artemis"]),
-        .executable(name: "GraphQL API Generation", targets: ["Artemis-Generate"])
+        .executable(name: "Artemis-Generate", targets: ["Artemis-Generate"])
     ],
     dependencies: [],
     targets: [
