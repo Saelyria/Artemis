@@ -135,6 +135,7 @@ open class Client<Q: Object> {
     {
         if let error = operation.error {
             assertionFailure("Built query was not valid - \(error)")
+			return
         }
         if let data = mock {
             do {

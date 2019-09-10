@@ -93,7 +93,7 @@ final class QueryRenderingTests: XCTestCase {
         }
         
         var expectedString = #"{user(id:"321"){...nameFields,...ageField},second:user{...ageField}},"#
-        expectedString.append(#"fragment nameFields on Person{firstName,lastName},fragment ageField on LivingThing{age}"#)
+        expectedString.append(#"fragment ageField on LivingThing{age},fragment nameFields on Person{firstName,lastName}"#)
         XCTAssert(query.render() == expectedString, query.render())
     }
 

@@ -20,7 +20,7 @@ public struct Operation<Schema, Result> {
         self.error = fieldsAggegate.error
         self.renderedSubSelections = fieldsAggegate.render()
         self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
-		self.renderedFragments = Set(fieldsAggegate.renderedFragmentDeclarations).joined(separator: ",")
+		self.renderedFragments = Set(fieldsAggegate.renderedFragmentDeclarations).sorted().joined(separator: ",")
     }
     
 	/**
