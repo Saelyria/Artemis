@@ -24,11 +24,23 @@ public extension Partial where T: Object {
         let keyString = T.Schema()[keyPath: keyPath].key
         return self.values[keyString] as? F.Value
     }
+	
+//	subscript<F: AnyField, V>(dynamicMember keyPath: KeyPath<T.Schema, F>) -> F.Value where F.Value == Optional<V>, V: Scalar {
+//        let keyString = T.Schema()[keyPath: keyPath].key
+//		return self.values[keyString] as? V
+//    }
     
     subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.Schema, F>) -> F.Value? where F.Value: Collection & Scalar {
         let keyString = T.Schema()[keyPath: keyPath].key
         return self.values[keyString] as? F.Value
     }
+	
+//	subscript<F: AnyField, V>(dynamicMember keyPath: KeyPath<T.Schema, F>) -> F.Value
+//		where F.Value == Optional<V>, V: Collection & Scalar
+//	{
+//        let keyString = T.Schema()[keyPath: keyPath].key
+//        return self.values[keyString] as? V
+//    }
     
     subscript<F: AnyField>(dynamicMember keyPath: KeyPath<T.Schema, F>) -> Partial<F.Value>? where F.Value: Object {
         let keyString = T.Schema()[keyPath: keyPath].key
@@ -44,6 +56,9 @@ public extension Partial where T: Object {
     
 	/**
 	Gets the given property under the given alias.
+	
+	- parameter keyPath: The keypath of the property as it was originally named on the object.
+	- parameter alias: The aliased name of the property as in the request.
 	*/
     func get<F: AnyField>(_ keyPath: KeyPath<T.Schema, F>, alias: String) -> F.Value? where F.Value: Scalar {
         return self.values[alias] as? F.Value
@@ -51,6 +66,9 @@ public extension Partial where T: Object {
     
 	/**
 	Gets the given property under the given alias.
+	
+	- parameter keyPath: The keypath of the property as it was originally named on the object.
+	- parameter alias: The aliased name of the property as in the request.
 	*/
     func get<F: AnyField>(_ keyPath: KeyPath<T.Schema, F>, alias: String) -> F.Value? where F.Value: Collection & Scalar {
         return self.values[alias] as? F.Value
@@ -58,6 +76,9 @@ public extension Partial where T: Object {
     
 	/**
 	Gets the given property under the given alias.
+	
+	- parameter keyPath: The keypath of the property as it was originally named on the object.
+	- parameter alias: The aliased name of the property as in the request.
 	*/
     func get<F: AnyField>(_ keyPath: KeyPath<T.Schema, F>, alias: String) -> Partial<F.Value>? where F.Value: Object {
         guard let valueDict = self.values[alias] as? [String: Any] else { return nil }
@@ -66,6 +87,9 @@ public extension Partial where T: Object {
     
 	/**
 	Gets the given property under the given alias.
+	
+	- parameter keyPath: The keypath of the property as it was originally named on the object.
+	- parameter alias: The aliased name of the property as in the request.
 	*/
     func get<F: AnyField>(_ keyPath: KeyPath<T.Schema, F>, alias: String) -> [Partial<F.Value.Element>]? where F.Value: Collection & Object {
         guard let valuesArray = self.values[alias] as? [[String: Any]] else { return nil }

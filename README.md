@@ -9,7 +9,7 @@
 
 Artemis is a GraphQL library for Swift that lets you interact with a GraphQL backend entirely in Swift - no unsafe queries made of strings,
 no `Data` or `[String: Any]` responses you need to parse though manually. Artemis uses `KeyPath` objects to keep track of types used 
-in queries, so this:
+in queries, so this request:
 
 ```swift
 // Artemis                                  // Rendered GraphQL query
@@ -43,6 +43,22 @@ client.perform(query) { result in
 
 Don't let this simple example sell Artemis short, though - it includes full support for fragments, arguments, mutations, multiple query fields, 
 and code generation from GraphQL schema documents so you can get up and running with a new API in minutes. It's also very light 
-(requiring only `Foundation`), so supports iOS, macOS, or anywhere else Swift and Foundation can run.
+(requiring only `Foundation`), so supports iOS, macOS, or anywhere else Swift and Foundation can run. It's also compatible with iOS and
+MacOS all the way back to iOS 8 and MacOS 10.10 Yosemite (just requiring an update to Xcode 13 and Swift 5.1), so you can get started
+using it today.
 
-For instructions on adding Artemis to your project and setting up code generation, check out the [Getting Started](https://github.com/Saelyria/Artemis/tree/master/GettingStarted.md) setup guide.
+For instructions on adding Artemis to your project and setting up code generation, check out the [installation and setup](https://github.com/Saelyria/Artemis/tree/master/InstallationSetup.md) guide.
+
+Once you're setup, you can check out the tutorial on [getting started with Artemis](https://github.com/Saelyria/Artemis/tree/master/GettingStarted.md)
+guide to get up and running with making requests.
+
+## Contributors
+
+Aaron Bosnjak (email: aaron.bosnjak707@gmail.com, Twitter: @aaron_bosnjak)
+
+Artemis is open to contributors! If you have a feature idea or a bug fix, feel free to open a pull request. Issues and feature ideas are tracked on
+this [Trello board](https://trello.com/b/iDjeDfov/artemis).
+
+## License
+
+Artemis is available under the MIT license, so do pretty much anything you want with it. As always, see the LICENSE file for more info.
