@@ -86,10 +86,10 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
 	where the `$0` is referring to the 'input builder' object. The methods we are calling on it are keypaths on the
 	input object type.
 	 */
-    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> ( (InputBuilder<V>) -> Void ) -> Add<T, F, SubSelection> where V: Input {
+    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> ( (InputBuilder<V>) -> InputBuilder<V> ) -> Add<T, F, SubSelection> where V: Input {
         return { inputBuilder in
 			let b = InputBuilder<V>()
-            inputBuilder(b)
+            _ = inputBuilder(b)
 			let key = F.Argument()[keyPath: keyPath].name
 			let value = "{\(b.addedInputFields.joined(separator: ","))}"
 			self.renderedArguments.append("\(key):\(value)")
@@ -101,40 +101,6 @@ public class Add<T: Object, F: AnyField, SubSelection: FieldAggregate>: FieldAgg
         self.fieldType = fieldType
 		self.items = items
         self.error = error
-    }
-}
-
-/**
-An object used when adding arguments to a field selection that builds a string of values for a given 'input' object.
-
-This object is specialized with the type of an 'input' object being used as the value for an argument. It is passed into
-the closure on that argument, where it is called with the keypaths of the wrapped 'input' type with the input's values.
-*/
-@dynamicMemberLookup
-public class InputBuilder<I: Input> {
-	internal var addedInputFields: [String] = []
-	
-	/**
-	Adds the given property value to the input object.
-	*/
-	public subscript<V: Scalar, T>(dynamicMember keyPath: KeyPath<I.Schema, Field<V, T>>) -> (V) -> Void {
-        return { value in
-			let key = I.Schema()[keyPath: keyPath].key
-			self.addedInputFields.append("\(key):\(value.render())")
-        }
-    }
-	
-	/**
-	Adds the given property input object value to the input object.
-	*/
-    public subscript<V, T>(dynamicMember keyPath: KeyPath<I.Schema, Field<V, T>>) -> ( (InputBuilder<V>) -> Void ) -> Void where V: Input {
-        return { inputBuilder in
-			let b = InputBuilder<V>()
-            inputBuilder(b)
-			let key = I.Schema()[keyPath: keyPath].key
-			let value = "{\(b.addedInputFields.joined(separator: ","))}"
-			self.addedInputFields.append("\(key):\(value)")
-        }
     }
 }
 

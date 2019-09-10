@@ -63,9 +63,7 @@ final class QueryRenderingTests: XCTestCase {
             .number(15)
 			.input {
 				$0.prop(1)
-				$0.nested {
-					$0.prop2("s")
-				}
+				.nested { $0.prop2("s") }
 			}
         }
         
