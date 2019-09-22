@@ -1,7 +1,7 @@
 import Foundation
 
 /**
-A protocol that identifies a type as being a GraphQL 'scalar'.
+A protocol that identifies a type as representing a GraphQL 'scalar'.
  
 'Scalars' are base types like `String`, `Int`, or `Bool` that can be used as the leaves for an operation.
  */
@@ -10,12 +10,51 @@ public protocol Scalar: SelectionOutput, SelectionInput {
 }
 
 /**
-A protocol that identifies a type as being a GraphQL 'interface'.
+A protocol that identifies a type as representing a GraphQL 'object'.
+ 
+'Objects' in GraphQL are any types that have selectable fields of other 'objects' or 'scalars'. This protocol is
+conformed to by data types that are meant to represent the various objects of your GraphQL API.
+ */
+public protocol Object: SelectionOutput {
+    /// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
+    associatedtype Schema: ObjectSchema
+    associatedtype Result = Partial<Self>
+}
+
+/**
+A protocol that identifies a type as representing a GraphQL 'interface'.
 
 'Interfaces' in GraphQL are like Swift protocols that GraphQL types can declare that they implement. In Artemis, GraphQL
 types declare their conformance to interfaces via their static `implements` property.
 */
 public protocol Interface: Object, ObjectSchema { }
+
+/**
+A protocol that designates a type as representing a GraphQL 'enum'.
+*/
+public protocol Enum: Scalar, RawRepresentable where Self.RawValue == String, Self.Result == String { }
+
+/**
+A protocol that designates a type as representing a GraphQL 'input object' type.
+*/
+public protocol Input: SelectionInput, Object { }
+
+// MARK: -
+
+/**
+A protocol that designates a type as containing the fields for an `Object` type.
+
+This protocol is separate from the `Object` protocol to allow existing model types to declare themselves as GraphQL
+`objects`, but to specify another type as representing its 'schema' (i.e. another type that contains all the heavily-
+marked-up `Field` properties). When object types are generated, they will generally conform to both of these protocols.
+*/
+public protocol ObjectSchema {
+    associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void, Void, Void>
+    
+    static var implements: ImplementedInterfaces { get }
+    
+    init()
+}
 
 /**
 A type used for objects to declare the interfaces that they implement.
@@ -26,6 +65,9 @@ public struct Interfaces<I1, I2, I3, I4, I5>: AnyInterfaces {
 public protocol AnyInterfaces {
     associatedtype I1; associatedtype I2; associatedtype I3; associatedtype I4; associatedtype I5
 }
+
+// MARK: -
+
 public extension Interfaces where I5 == Void {
     init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type, _ i4: I4.Type) { }
 }
@@ -42,25 +84,20 @@ public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void
     init() { }
 }
 
-/**
-An object that acts as the schema for a GraphQL 'object' or 'type'.
-*/
-public protocol Object: SelectionOutput {
-    /// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
-    associatedtype Schema: ObjectSchema
-    associatedtype Result = Partial<Self>
-}
-
 public extension Object where Self: ObjectSchema {
     typealias Schema = Self
 }
 
-public protocol ObjectSchema {
-    associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void, Void, Void>
-    
-    static var implements: ImplementedInterfaces { get }
-    
-    init()
+public extension Enum {
+    func render() -> String {
+        return self.rawValue
+    }
+}
+
+public extension Input {
+    func render() -> String {
+        return ""
+    }
 }
 
 public extension ObjectSchema where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
@@ -203,20 +240,6 @@ public extension Scalar {
         guard R.self == Result.self else { throw GraphQLError.invalidOperation }
         guard let returnValue = object as? R else { throw GraphQLError.singleItemParseFailure(operation: key) }
         return returnValue
-    }
-}
-
-public protocol Enum: Scalar, RawRepresentable where Self.RawValue == String, Self.Result == String { }
-public extension Enum {
-    func render() -> String {
-        return self.rawValue
-    }
-}
-
-public protocol Input: SelectionInput, Object { }
-public extension Input {
-    func render() -> String {
-        return ""
     }
 }
 

@@ -1,8 +1,20 @@
 import Foundation
 
+/**
+An object that represents an operation (either a query or mutation) performed with a GraphQL API.
+
+Operation objects are used with `Client` objects to make requests with a GraphQL API. In this relationship, operations
+describe the GraphQL request document by being created with the selected fields via `Add` objects.
+
+These objects are generally created inside a `Client.perform(_:completion:)` method call so that their `Schema` and
+`Result` types can be inferred from the selections done inside their function builders.
+*/
 public struct Operation<Schema, Result> {
+	/// A type of GraphQL operation.
     public enum OperationType {
+		/// An operation that is meant to query data from a GraphQL API.
         case query
+		/// An operation that is meant to mutate (either update or add) data in a GraphQL API.
         case mutation
     }
     
@@ -11,8 +23,17 @@ public struct Operation<Schema, Result> {
     let resultCreator: ([String: Any]) throws -> Result
     let renderedSubSelections: String
     let renderedFragments: String
+	/// The type of GraphQL operation this operation will perform.
     public let operationType: OperationType
     
+	/**
+	Creates a new operation using the selection set from the given function builder.
+	
+	- parameter type: The type of this operation.
+	- parameter name: The optional name of this operation, used mainly for debugging and logging purposes.
+	- parameter subSelection: A function builder of `Add` objects that selects the fields to include in the response to
+		this operation.
+	*/
     public init<F: FieldAggregate>(_ type: OperationType, name: String? = nil, @SubSelectionBuilder _ subSelection: () -> F) where F.T == Schema, F.Result == Result {
         self.operationType = type
         self.name = name

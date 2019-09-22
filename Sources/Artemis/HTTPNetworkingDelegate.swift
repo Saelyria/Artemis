@@ -1,5 +1,8 @@
 import Foundation
 
+/**
+A networking delegate for a 'client' object that sends GraphQL documents over HTTP to a specific endpoint.
+*/
 public class HTTPNetworkingDelegate: NetworkDelegate {
     public enum Method {
         case get
