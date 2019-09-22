@@ -44,7 +44,7 @@ client.perform(query) { result in
 Don't let this simple example sell Artemis short, though - it includes full support for fragments, arguments, mutations, multiple query fields, 
 and code generation from GraphQL schema documents so you can get up and running with a new API in minutes. It's also very light 
 (requiring only `Foundation`), so supports iOS, macOS, or anywhere else Swift and Foundation can run. It's also compatible with iOS and
-MacOS all the way back to iOS 8 and MacOS 10.10 Yosemite (just requiring an update to Xcode 13 and Swift 5.1), so you can get started
+MacOS all the way back to iOS 8 and MacOS 10.10 Yosemite (just requiring an update to Xcode 11 and Swift 5.1), so you can get started
 using it today.
 
 For instructions on adding Artemis to your project and setting up code generation, check out the [installation and setup](https://github.com/Saelyria/Artemis/tree/master/InstallationSetup.md) guide.

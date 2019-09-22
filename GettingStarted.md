@@ -27,11 +27,11 @@ import Artemis
 
 final class Continent: Object, ObjectSchema {
 
-   var code = Field<String, NoArguments>("code")
+  var code = Field<String, NoArguments>("code")
 
-   var name = Field<String, NoArguments>("name")
+  var name = Field<String, NoArguments>("name")
 
-   var countries = Field<[Country]?, NoArguments>("countries")
+  var countries = Field<[Country]?, NoArguments>("countries")
 }
 ```
 A lot of this `Continent` type can be inferred from reading it, but there's a handful of things that might look a little peculiar so that we can
@@ -46,7 +46,7 @@ Now let's assume we have a simple query root object like this:
 ```swift
 final class Query: Object, ObjectSchema {
 
-   var continents = Field<[Continent]?, NoArguments>("continents")
+  var continents = Field<[Continent]?, NoArguments>("continents")
 }
 ```
 
@@ -67,7 +67,7 @@ the one field on our root query object - the 'continents' field. We can do that 
 
 ```swift
 client.perform(Operation(.query) {
-	Add(\.continents)
+  Add(\.continents)
 }, completion: { result in
 
 })
@@ -80,9 +80,9 @@ we want the continent's name, like so:
 
 ```swift
 client.perform(Operation(.query) {
-	Add(\.continents) {
-		Add(\.name)
-	}
+  Add(\.continents) {
+    Add(\.name)
+  }
 }, completion: { result in
 
 })
@@ -98,14 +98,14 @@ like this:
 
 ```swift
 ... completion: { result in
-	switch result {
-	case .success(let continents):
-		continents.forEach { continent in
-			print(continent.name)
-		}
-	case .failure(let error):
-		print(error)
+  switch result {
+  case .success(let continents):
+    continents.forEach { continent in
+	  print(continent.name)
 	}
+  case .failure(let error):
+    print(error)
+  }
 }
 ```
 
@@ -114,7 +114,7 @@ The thing that makes it 'partial' is that, naturally, if we were to ask our `con
 
 ```swift
 continents.forEach { continent in
-	print(continent.code)
+  print(continent.code)
 }
 ```
 
@@ -123,10 +123,10 @@ the request like this, just like you'd expect:
 
 ```swift
 Operation(.query) {
-	Add(\.continents) {
-		Add(\.name)
-		Add(\.code)
-	}
+  Add(\.continents) {
+    Add(\.name)
+    Add(\.code)
+  }
 }
 ```
 
@@ -139,7 +139,7 @@ a field via the generic arguments to it. Here's an example of what that all migh
 ```swift
 var continent = Field<Continent?, ContinentArguments>("continent")
 final class ContinentArguments: ArgumentsList {
-	var code = Argument<String>("code")
+  var code = Argument<String>("code")
 }
 ```
 
@@ -151,11 +151,52 @@ arguments to a SwiftUI view - as a trailing function call, like this:
 
 ```swift
 client.perform(Operation(.query) {
-	Add(\.continent) {
-		Add(\.name)
-	}
-	.code("NA")
+  Add(\.continent) {
+    Add(\.name)
+  }
+  .code("NA")
 }, completion: { _ in })
 ```
 
 Where the value passed into the function call is the value for the argument.
+
+### Input objects
+
+Sometimes, arguments for our selections require more complicated 'input object' types. Artemis gives you a syntax very close to GraphQL's
+own for selecting fields on input objects. As an example, say our `continents` field had an input object that let us optionally add arguments
+to filter the returned continents with filters like the languages spoken, a minimum population, and a maximum population. This would get
+generated into a Swift class like this:
+
+```swift
+final class ContinentFilterInput: Input, ObjectSchema {
+  var languages = Field<[String], NoArguments>("languages")
+  var minimumPopulation = Field<Int, NoArguments>("minimumPopulation")
+  var maximumPopulation = Field<Int, NoArguments>("maximumPopulation")
+}
+```
+
+and the `continents` field and its arguments type would be generated like this:
+
+```swift
+var continents = Field<[Continent], ContinentsArguments>("continent")
+final class ContinentsArguments: ArgumentsList {
+  var filters = Argument<ContinentFilterInput>("filters")
+}
+```
+
+We can then create a request for continents with filters attached like this:
+
+```swift
+client.perform(Operation(.query) {
+  Add(\.continents) {
+    Add(\.name)
+  }
+  .filters { 
+    $0.languages(["Japanese", "Hindi"])
+    $0.minimumPopulation(50000000) 
+  }
+}, completion: { _ in })
+```
+
+Here, we've added the `filters` argument to the `continents` field. Since this `filters` argument takes an input object, we give the
+`filters` call a closure that gets passed in an object that we call with the input object's fields and their arguments.
