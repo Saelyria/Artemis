@@ -2,7 +2,7 @@ import XCTest
 @testable import Artemis
 
 final class QueryParsingTests: XCTestCase {
-    func testQueryMultipleQueryFieldSubSelectionParsing() {
+    func testQueryMultipleQueryFieldSelectionSetParsing() {
         let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
             Add(\.me) {
                 Add(\.firstName)
@@ -105,7 +105,7 @@ final class QueryParsingTests: XCTestCase {
     }
     
     static var allTests = [
-        ("testQueryMultipleQueryFieldSubSelectionRendering", testQueryMultipleQueryFieldSubSelectionParsing),
+        ("testQueryMultipleQueryFieldSelectionSetRendering", testQueryMultipleQueryFieldSelectionSetParsing),
         ("testQueryAliasRendering", testQueryAliasParsing),
     ]
 }

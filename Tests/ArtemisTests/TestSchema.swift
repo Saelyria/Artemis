@@ -1,24 +1,24 @@
 @testable import Artemis
 
 final class Query: Object, ObjectSchema {
-    typealias Schema = Query
-    
-    var me = Field<Person, NoArguments>("me")
-    var user = Field<Person, UserArguments>("user")
-    struct UserArguments: ArgumentsList {
-        var id = Argument<String>("id")
-        let number = Argument<Int>("number", default: 10)
+	typealias Schema = Query
+	
+	var me = Field<Person, NoArguments>("me")
+	var user = Field<Person, UserArguments>("user")
+	struct UserArguments: ArgumentsList {
+		var id = Argument<String>("id")
+		let number = Argument<Int>("number", default: 10)
 		var input = Argument<UserInput>("input")
-    }
-    var users = Field<[Person], NoArguments>("users")
-    var number = Field<Int, NoArguments>("number")
-    var numbers = Field<[Int], NoArguments>("numbers")
+	}
+	var users = Field<[Person], NoArguments>("users")
+	var number = Field<Int, NoArguments>("number")
+	var numbers = Field<[Int], NoArguments>("numbers")
 }
 
 struct Person {
-    let id: String
-    let name: String
-    let age: Int
+	let id: String
+	let name: String
+	let age: Int
 }
 
 final class UserInput: Input, ObjectSchema {
@@ -28,22 +28,22 @@ final class UserInput: Input, ObjectSchema {
 }
 
 extension Person: Object {
-    final class Schema: ObjectSchema {
-        static let implements = Interfaces(LivingThing.self)
-        
-        var firstName = Field<String, NoArguments>("firstName")
-        var lastName = Field<String, NoArguments>("lastName")
-        var age = Field<Int, NoArguments>("age")
-        var pets = Field<[Animal], NoArguments>("pets")
-        var spouse = Field<Person, NoArguments>("spouse")
-    }
+	final class Schema: ObjectSchema {
+		static let implements = Interfaces(LivingThing.self)
+		
+		var firstName = Field<String, NoArguments>("firstName")
+		var lastName = Field<String, NoArguments>("lastName")
+		var age = Field<Int, NoArguments>("age")
+		var pets = Field<[Animal], NoArguments>("pets")
+		var spouse = Field<Person, NoArguments>("spouse")
+	}
 }
 
 final class Animal: Object, ObjectSchema {
-    var name = Field<String, NoArguments>("name")
-    var age = Field<Int, NoArguments>("age")
+	var name = Field<String, NoArguments>("name")
+	var age = Field<Int, NoArguments>("age")
 }
 
 final class LivingThing: Interface {
-    var age = Field<Int, NoArguments>("age")
+	var age = Field<Int, NoArguments>("age")
 }

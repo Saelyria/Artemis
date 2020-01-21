@@ -17,8 +17,8 @@ final class QueryDebugRenderingTests: XCTestCase {
         """)
     }
     
-    func testQueryMultipleQueryFieldSubSelectionRendering() {
-        let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
+    func testQueryMultipleQueryFieldSelectionSetRendering() {
+		let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(Operation.OperationType.query) {
             Add(\.me) {
                 Add(\.firstName)
                 Add(\.lastName)
@@ -93,7 +93,7 @@ final class QueryDebugRenderingTests: XCTestCase {
     
     static var allTests = [
         ("testQueryNameRendering", testQueryNameRendering),
-        ("testQueryMultipleQueryFieldSubSelectionRendering", testQueryMultipleQueryFieldSubSelectionRendering),
+        ("testQueryMultipleQueryFieldSelectionSetRendering", testQueryMultipleQueryFieldSelectionSetRendering),
         ("testQueryAliasRendering", testQueryAliasRendering),
 		("testQueryArgumentRendering", testQueryArgumentRendering)
     ]
