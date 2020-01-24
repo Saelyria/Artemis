@@ -4,7 +4,7 @@ import Foundation
 //    return fragment.SelectionSet
 //}
 
-public protocol FragmentProtocol: SelectionSet, AnyField {
+public protocol FragmentProtocol: SelectionSet { //AnyField
 	var name: String { get }
 	func render() -> String
 }

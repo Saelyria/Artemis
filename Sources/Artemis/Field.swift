@@ -4,10 +4,11 @@ import Foundation
 A protocol that allows us to generically refer to a `Field` instance.
 */
 public protocol AnyField {
-    associatedtype Value: SelectionOutput
-    associatedtype Argument: ArgumentsList = NoArguments
+	/// The type returned from the field. For example, on a `name` field, this would likely be `String`.
+	associatedtype Value: SelectionOutput
+	associatedtype Argument: ArgumentsList = NoArguments
     
-    var key: String { get }
+	var key: String { get }
 }
 
 /**
