@@ -12,15 +12,15 @@ user {
 The 'selection set' is an object that represents 'the selection of the 'name' and 'age' fields on a 'user' type'.
 Concrete types conforming to this protocol are returned from the 'sub selection function builders'.
 */
-public protocol SelectionSet: AnySelectionSet {
-	/// The object type that the fields selected from this aggregate are on.
-	associatedtype T: Object
-	/// The combined 'result' of the selected fields. For example, in the above example selection set of 'name' and
-	/// 'age', this would be a `(String, Int)` tuple.
-	associatedtype Result
-	
-	func createResult(from: [String : Any]) throws -> Result
-}
+//public protocol SelectionSet: AnySelectionSet {
+//	/// The object type that the fields selected from this aggregate are on.
+//	associatedtype T: Object
+//	/// The combined 'result' of the selected fields. For example, in the above example selection set of 'name' and
+//	/// 'age', this would be a `(String, Int)` tuple.
+//	associatedtype Result
+//
+//	func createResult(from: [String : Any]) throws -> Result
+//}
 /**
 A type-erased reference to a selection set that allows them to be put into arrays/individually called for their
 'render' strings to build queries.
@@ -45,7 +45,7 @@ public extension AnySelectionSet {
 	}
 }
 
-public struct SelectionSetItem<T: Object, Result>: SelectionSet {
+public struct SelectionSet<T: ObjectSchema, Result>: AnySelectionSet {
 	public var items: [AnySelectionSet]
 	var resultBuilder: ([String: Any]) throws -> Result
 	

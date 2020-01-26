@@ -15,7 +15,7 @@ instance.
 	`Object`. This type comees from the function builder on the init.
 */
 @dynamicMemberLookup
-public class Add<T: Object, F: AnyField, SS: SelectionSet>: SelectionSet {
+public class Add<T: ObjectSchema, F: AnyField>: AnySelectionSet {
 	/// The type of result object that adding this field gives when its surrounding operation is performed.
 	public typealias Result = F.Value.Result
 	
@@ -51,7 +51,7 @@ public class Add<T: Object, F: AnyField, SS: SelectionSet>: SelectionSet {
 	This subscript returns a closure that is called with the value to supply for the argument. Keypaths usable with this
 	subscript method are keypaths on the field's `Argument` type.
 	*/
-	public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (V) -> Add<T, F, SS> {
+	public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (V) -> Add<T, F> {
 		return { value in
 			let renderedArg = F.Argument()[keyPath: keyPath].render(value: value)
 			self.renderedArguments.append(renderedArg)
@@ -92,7 +92,7 @@ public class Add<T: Object, F: AnyField, SS: SelectionSet>: SelectionSet {
 	where the `$0` is referring to the 'input builder' object. The methods we are calling on it are keypaths on the
 	input object type.
 	*/
-	public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> ( (InputBuilder<V>) -> InputBuilder<V> ) -> Add<T, F, SS> where V: Input {
+	public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> ( (InputBuilder<V>) -> InputBuilder<V> ) -> Add<T, F> where V: Input {
 		return { inputBuilder in
 			let b = InputBuilder<V>()
 			_ = inputBuilder(b)
@@ -110,7 +110,7 @@ public class Add<T: Object, F: AnyField, SS: SelectionSet>: SelectionSet {
 	}
 }
 
-extension Add where F.Value: Scalar, SS == EmptySelectionSet {
+extension Add where F.Value: Scalar {
 	/**
 	Adds the given field to the operation.
 	
@@ -118,13 +118,13 @@ extension Add where F.Value: Scalar, SS == EmptySelectionSet {
 	keypath object must be a GraphQL 'scalar' type.
 	- parameter alias: The alias to use for this field in the rendered GraphQL document.
 	*/
-	public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil) {
-		let field = T.Schema()[keyPath: keyPath]
+	public convenience init(_ keyPath: KeyPath<T, F>, alias: String? = nil) {
+		let field = T()[keyPath: keyPath]
 		self.init(fieldType: .field(key: field.key, alias: alias, renderedSelectionSet: nil), items: [])
 	}
 }
 
-extension Add where F.Value: Object, SS.T == F.Value {
+extension Add where F.Value: Object {
 	/**
 	Adds the given field to the operation.
 	
@@ -134,14 +134,14 @@ extension Add where F.Value: Object, SS.T == F.Value {
 	- parameter SelectionSet: A function builder that additional `Add` components can be given in to select fields on
 	this `Add` instance's returned value.
 	*/
-	public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil, @SelectionSetBuilder SelectionSet: () -> SS) {
-		let field = T.Schema()[keyPath: keyPath]
+	public convenience init<R>(_ keyPath: KeyPath<T, F>, alias: String? = nil, @SelectionSetBuilder SelectionSet: () -> SelectionSet<F.Value, R>) {
+		let field = T()[keyPath: keyPath]
 		let ss = SelectionSet()
 		self.init(fieldType: .field(key: field.key, alias: alias, renderedSelectionSet: ss.render()), items: ss.items)
 	}
 }
 
-extension Add where F.Value: Collection, SS.T.Schema == F.Value.Element, F.Value.Element: Object {
+//extension Add where F.Value: Collection, SS.T.Schema == F.Value.Element, F.Value.Element: Object {
 	/**
 	Adds the given field to the operation.
 	
@@ -156,7 +156,7 @@ extension Add where F.Value: Collection, SS.T.Schema == F.Value.Element, F.Value
 //		let ss = SelectionSet()
 //		self.init(fieldType:  .field(key: field.key, alias: alias, renderedSelectionSet: ss.render()), items: ss.items)
 //	}
-}
+//}
 
 extension Add {
 	/**
@@ -192,26 +192,26 @@ extension Add {
 
 /// A type that can be used as the sub-selection type for `Add` instances whose value type is a scalar (so can't include
 /// a sub-selection).
-public struct EmptySelectionSet: SelectionSet {
-	public struct T: Object {
-		public struct Schema: ObjectSchema {
-			public init() { }
-		}
-	}
-	public typealias Result = Never
-	
-	public var items: [AnySelectionSet] = []
-	
-	public func includedKeyPaths<T>() -> [(String, PartialKeyPath<T>)] {
-		return []
-	}
-	
-	public func render() -> String {
-		return ""
-	}
-	
-	public func createResult(from: [String : Any]) throws -> Never {
-		fatalError()
-	}
-}
+//public struct EmptySelectionSet: SelectionSet {
+//	public struct T: Object {
+//		public struct Schema: ObjectSchema {
+//			public init() { }
+//		}
+//	}
+//	public typealias Result = Never
+//
+//	public var items: [AnySelectionSet] = []
+//
+//	public func includedKeyPaths<T>() -> [(String, PartialKeyPath<T>)] {
+//		return []
+//	}
+//
+//	public func render() -> String {
+//		return ""
+//	}
+//
+//	public func createResult(from: [String : Any]) throws -> Never {
+//		fatalError()
+//	}
+//}
 
