@@ -1,7 +1,7 @@
 import Foundation
 
 // MARK: - Adding fragments of conforming types to an interface sub-selection
-
+/*
 public extension Add where SS == EmptySelectionSet, F: FragmentProtocol, F.T.Schema.ImplementedInterfaces.I1 == T {
 	/**
 	Adds the fields from the given fragment to the document.
@@ -116,3 +116,4 @@ public extension Add where SS == EmptySelectionSet, F: FragmentProtocol, F.T == 
         self.init(fieldType: .fragment(inline: "...\(fragment.name)", rendered: fragment.render()), items: fragment.items)
     }
 }
+*/

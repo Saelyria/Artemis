@@ -6,44 +6,57 @@ A function builder type that builds selection sets from `Add` instances.
 @_functionBuilder
 public struct SelectionSetBuilder {
 	public static func buildBlock
-		<SS1: SelectionSet>
-		(_ ss1: SS1)
-		-> SelectionSetItem<SS1.T, SS1.Result>
+        <T, F1>
+		(_ ss1: Add<T, F1>)
+        -> SelectionSet<T, F1.Value.Result>
 	{
-		return SelectionSetItem(items: [ss1], resultBuilder: { dict in
+		return SelectionSet(items: [ss1], resultBuilder: { dict in
 			return try ss1.createResult(from: dict)
 		})
 	}
 	
 	public static func buildBlock
-		<SS1: SelectionSet, SS2: SelectionSet>
-		(_ ss1: SS1, _ ss2: SS2)
-		-> SelectionSetItem<SS1.T, (SS1.Result, SS2.Result)>
-		where SS1.T == SS2.T
+		<T, F1, F2>
+        (_ ss1: Add<T, F1>, _ ss2: Add<T, F2>)
+        -> SelectionSet<T, (F1.Value.Result, F2.Value.Result)>
 	{
-		return SelectionSetItem(items: [ss1, ss2], resultBuilder: { dict in
+		return SelectionSet(items: [ss1, ss2], resultBuilder: { dict in
 			return (
 				try ss1.createResult(from: dict),
 				try ss2.createResult(from: dict)
 			)
 		})
 	}
+
+//    public static func buildBlock
+//        <T, S1: Selection, S2: Selection>
+//        (_ ss1: S1, _ ss2: S2)
+//        -> SelectionSet<T, (S1.Result, S2.Result)>
+//        where S1.T.Schema == T.Schema, S2.T.Schema == T.Schema
+//    {
+//        return SelectionSet(items: [ss1, ss2], resultBuilder: { dict in
+//            return (
+//                try ss1.createResult(from: dict),
+//                try ss2.createResult(from: dict)
+//            )
+//        })
+//    }
 	
-	public static func buildBlock
-		<SS1: SelectionSet, SS2: SelectionSet, SS3: SelectionSet>
-		(_ ss1: SS1, _ ss2: SS2, _ ss3: SS3)
-		-> SelectionSetItem<SS1.T, (SS1.Result, SS2.Result, SS3.Result)>
-		where SS1.T == SS2.T, SS2.T == SS3.T
-	{
-		return SelectionSetItem(items: [ss1, ss2, ss3], resultBuilder: { dict in
-			return (
-				try ss1.createResult(from: dict),
-				try ss2.createResult(from: dict),
-				try ss3.createResult(from: dict)
-			)
-		})
-	}
-	
+//	public static func buildBlock
+//		<T, F1, F2, F3>
+//		(_ ss1: Add<T, F1>, _ ss2: Add<T, F2>, _ ss3: Add<T, F3>)
+//		-> SelectionSet<T, (F1.Value.Result, F2.Value.Result, F3.Value.Result)>
+//	{
+//		return SelectionSet(items: [ss1, ss2, ss3], resultBuilder: { dict in
+//			return (
+//				try ss1.createResult(from: dict),
+//				try ss2.createResult(from: dict),
+//				try ss3.createResult(from: dict)
+//			)
+//		})
+//	}
+
+    /*
 	public static func buildBlock
 		<SS1: SelectionSet, SS2: SelectionSet, SS3: SelectionSet, SS4: SelectionSet>
 		(_ ss1: SS1, _ ss2: SS2, _ ss3: SS3, _ ss4: SS4)
@@ -94,4 +107,5 @@ public struct SelectionSetBuilder {
 			)
 		})
 	}
+ */
 }

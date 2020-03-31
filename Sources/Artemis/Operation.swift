@@ -9,7 +9,7 @@ describe the GraphQL request document by being created with the selected fields 
 These objects are generally created inside a `Client.perform(_:completion:)` method call so that their `Schema` and
 `Result` types can be inferred from the selections done inside their function builders.
 */
-public struct Operation<Schema, Result> {
+public struct Operation<Schema: Object, Result> {
 	/// A type of GraphQL operation.
 	public enum OperationType {
 		/// An operation that is meant to query data from a GraphQL API.
@@ -34,7 +34,7 @@ public struct Operation<Schema, Result> {
 	- parameter SelectionSet: A function builder of `Add` objects that selects the fields to include in the response to
 	this operation.
 	*/
-	public init<F: SelectionSet>(_ type: OperationType, name: String? = nil, @SelectionSetBuilder _ SelectionSet: () -> F) where F.T == Schema, F.Result == Result {
+    public init<S: Selection>(_ type: OperationType, name: String? = nil, @SelectionSetBuilder _ SelectionSet: () -> S) where S.T == Schema, S.Result == Result {
 		self.operationType = type
 		self.name = name
 		let fieldsAggegate = SelectionSet()

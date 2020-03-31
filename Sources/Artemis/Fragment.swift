@@ -3,7 +3,7 @@ import Foundation
 //public prefix func ...<T, SelectionSet>(_ fragment: Fragment<T, SelectionSet>) -> SelectionSet {
 //    return fragment.SelectionSet
 //}
-
+/*
 public protocol FragmentProtocol: SelectionSet { //AnyField
 	var name: String { get }
 	func render() -> String
@@ -45,3 +45,4 @@ public struct Fragment<T: Object>: FragmentProtocol {
 		return ""
 	}
 }
+*/
