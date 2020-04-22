@@ -7,6 +7,10 @@
 <a href="https://raw.githubusercontent.com/Saelyria/Artemis/master/LICENSE"><img src="http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License: MIT" /></a>
 </p>
 
+> Note that Artemis is not yet considered suitable for production development due to the unstable nature of Swift's 'function builders', 
+whose internal implementation changes greatly between Xcode versions. Until this Swift feature is officially implemented, Artemis is
+likely to break between Xcode versions and should be considered 'beta'.
+
 Artemis is a GraphQL library for Swift that lets you interact with a GraphQL backend entirely in Swift - no unsafe queries made of strings,
 no `Data` or `[String: Any]` responses you need to parse though manually. Artemis uses `KeyPath` objects to keep track of types used 
 in queries, so this request:
