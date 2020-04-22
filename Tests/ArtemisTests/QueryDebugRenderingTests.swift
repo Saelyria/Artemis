@@ -3,7 +3,7 @@ import XCTest
 
 final class QueryDebugRenderingTests: XCTestCase {
     func testQueryNameRendering() {
-        let query = Artemis.Operation(.query, name: "QueryName") {
+        let query = Artemis.Operation<Query, Partial<Person>>(.query, name: "QueryName") {
             Add(\.me) {
                 Add(\.firstName)
             }
@@ -18,7 +18,7 @@ final class QueryDebugRenderingTests: XCTestCase {
     }
     
     func testQueryMultipleQueryFieldSelectionSetRendering() {
-		let query = Artemis.Operation(.query) {
+		let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
             Add(\.me) {
                 Add(\.firstName)
                 Add(\.lastName)
@@ -46,7 +46,7 @@ final class QueryDebugRenderingTests: XCTestCase {
     }
     
     func testQueryAliasRendering() {
-        let query = Artemis.Operation(.query) {
+        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
             Add(\.me, alias: "first") {
                 Add(\.firstName, alias: "name")
             }

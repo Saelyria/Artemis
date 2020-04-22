@@ -31,13 +31,13 @@ public struct Operation<Schema: Object, Result> {
 	
 	- parameter type: The type of this operation.
 	- parameter name: The optional name of this operation, used mainly for debugging and logging purposes.
-	- parameter SelectionSet: A function builder of `Add` objects that selects the fields to include in the response to
+	- parameter selection: A function builder of `Add` objects that selects the fields to include in the response to
 	this operation.
 	*/
-    public init<S: Selection>(_ type: OperationType, name: String? = nil, @SelectionSetBuilder _ SelectionSet: () -> S) where S.T == Schema, S.Result == Result {
+    public init(_ type: OperationType, name: String? = nil, @SelectionSetBuilder<Schema> _ selection: () -> SelectionSet<Result>) {
 		self.operationType = type
 		self.name = name
-		let fieldsAggegate = SelectionSet()
+		let fieldsAggegate = selection()
 		self.error = fieldsAggegate.error
 		self.renderedSelectionSets = fieldsAggegate.render()
 		self.resultCreator = { try fieldsAggegate.createResult(from: $0) }

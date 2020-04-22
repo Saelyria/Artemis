@@ -31,8 +31,8 @@ public class Add<T: Object, F: AnyField>: Selection {
 		case .fragment: return ""
 		}
 	}
-	public var items: [AnySelection] = []
-	public var renderedFragmentDeclarations: [String] {
+    var items: [Selection] = []
+    var renderedFragmentDeclarations: [String] {
 		var frags: [String] = []
 		switch self.fieldType {
 		case .fragment(_, let rendered):
@@ -42,7 +42,7 @@ public class Add<T: Object, F: AnyField>: Selection {
 		frags.append(contentsOf: self.items.flatMap { $0.renderedFragmentDeclarations })
 		return frags
 	}
-	public let error: GraphQLError?
+    let error: GraphQLError?
 	private var renderedArguments: [String] = []
 	
 	/**
@@ -103,7 +103,7 @@ public class Add<T: Object, F: AnyField>: Selection {
 		}
 	}
 	
-	internal init(fieldType: FieldType, items: [AnySelection], error: GraphQLError? = nil) {
+	internal init(fieldType: FieldType, items: [Selection], error: GraphQLError? = nil) {
 		self.fieldType = fieldType
 		self.items = items
 		self.error = error
@@ -134,11 +134,11 @@ extension Add where F.Value: Object {
 	- parameter selectionSet: A function builder that additional `Add` components can be given in to select fields on
 	this `Add` instance's returned value.
 	*/
-    public convenience init<S: Selection>(
+    public convenience init<R>(
         _ keyPath: KeyPath<T.Schema, F>,
         alias: String? = nil,
-        @SelectionSetBuilder selectionSet: () -> S
-    ) where S.T == F.Value {
+        @SelectionSetBuilder<F.Value> selectionSet: () -> SelectionSet<R>
+    ) {
 		let field = T.Schema()[keyPath: keyPath]
 		let ss = selectionSet()
 		self.init(fieldType: .field(key: field.key, alias: alias, renderedSelectionSet: ss.render()), items: ss.items)
@@ -166,7 +166,7 @@ extension Add {
 	/**
 	Renders this added field and its sub-selected fields into a string that can be added to a document.
 	*/
-	public func render() -> String {
+    func render() -> String {
 		switch self.fieldType {
 		case .field(let key, let alias, let renderedSelectionSet):
 			let args: String
@@ -188,7 +188,7 @@ extension Add {
 	Creates the appropriate response object type (likely a `Partial` object specialized with this instance's `Value`
 	type) from the response JSON.
 	*/
-	public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
+    func createResult(from dict: [String : Any]) throws -> F.Value.Result {
 		guard let object: Any = dict[self.key] else { throw GraphQLError.malformattedResponse(reason: "Response didn't include key for \(self.key)") }
 		return try F.Value.createUnsafeResult(from: object, key: self.key)
 	}

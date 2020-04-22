@@ -137,6 +137,7 @@ open class Client<Q: Object> {
             assertionFailure("Built query was not valid - \(error)")
 			return
         }
+        if self.loggingEnabled { print("Artemis - fetching query:\n\(operation.renderDebug())") }
         if let data = mock {
             do {
 				if self.loggingEnabled,
@@ -151,7 +152,6 @@ open class Client<Q: Object> {
                 completion(.failure(error as! GraphQLError))
             }
         } else {
-			if self.loggingEnabled { print("Artemis - fetching query:\n\(operation.renderDebug())") }
             self.networkDelegate.send(document: operation.render()) { [weak self] rawResult in
                 do {
                     let data = try rawResult.get()
