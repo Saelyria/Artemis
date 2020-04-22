@@ -9,7 +9,9 @@
 
 > Note that Artemis is not yet considered suitable for production development due to the unstable nature of Swift's 'function builders', 
 whose internal implementation changes greatly between Xcode versions. Until this Swift feature is officially implemented, Artemis is
-likely to break between Xcode versions and should be considered 'beta'.
+likely to break between Xcode versions and should be considered 'beta'. Currently, Artemis builds with the 'Trunk Development' 
+snapshots of the master branch of Swift from [here](https://swift.org/download/#snapshots) (last checked with the snapshot from April
+21, 2020).
 
 Artemis is a GraphQL library for Swift that lets you interact with a GraphQL backend entirely in Swift - no unsafe queries made of strings,
 no `Data` or `[String: Any]` responses you need to parse though manually. Artemis uses `KeyPath` objects to keep track of types used 
