@@ -19,7 +19,7 @@ public struct SelectionSetBuilder<T: Object> {
         })
     }
 
-    public static func buildBlock<R>(_ set: SelectionSet<R>) -> SelectionSet<R> {
+    public static func buildBlock<S: Selection>(_ set: S) -> S {
         return set
     }
 

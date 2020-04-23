@@ -7,7 +7,7 @@ final class Query: Object, ObjectSchema {
 	var user = Field<Person, UserArguments>("user")
 	struct UserArguments: ArgumentsList {
 		var id = Argument<String>("id")
-		let number = Argument<Int>("number", default: 10)
+		var number = Argument<Int>("number", default: 10)
 		var input = Argument<UserInput>("input")
 	}
 	var users = Field<[Person], NoArguments>("users")

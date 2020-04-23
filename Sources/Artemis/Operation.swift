@@ -34,7 +34,7 @@ public struct Operation<Schema: Object, Result> {
 	- parameter selection: A function builder of `Add` objects that selects the fields to include in the response to
 	this operation.
 	*/
-    public init(_ type: OperationType, name: String? = nil, @SelectionSetBuilder<Schema> _ selection: () -> SelectionSet<Result>) {
+    public init<S: Selection>(_ type: OperationType, name: String? = nil, @SelectionSetBuilder<Schema> _ selection: () -> S) where S.Result == Result {
 		self.operationType = type
 		self.name = name
 		let fieldsAggegate = selection()
