@@ -1,7 +1,6 @@
 import Foundation
 
 // MARK: - Adding fragments of conforming types to an interface sub-selection
-
 /*
 public extension Add where SS == EmptySelectionSet, F: FragmentProtocol, F.T.Schema.ImplementedInterfaces.I1 == T {
 	/**

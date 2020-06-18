@@ -15,7 +15,7 @@ instance.
 	`Object`. This type comees from the function builder on the init.
 */
 @dynamicMemberLookup
-public class Add<T: ObjectSchema, F: AnyField>: AnySelectionSet {
+public class Add<T: Object, F: AnyField>: Selection {
 	/// The type of result object that adding this field gives when its surrounding operation is performed.
 	public typealias Result = F.Value.Result
 	
@@ -28,11 +28,11 @@ public class Add<T: ObjectSchema, F: AnyField>: AnySelectionSet {
 	var key: String {
 		switch self.fieldType {
 		case .field(let key, let alias, _): return alias ?? key
-		case .fragment(_): return ""
+		case .fragment: return ""
 		}
 	}
-	public var items: [AnySelectionSet] = []
-	public var renderedFragmentDeclarations: [String] {
+    public var items: [SelectionBase] = []
+    public var renderedFragmentDeclarations: [String] {
 		var frags: [String] = []
 		switch self.fieldType {
 		case .fragment(_, let rendered):
@@ -42,7 +42,7 @@ public class Add<T: ObjectSchema, F: AnyField>: AnySelectionSet {
 		frags.append(contentsOf: self.items.flatMap { $0.renderedFragmentDeclarations })
 		return frags
 	}
-	public let error: GraphQLError?
+    public let error: GraphQLError?
 	private var renderedArguments: [String] = []
 	
 	/**
@@ -103,7 +103,7 @@ public class Add<T: ObjectSchema, F: AnyField>: AnySelectionSet {
 		}
 	}
 	
-	internal init(fieldType: FieldType, items: [AnySelectionSet], error: GraphQLError? = nil) {
+	internal init(fieldType: FieldType, items: [SelectionBase], error: GraphQLError? = nil) {
 		self.fieldType = fieldType
 		self.items = items
 		self.error = error
@@ -118,8 +118,8 @@ extension Add where F.Value: Scalar {
 	keypath object must be a GraphQL 'scalar' type.
 	- parameter alias: The alias to use for this field in the rendered GraphQL document.
 	*/
-	public convenience init(_ keyPath: KeyPath<T, F>, alias: String? = nil) {
-		let field = T()[keyPath: keyPath]
+	public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil) {
+		let field = T.Schema()[keyPath: keyPath]
 		self.init(fieldType: .field(key: field.key, alias: alias, renderedSelectionSet: nil), items: [])
 	}
 }
@@ -131,12 +131,16 @@ extension Add where F.Value: Object {
 	- parameter keyPath: The keypath referring to the field on the object type. The `Value` associated type of this
 	keypath object must be a GraphQL 'object' type.
 	- parameter alias: The alias to use for this field in the rendered GraphQL document.
-	- parameter SelectionSet: A function builder that additional `Add` components can be given in to select fields on
+	- parameter selectionSet: A function builder that additional `Add` components can be given in to select fields on
 	this `Add` instance's returned value.
 	*/
-	public convenience init<R>(_ keyPath: KeyPath<T, F>, alias: String? = nil, @SelectionSetBuilder SelectionSet: () -> SelectionSet<F.Value, R>) {
-		let field = T()[keyPath: keyPath]
-		let ss = SelectionSet()
+    public convenience init<S: Selection>(
+        _ keyPath: KeyPath<T.Schema, F>,
+        alias: String? = nil,
+        @SelectionSetBuilder<F.Value> selectionSet: () -> S
+    ) {
+		let field = T.Schema()[keyPath: keyPath]
+		let ss = selectionSet()
 		self.init(fieldType: .field(key: field.key, alias: alias, renderedSelectionSet: ss.render()), items: ss.items)
 	}
 }
@@ -162,7 +166,7 @@ extension Add {
 	/**
 	Renders this added field and its sub-selected fields into a string that can be added to a document.
 	*/
-	public func render() -> String {
+    public func render() -> String {
 		switch self.fieldType {
 		case .field(let key, let alias, let renderedSelectionSet):
 			let args: String
@@ -184,7 +188,7 @@ extension Add {
 	Creates the appropriate response object type (likely a `Partial` object specialized with this instance's `Value`
 	type) from the response JSON.
 	*/
-	public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
+    public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
 		guard let object: Any = dict[self.key] else { throw GraphQLError.malformattedResponse(reason: "Response didn't include key for \(self.key)") }
 		return try F.Value.createUnsafeResult(from: object, key: self.key)
 	}

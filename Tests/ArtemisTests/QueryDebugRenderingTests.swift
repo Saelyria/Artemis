@@ -18,7 +18,7 @@ final class QueryDebugRenderingTests: XCTestCase {
     }
     
     func testQueryMultipleQueryFieldSelectionSetRendering() {
-		let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(Operation.OperationType.query) {
+		let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
             Add(\.me) {
                 Add(\.firstName)
                 Add(\.lastName)
