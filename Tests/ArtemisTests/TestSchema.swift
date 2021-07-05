@@ -40,6 +40,8 @@ extension Person: Object {
 }
 
 final class Animal: Object, ObjectSchema {
+    static let implements = Interfaces(LivingThing.self)
+
 	var name = Field<String, NoArguments>("name")
 	var age = Field<Int, NoArguments>("age")
 }

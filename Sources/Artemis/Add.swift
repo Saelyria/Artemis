@@ -11,8 +11,6 @@ instance.
 - `T`: The GraphQL object type that we are selecting fields on. For example, a `User` type.
 - `F`: The specific `Field` type (i.e. property) that this 'add' object is selecting. For example, the `name` field on
 	the `User`, which could be a `Field<String, NoArguments>`.
-- `SelectionSet`: The `FieldAggregate` type that represents all the sub-selected fields on `F`'s type if it is an
-	`Object`. This type comees from the function builder on the init.
 */
 @dynamicMemberLookup
 public class Add<T: Object, F: AnyField>: Selection {

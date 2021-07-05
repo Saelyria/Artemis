@@ -1,7 +1,7 @@
 import Foundation
 
 /**
- A type-erased reference to a selection (either `SelectionSet` or `Add` that allows them to be put into arrays/
+ A type-erased reference to a selection (either `SelectionSet` or `Add`) that allows them to be put into arrays/
  individually called for their 'render' strings to build queries.
 */
 public protocol Selection: SelectionBase {
