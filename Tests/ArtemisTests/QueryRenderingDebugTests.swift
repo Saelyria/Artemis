@@ -1,7 +1,7 @@
 import XCTest
 @testable import Artemis
 
-final class QueryDebugRenderingTests: XCTestCase {
+final class QueryRenderingDebugTests: XCTestCase {
     func testQueryNameRendering() {
         let query = Artemis.Operation<Query, Partial<Person>>(.query, name: "QueryName") {
             Add(\.me) {
@@ -93,11 +93,16 @@ final class QueryDebugRenderingTests: XCTestCase {
 
     func testFragmentRendering() {
         let ageFragment = Fragment("ageField", on: LivingThing.self) {
-            Add(\.age)
+            Add(\.age, alias: "yearsOnEarth")
         }
         let namesFragment = Fragment("nameFields", on: Person.self) {
             Add(\.firstName)
             Add(\.lastName)
+        }
+        let petsFragment = Fragment("petField", on: Person.self) {
+            Add(\.pets) {
+                Add(\.age)
+            }
         }
 
         let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
@@ -109,26 +114,33 @@ final class QueryDebugRenderingTests: XCTestCase {
             Add(\.user, alias: "second") {
                 Add(\.firstName)
                 Add(fieldsOn: ageFragment)
+                Add(fieldsOn: petsFragment)
             }
         }
 
         XCTAssertEqual(query.renderDebug(), """
         {
-           user(id: \"321\") {
+           user(id: "321") {
               ...nameFields
               ...ageField
            }
            second: user {
               firstName
               ...ageField
+              ...petField
            }
         }
         fragment ageField on LivingThing {
-           age
+           yearsOnEarth: age
         }
         fragment nameFields on Person {
            firstName
            lastName
+        }
+        fragment petField on Person {
+           pets {
+              age
+           }
         }
         """)
     }

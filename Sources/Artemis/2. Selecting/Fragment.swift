@@ -1,24 +1,14 @@
 import Foundation
 
-//public prefix func ...<T, SelectionSet>(_ fragment: Fragment<T, SelectionSet>) -> SelectionSet {
-//    return fragment.SelectionSet
-//}
-
 /**
 An object representing a GraphQL 'fragment' that can be added to a sub-selection.
 */
 public struct Fragment<T: Object> {
-	public typealias Argument = NoArguments
-	
-	public var key: String = ""
-	public typealias Result = Never
-	
+    /// The name given to this fragment to identify it.
 	public let name: String
 	let renderedSelectionSet: String
-	public var items: [SelectionBase] = []
-    public var error: GraphQLError?
-    public var renderedFragmentDeclarations: [String] = []
-	
+    let items: [SelectionBase]
+
 	/**
 	Creates a new frament usable in a sub-selection with the given name, on the given type, selecting the properties
 	in the given sub-selection function builder result.

@@ -65,20 +65,6 @@ extension Add {
     }
 
     /**
-    Adds an argument wrapped as a variable to the queried field.
-
-    This subscript returns a closure that is called with a `Variable` wrapping the value to supply for the argument.
-    Keypaths usable with this subscript method are keypaths on the field's `Argument` type.
-    */
-    //    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (Variable<V>) -> Add<T, F, SelectionSet> {
-    //        return { variable in
-    //            let renderedArg = F.Argument()[keyPath: keyPath].render(value: variable)
-    //            self.renderedArguments.append(renderedArg)
-    //            return self
-    //        }
-    //    }
-
-    /**
     Adds an 'input' object argument to the queried field.
 
     This keypath returns a closure that is called with a closure that builds the input object to supply for the
@@ -165,23 +151,6 @@ extension Add {
 	}
 }
 
-//extension Add where F.Value: Collection, SS.T.Schema == F.Value.Element, F.Value.Element: Object {
-	/**
-	Adds the given field to the operation.
-	
-	- parameter keyPath: The keypath referring to the field on the object type. The `Value` associated type of this
-	keypath object must be a GraphQL 'object' type.
-	- parameter alias: The alias to use for this field in the rendered GraphQL document.
-	- parameter SelectionSet: A function builder that additional `Add` components can be given in to select fields on
-	this `Add` instance's returned value.
-	*/
-//	public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil, @SelectionSetBuilder SelectionSet: () -> SelectionSet) {
-//		let field = T.Schema()[keyPath: keyPath]
-//		let ss = SelectionSet()
-//		self.init(fieldType:  .field(key: field.key, alias: alias, renderedSelectionSet: ss.render()), items: ss.items)
-//	}
-//}
-
 extension Add {
 	/**
 	Renders this added field and its sub-selected fields into a string that can be added to a document.
@@ -215,29 +184,3 @@ extension Add {
         }
 	}
 }
-
-/// A type that can be used as the sub-selection type for `Add` instances whose value type is a scalar (so can't include
-/// a sub-selection).
-//public struct EmptySelectionSet: SelectionSet {
-//	public struct T: Object {
-//		public struct Schema: ObjectSchema {
-//			public init() { }
-//		}
-//	}
-//	public typealias Result = Never
-//
-//	public var items: [AnySelectionSet] = []
-//
-//	public func includedKeyPaths<T>() -> [(String, PartialKeyPath<T>)] {
-//		return []
-//	}
-//
-//	public func render() -> String {
-//		return ""
-//	}
-//
-//	public func createResult(from: [String : Any]) throws -> Never {
-//		fatalError()
-//	}
-//}
-

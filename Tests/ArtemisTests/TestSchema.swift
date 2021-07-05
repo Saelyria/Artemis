@@ -34,7 +34,10 @@ extension Person: Object {
 		var firstName = Field<String, NoArguments>("firstName")
 		var lastName = Field<String, NoArguments>("lastName")
 		var age = Field<Int, NoArguments>("age")
-		var pets = Field<[Animal], NoArguments>("pets")
+		var pets = Field<[Animal], PetsArguments>("pets")
+        struct PetsArguments: ArgumentsList {
+            var number = Argument<Int>("number", default: 10)
+        }
 		var spouse = Field<Person, NoArguments>("spouse")
 	}
 }
