@@ -51,11 +51,4 @@ public struct Argument<Value: SelectionInput> {
     func render(value: Value) -> String {
         return "\(name):\(value.render())"
     }
-    
-	/**
-	Renders the argument into a string that can be added to a rendered field in a document.
-	*/
-//    func render(value: Variable<Value>) -> String {
-//        return "\(name):\(value.name)"
-//    }
 }
