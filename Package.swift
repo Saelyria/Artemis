@@ -9,12 +9,10 @@ let package = Package(
     ],
     products: [
         .library(name: "Artemis", targets: ["Artemis"]),
-        .executable(name: "Artemis-Generate", targets: ["Artemis-Generate"])
     ],
     dependencies: [],
     targets: [
         .target(name: "Artemis", dependencies: []),
-        .target(name: "Artemis-Generate", dependencies: ["Artemis"]),
         .testTarget(name: "ArtemisTests", dependencies: ["Artemis"]),
     ],
     swiftLanguageVersions: [.v5]
