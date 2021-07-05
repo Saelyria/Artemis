@@ -9,9 +9,9 @@ import Foundation
 public struct SelectionSetBuilder<T: Object> {
     /// Function builder method to transform an `Add` instance into a `SelectionSet` that will get piped into one of
     /// the `buildBlock` methods.
-    public static func buildExpression<F1>(
-        _ ss1: Add<T, F1>
-    ) -> SelectionSet<F1.Value.Result> {
+    public static func buildExpression<R, A: ArgumentsList>(
+        _ ss1: Add<T, R, A>
+    ) -> SelectionSet<R> {
         return SelectionSet(items: [ss1], resultBuilder: { dict in
             return try ss1.createResult(from: dict)
         })

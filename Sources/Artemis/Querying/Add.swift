@@ -13,19 +13,16 @@ instance.
 	the `User`, which could be a `Field<String, NoArguments>`.
 */
 @dynamicMemberLookup
-public class Add<T: Object, F: AnyField>: Selection {
-	/// The type of result object that adding this field gives when its surrounding operation is performed.
-	public typealias Result = F.Value.Result
-	
+public class Add<T: Object, Result, Args: ArgumentsList>: Selection {	
 	enum FieldType {
-		case field(key: String, alias: String?, renderedSelectionSet: String?)
-		case fragment(inline: String, rendered: String)
+        case field(key: String, alias: String?, renderedSelectionSet: String?, createResult: (Any) throws -> Result)
+		case fragment(inline: String, rendered: String, createResult: (Any) throws -> Result)
 	}
 	
 	let fieldType: FieldType
 	var key: String {
 		switch self.fieldType {
-		case .field(let key, let alias, _): return alias ?? key
+		case .field(let key, let alias, _, _): return alias ?? key
 		case .fragment: return ""
 		}
 	}
@@ -33,7 +30,7 @@ public class Add<T: Object, F: AnyField>: Selection {
     public var renderedFragmentDeclarations: [String] {
 		var frags: [String] = []
 		switch self.fieldType {
-		case .fragment(_, let rendered):
+		case .fragment(_, let rendered, _):
 			frags = [rendered]
 		case .field: break
 		}
@@ -50,7 +47,7 @@ public class Add<T: Object, F: AnyField>: Selection {
 	}
 }
 
-extension Add where F: AnyField {
+extension Add {
     /**
     Adds an argument to the queried field.
 
@@ -58,10 +55,10 @@ extension Add where F: AnyField {
     subscript method are keypaths on the field's `Argument` type.
     */
     public subscript<V>(
-        dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>
-    ) -> (V) -> Add<T, F> {
+        dynamicMember keyPath: KeyPath<Args, Argument<V>>
+    ) -> (V) -> Add<T, Result, Args> {
         return { value in
-            let renderedArg = F.Argument()[keyPath: keyPath].render(value: value)
+            let renderedArg = Args()[keyPath: keyPath].render(value: value)
             self.renderedArguments.append(renderedArg)
             return self
         }
@@ -101,12 +98,12 @@ extension Add where F: AnyField {
     input object type.
     */
     public subscript<V>(
-        dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>
-    ) -> ( (InputBuilder<V>) -> Void ) -> Add<T, F> where V: Input {
+        dynamicMember keyPath: KeyPath<Args, Argument<V>>
+    ) -> ( (InputBuilder<V>) -> Void ) -> Add<T, Result, Args> where V: Input {
         return { inputBuilder in
             let b = InputBuilder<V>()
             inputBuilder(b)
-            let key = F.Argument()[keyPath: keyPath].name
+            let key = Args()[keyPath: keyPath].name
             let value = "{\(b.addedInputFields.joined(separator: ","))}"
             self.renderedArguments.append("\(key):\(value)")
             return self
@@ -114,7 +111,7 @@ extension Add where F: AnyField {
     }
 }
 
-extension Add where F: AnyField, F.Value: Scalar {
+extension Add {
 	/**
 	Adds the given field to the operation.
 	
@@ -122,13 +119,24 @@ extension Add where F: AnyField, F.Value: Scalar {
 	keypath object must be a GraphQL 'scalar' type.
 	- parameter alias: The alias to use for this field in the rendered GraphQL document.
 	*/
-	public convenience init(_ keyPath: KeyPath<T.Schema, F>, alias: String? = nil) {
+    public convenience init<Value: Scalar>(
+        _ keyPath: KeyPath<T.Schema, Field<Value, Args>>,
+        alias: String? = nil
+    ) where Result == Value.Result {
 		let field = T.Schema()[keyPath: keyPath]
-		self.init(fieldType: .field(key: field.key, alias: alias, renderedSelectionSet: nil), items: [])
+        let fieldType: FieldType = .field(
+            key: field.key,
+            alias: alias,
+            renderedSelectionSet: nil,
+            createResult: { dict in
+                return try Value.createUnsafeResult(from: dict, key: field.key)
+            }
+        )
+        self.init(fieldType: fieldType, items: [])
 	}
 }
 
-extension Add where F: AnyField, F.Value: Object {
+extension Add {
 	/**
 	Adds the given field to the operation.
 	
@@ -138,14 +146,22 @@ extension Add where F: AnyField, F.Value: Object {
 	- parameter selectionSet: A function builder that additional `Add` components can be given in to select fields on
 	this `Add` instance's returned value.
 	*/
-    public convenience init<S: Selection>(
-        _ keyPath: KeyPath<T.Schema, F>,
+    public convenience init<S: Selection, Value: Object>(
+        _ keyPath: KeyPath<T.Schema, Field<Value, Args>>,
         alias: String? = nil,
-        @SelectionSetBuilder<F.Value> selectionSet: () -> S
-    ) {
+        @SelectionSetBuilder<Value> selectionSet: () -> S
+    ) where Result == Value.Result {
 		let field = T.Schema()[keyPath: keyPath]
 		let ss = selectionSet()
-		self.init(fieldType: .field(key: field.key, alias: alias, renderedSelectionSet: ss.render()), items: ss.items)
+        let fieldType: FieldType = .field(
+            key: field.key,
+            alias: alias,
+            renderedSelectionSet: ss.render(),
+            createResult: { dict in
+                return try Value.createUnsafeResult(from: dict, key: field.key)
+            }
+        )
+        self.init(fieldType: fieldType, items: ss.items)
 	}
 }
 
@@ -172,7 +188,7 @@ extension Add {
 	*/
     public func render() -> String {
 		switch self.fieldType {
-		case .field(let key, let alias, let renderedSelectionSet):
+		case .field(let key, let alias, let renderedSelectionSet, _):
 			let args: String
 			if self.renderedArguments.isEmpty {
 				args = ""
@@ -183,7 +199,7 @@ extension Add {
 			let name: String = (alias == nil) ? key : "\(alias!):\(key)"
 			let SelectionSet = (renderedSelectionSet == nil) ? "" : "{\(renderedSelectionSet!)}"
 			return "\(name)\(args)\(SelectionSet)"
-		case .fragment(let renderedInlineFragment, _):
+		case .fragment(let renderedInlineFragment, _, _):
 			return renderedInlineFragment
 		}
 	}
@@ -192,9 +208,11 @@ extension Add {
 	Creates the appropriate response object type (likely a `Partial` object specialized with this instance's `Value`
 	type) from the response JSON.
 	*/
-    public func createResult(from dict: [String : Any]) throws -> F.Value.Result {
-		guard let object: Any = dict[self.key] else { throw GraphQLError.malformattedResponse(reason: "Response didn't include key for \(self.key)") }
-		return try F.Value.createUnsafeResult(from: object, key: self.key)
+    public func createResult(from dict: [String : Any]) throws -> Result {
+        switch self.fieldType {
+        case .field(_, _, _, let createResult), .fragment(_, _, let createResult):
+            return try createResult(dict[self.key])
+        }
 	}
 }
 

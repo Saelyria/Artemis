@@ -23,9 +23,9 @@ public extension Partial where T: Object {
     /// Fetches the scalar value from the underlying dictionary that corresponds to the given `Field`.
 	subscript<Value: Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
-    ) -> Value? {
+    ) -> Value.Result? {
 		let keyString = T.Schema()[keyPath: keyPath].key
-		return self.values[keyString] as? Value
+        return self.values[keyString] as? Value.Result
 	}
 	
 	//	subscript<F: AnyField, V>(dynamicMember keyPath: KeyPath<T.Schema, F>) -> F.Value where F.Value == Optional<V>, V: Scalar {
@@ -35,9 +35,9 @@ public extension Partial where T: Object {
 	
 	subscript<Value: Collection & Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
-    ) -> Value? {
+    ) -> Value.Result? {
 		let keyString = T.Schema()[keyPath: keyPath].key
-		return self.values[keyString] as? Value
+        return self.values[keyString] as? Value.Result
 	}
 	
 	//	subscript<F: AnyField, V>(dynamicMember keyPath: KeyPath<T.Schema, F>) -> F.Value
@@ -72,8 +72,8 @@ public extension Partial where T: Object {
 	func get<Value: Scalar, Args: ArgumentsList>(
         _ keyPath: KeyPath<T.Schema, Field<Value, Args>>,
         alias: String
-    ) -> Value? {
-		return self.values[alias] as? Value
+    ) -> Value.Result? {
+        return self.values[alias] as? Value.Result
 	}
 	
 	/**
@@ -85,8 +85,8 @@ public extension Partial where T: Object {
 	func get<Value: Collection & Scalar, Args: ArgumentsList>(
         _ keyPath: KeyPath<T.Schema, Field<Value, Args>>,
         alias: String
-    ) -> Value? {
-		return self.values[alias] as? Value
+    ) -> Value.Result? {
+        return self.values[alias] as? Value.Result
 	}
 	
 	/**

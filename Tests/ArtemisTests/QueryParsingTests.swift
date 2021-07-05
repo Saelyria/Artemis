@@ -2,7 +2,7 @@ import XCTest
 @testable import Artemis
 
 final class QueryParsingTests: XCTestCase {
-    func testQueryMultipleQueryFieldSelectionSetParsing() {
+    func testQueryMultipleQueryFieldSelectionSetParsing() throws {
         let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
             Add(\.me) {
                 Add(\.firstName)
@@ -37,10 +37,7 @@ final class QueryParsingTests: XCTestCase {
         }
         """.utf8)
         
-        guard let (me, users) = try? query.createResult(from: response) else {
-            XCTFail()
-            return
-        }
+        let (me, users) = try query.createResult(from: response)
         
         XCTAssert(me.values.count == 2)
         XCTAssert(me.firstName == "Aaron")
@@ -60,7 +57,7 @@ final class QueryParsingTests: XCTestCase {
         XCTAssert(users.first?.pets?.first?.age == nil)
     }
     
-    func testQueryAliasParsing() {
+    func testQueryAliasParsing() throws {
         let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
             Add(\.me, alias: "first") {
                 Add(\.firstName, alias: "name")
@@ -83,10 +80,7 @@ final class QueryParsingTests: XCTestCase {
         }
         """.utf8)
         
-        guard let (first, second) = try? query.createResult(from: response) else {
-            XCTFail()
-            return
-        }
+        let (first, second) = try query.createResult(from: response)
 
         XCTAssert(first.values.count == 1)
         XCTAssert(first.firstName == nil)
