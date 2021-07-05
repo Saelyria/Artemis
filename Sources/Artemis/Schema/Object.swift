@@ -1,15 +1,6 @@
 import Foundation
 
 /**
-A protocol that identifies a type as representing a GraphQL 'scalar'.
-
-'Scalars' are base types like `String`, `Int`, or `Bool` that can be used as the leaves for an operation.
-*/
-public protocol Scalar: SelectionOutput, SelectionInput {
-	associatedtype Result = Self
-}
-
-/**
 A protocol that identifies a type as representing a GraphQL 'object'.
 
 'Objects' in GraphQL are any types that have selectable fields of other 'objects' or 'scalars'. This protocol is
@@ -116,7 +107,6 @@ extension Array: Object where Element: Object {
 	public typealias Schema = Element.Schema
 }
 
-extension Array: Scalar where Element: Scalar { }
 extension Array: SelectionOutput where Element: SelectionOutput {
 	public typealias Result = [Element.Result]
 	public typealias Value = Self
@@ -153,9 +143,7 @@ extension Optional: SelectionInput where Wrapped: SelectionInput {
 extension Optional: Object where Wrapped: Object {
 	public typealias Schema = Wrapped.Schema
 }
-extension Optional: Scalar where Wrapped: Scalar {
-	
-}
+
 extension Optional: Input where Wrapped: Input {
 	
 }
@@ -212,71 +200,3 @@ extension Optional: Enum where Wrapped: Enum { }
 //extension Optional: GraphQLScalarValue where Wrapped: GraphQLScalarValue { }
 //extension Optional: GraphQLCompatibleValue where Wrapped: GraphQLCompatibleValue { }
 
-/**
-A type that can be the value of a field selectable for an operation.
-
-'Output' types are, in GraphQL terms, 'objects', 'interfaces', 'unions', 'scalars', or 'enums'. Types conforming to
-this protocol (done by conforming to the protocol for one of the aforementioned protocols) are able to be used as the
-'return value' for a field selected in an operation (query or mutation).
-*/
-public protocol SelectionOutput {
-	associatedtype Result = Partial<Self>
-	static func createUnsafeResult<R>(from: Any, key: String) throws -> R
-}
-
-/**
-A type that can be used as the input for an argument to a field.
-
-'Input' types are, in GraphQL terms, 'input objects', 'scalars', or 'enums'. Types conforming to this protocol (done by
-conforming to the protocol for one of the aforementioned protocols) are able to be used as arguments on a field.
-*/
-public protocol SelectionInput {
-	/// Renders the instance for use in a GraphQL query.
-	func render() -> String
-}
-
-public extension Scalar {
-	static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
-		guard R.self == Result.self else { throw GraphQLError.invalidOperation }
-		guard let returnValue = object as? R else { throw GraphQLError.singleItemParseFailure(operation: key) }
-		return returnValue
-	}
-}
-
-public typealias ID = String
-
-extension String: Scalar {
-	public typealias Result = String
-	public typealias Value = String
-	public func render() -> String {
-		return "\"\(self)\""
-	}
-}
-extension Int: Scalar {
-	public typealias Result = Int
-	public typealias Value = Int
-	public func render() -> String {
-		return String(describing: self)
-	}
-}
-extension Float: Scalar {
-	public typealias Result = Float
-	public typealias Value = Float
-	public func render() -> String {
-		return String(describing: self)
-	}
-}
-extension Double: Scalar {
-	public typealias Result = Double
-	public typealias Value = Double
-	public func render() -> String {
-		return String(describing: self)
-	}
-}
-extension Bool: Scalar {
-	public typealias Result = Bool
-	public typealias Value = Bool
-	public func render() -> String {
-		return String(describing: self)
-	}
-}

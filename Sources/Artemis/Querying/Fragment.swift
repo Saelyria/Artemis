@@ -6,7 +6,7 @@ import Foundation
 
 public protocol FragmentProtocol: Selection {
     associatedtype T: Object
-
+    
 	var name: String { get }
 	func render() -> String
 }

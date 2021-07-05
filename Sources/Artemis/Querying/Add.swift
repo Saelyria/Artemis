@@ -43,64 +43,6 @@ public class Add<T: Object, F: AnyField>: Selection {
     public let error: GraphQLError?
 	private var renderedArguments: [String] = []
 	
-	/**
-	Adds an argument to the queried field.
-	
-	This subscript returns a closure that is called with the value to supply for the argument. Keypaths usable with this
-	subscript method are keypaths on the field's `Argument` type.
-	*/
-	public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (V) -> Add<T, F> {
-		return { value in
-			let renderedArg = F.Argument()[keyPath: keyPath].render(value: value)
-			self.renderedArguments.append(renderedArg)
-			return self
-		}
-	}
-	
-	/**
-	Adds an argument wrapped as a variable to the queried field.
-	
-	This subscript returns a closure that is called with a `Variable` wrapping the value to supply for the argument.
-	Keypaths usable with this subscript method are keypaths on the field's `Argument` type.
-	*/
-	//    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (Variable<V>) -> Add<T, F, SelectionSet> {
-	//        return { variable in
-	//            let renderedArg = F.Argument()[keyPath: keyPath].render(value: variable)
-	//            self.renderedArguments.append(renderedArg)
-	//            return self
-	//        }
-	//    }
-	
-	/**
-	Adds an 'input' object argument to the queried field.
-	
-	This keypath returns a closure that is called with a closure that builds the input object to supply for the
-	argument. This second closure is passed in an 'input builder' object that values of the input object can be added
-	to via callable keypaths. It will generally look something like this:
-	
-	```
-	Add(\.somePath) {
-		...
-	}
-	.inputObject {
-		$0.propOnInput(1)
-		$0.otherProp("")
-	}
-	```
-	where the `$0` is referring to the 'input builder' object. The methods we are calling on it are keypaths on the
-	input object type.
-	*/
-	public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> ( (InputBuilder<V>) -> Void ) -> Add<T, F> where V: Input {
-		return { inputBuilder in
-			let b = InputBuilder<V>()
-			inputBuilder(b)
-			let key = F.Argument()[keyPath: keyPath].name
-			let value = "{\(b.addedInputFields.joined(separator: ","))}"
-			self.renderedArguments.append("\(key):\(value)")
-			return self
-		}
-	}
-	
 	internal init(fieldType: FieldType, items: [SelectionBase], error: GraphQLError? = nil) {
 		self.fieldType = fieldType
 		self.items = items
@@ -108,7 +50,71 @@ public class Add<T: Object, F: AnyField>: Selection {
 	}
 }
 
-extension Add where F.Value: Scalar {
+extension Add where F: AnyField {
+    /**
+    Adds an argument to the queried field.
+
+    This subscript returns a closure that is called with the value to supply for the argument. Keypaths usable with this
+    subscript method are keypaths on the field's `Argument` type.
+    */
+    public subscript<V>(
+        dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>
+    ) -> (V) -> Add<T, F> {
+        return { value in
+            let renderedArg = F.Argument()[keyPath: keyPath].render(value: value)
+            self.renderedArguments.append(renderedArg)
+            return self
+        }
+    }
+
+    /**
+    Adds an argument wrapped as a variable to the queried field.
+
+    This subscript returns a closure that is called with a `Variable` wrapping the value to supply for the argument.
+    Keypaths usable with this subscript method are keypaths on the field's `Argument` type.
+    */
+    //    public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> (Variable<V>) -> Add<T, F, SelectionSet> {
+    //        return { variable in
+    //            let renderedArg = F.Argument()[keyPath: keyPath].render(value: variable)
+    //            self.renderedArguments.append(renderedArg)
+    //            return self
+    //        }
+    //    }
+
+    /**
+    Adds an 'input' object argument to the queried field.
+
+    This keypath returns a closure that is called with a closure that builds the input object to supply for the
+    argument. This second closure is passed in an 'input builder' object that values of the input object can be added
+    to via callable keypaths. It will generally look something like this:
+
+    ```
+    Add(\.somePath) {
+        ...
+    }
+    .inputObject {
+        $0.propOnInput(1)
+        $0.otherProp("")
+    }
+    ```
+    where the `$0` is referring to the 'input builder' object. The methods we are calling on it are keypaths on the
+    input object type.
+    */
+    public subscript<V>(
+        dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>
+    ) -> ( (InputBuilder<V>) -> Void ) -> Add<T, F> where V: Input {
+        return { inputBuilder in
+            let b = InputBuilder<V>()
+            inputBuilder(b)
+            let key = F.Argument()[keyPath: keyPath].name
+            let value = "{\(b.addedInputFields.joined(separator: ","))}"
+            self.renderedArguments.append("\(key):\(value)")
+            return self
+        }
+    }
+}
+
+extension Add where F: AnyField, F.Value: Scalar {
 	/**
 	Adds the given field to the operation.
 	
@@ -122,7 +128,7 @@ extension Add where F.Value: Scalar {
 	}
 }
 
-extension Add where F.Value: Object {
+extension Add where F: AnyField, F.Value: Object {
 	/**
 	Adds the given field to the operation.
 	
