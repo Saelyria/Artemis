@@ -8,7 +8,7 @@ final class QueryDebugRenderingTests: XCTestCase {
                 Add(\.firstName)
             }
         }
-        XCTAssert(query.renderDebug() == """
+        XCTAssertEqual(query.renderDebug(), """
         query QueryName {
            me {
               firstName
@@ -30,7 +30,7 @@ final class QueryDebugRenderingTests: XCTestCase {
             }
         }
         
-        XCTAssert(query.renderDebug() == """
+        XCTAssertEqual(query.renderDebug(), """
         {
            me {
               firstName
@@ -55,7 +55,7 @@ final class QueryDebugRenderingTests: XCTestCase {
             }
         }
         
-        XCTAssert(query.renderDebug() == """
+        XCTAssertEqual(query.renderDebug(), """
         {
            first: me {
               name: firstName
@@ -79,7 +79,7 @@ final class QueryDebugRenderingTests: XCTestCase {
             }
         }
         
-        XCTAssert(query.renderDebug() == """
+        XCTAssertEqual(query.renderDebug(), """
         {
            first: user(id: \"321\", number: 15) {
               name: firstName
@@ -90,11 +90,54 @@ final class QueryDebugRenderingTests: XCTestCase {
         }
         """)
     }
+
+    func testFragmentRendering() {
+        let ageFragment = Fragment("ageField", on: LivingThing.self) {
+            Add(\.age)
+        }
+        let namesFragment = Fragment("nameFields", on: Person.self) {
+            Add(\.firstName)
+            Add(\.lastName)
+        }
+
+        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+            Add(\.user) {
+                Add(fieldsOn: namesFragment)
+                Add(fieldsOn: ageFragment)
+            }
+            .id("321")
+            Add(\.user, alias: "second") {
+                Add(\.firstName)
+                Add(fieldsOn: ageFragment)
+            }
+        }
+
+        XCTAssertEqual(query.renderDebug(), """
+        {
+           user(id: \"321\") {
+              ...nameFields
+              ...ageField
+           }
+           second: user {
+              firstName
+              ...ageField
+           }
+        }
+        fragment ageField on LivingThing {
+           age
+        }
+        fragment nameFields on Person {
+           firstName
+           lastName
+        }
+        """)
+    }
     
     static var allTests = [
         ("testQueryNameRendering", testQueryNameRendering),
         ("testQueryMultipleQueryFieldSelectionSetRendering", testQueryMultipleQueryFieldSelectionSetRendering),
         ("testQueryAliasRendering", testQueryAliasRendering),
-		("testQueryArgumentRendering", testQueryArgumentRendering)
+		("testQueryArgumentRendering", testQueryArgumentRendering),
+        ("testFragmentRendering", testFragmentRendering)
     ]
 }

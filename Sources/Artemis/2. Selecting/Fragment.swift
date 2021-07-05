@@ -4,17 +4,10 @@ import Foundation
 //    return fragment.SelectionSet
 //}
 
-public protocol FragmentProtocol: Selection {
-    associatedtype T: Object
-    
-	var name: String { get }
-	func render() -> String
-}
-
 /**
 An object representing a GraphQL 'fragment' that can be added to a sub-selection.
 */
-public struct Fragment<T: Object>: FragmentProtocol {
+public struct Fragment<T: Object> {
 	public typealias Argument = NoArguments
 	
 	public var key: String = ""
@@ -41,7 +34,7 @@ public struct Fragment<T: Object>: FragmentProtocol {
 		return "fragment \(self.name) on \(String(describing: T.self)){\(self.renderedSelectionSet)}"
 	}
 	
-	public func createResult(from: [String : Any]) throws -> Never {
+	public func createResult(from: Any) throws -> Never {
 		fatalError()
 	}
 	

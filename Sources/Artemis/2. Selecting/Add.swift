@@ -211,7 +211,7 @@ extension Add {
     public func createResult(from dict: [String : Any]) throws -> Result {
         switch self.fieldType {
         case .field(_, _, _, let createResult), .fragment(_, _, let createResult):
-            return try createResult(dict[self.key])
+            return try createResult(dict[self.key] as Any)
         }
 	}
 }

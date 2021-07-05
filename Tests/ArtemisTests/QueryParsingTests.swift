@@ -39,22 +39,22 @@ final class QueryParsingTests: XCTestCase {
         
         let (me, users) = try query.createResult(from: response)
         
-        XCTAssert(me.values.count == 2)
-        XCTAssert(me.firstName == "Aaron")
-        XCTAssert(me.lastName == "Bosnjak")
-        XCTAssert(me.age == nil)
-        XCTAssert(me.pets == nil)
-        XCTAssert(me.spouse == nil)
+        XCTAssertEqual(me.values.count, 2)
+        XCTAssertEqual(me.firstName, "Aaron")
+        XCTAssertEqual(me.lastName, "Bosnjak")
+        XCTAssertNil(me.age)
+        XCTAssertNil(me.pets)
+        XCTAssertNil(me.spouse)
         
-        XCTAssert(users.count == 1)
-        XCTAssert(users.first?.values.count == 2)
-        XCTAssert(users.first?.firstName == "Ashley")
-        XCTAssert(users.first?.lastName == nil)
-        XCTAssert(users.first?.age == nil)
-        XCTAssert(users.first?.spouse == nil)
-        XCTAssert(users.first?.pets?.count == 1)
-        XCTAssert(users.first?.pets?.first?.name == "Tiny")
-        XCTAssert(users.first?.pets?.first?.age == nil)
+        XCTAssertEqual(users.count, 1)
+        XCTAssertEqual(users.first?.values.count, 2)
+        XCTAssertEqual(users.first?.firstName, "Ashley")
+        XCTAssertNil(users.first?.lastName)
+        XCTAssertNil(users.first?.age)
+        XCTAssertNil(users.first?.spouse)
+        XCTAssertEqual(users.first?.pets?.count, 1)
+        XCTAssertEqual(users.first?.pets?.first?.name, "Tiny")
+        XCTAssertNil(users.first?.pets?.first?.age)
     }
     
     func testQueryAliasParsing() throws {
@@ -82,20 +82,20 @@ final class QueryParsingTests: XCTestCase {
         
         let (first, second) = try query.createResult(from: response)
 
-        XCTAssert(first.values.count == 1)
-        XCTAssert(first.firstName == nil)
-        XCTAssert(first.lastName == nil)
-        XCTAssert(first.age == nil)
-        XCTAssert(first.pets == nil)
-        XCTAssert(first.spouse == nil)
-        XCTAssert(first.get(\.firstName, alias: "name") == "Aaron")
+        XCTAssertEqual(first.values.count, 1)
+        XCTAssertNil(first.firstName)
+        XCTAssertNil(first.lastName)
+        XCTAssertNil(first.age)
+        XCTAssertNil(first.pets)
+        XCTAssertNil(first.spouse)
+        XCTAssertEqual(first.get(\.firstName, alias: "name"), "Aaron")
         
-        XCTAssert(first.values.count == 1)
-        XCTAssert(second.firstName == nil)
-        XCTAssert(second.lastName == "Bielus")
-        XCTAssert(second.age == nil)
-        XCTAssert(second.pets == nil)
-        XCTAssert(second.spouse == nil)
+        XCTAssertEqual(first.values.count, 1)
+        XCTAssertNil(second.firstName)
+        XCTAssertEqual(second.lastName, "Bielus")
+        XCTAssertNil(second.age)
+        XCTAssertNil(second.pets)
+        XCTAssertNil(second.spouse)
     }
     
     static var allTests = [
