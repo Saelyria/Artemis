@@ -92,10 +92,10 @@ public class Add<T: Object, F: AnyField>: Selection {
 	where the `$0` is referring to the 'input builder' object. The methods we are calling on it are keypaths on the
 	input object type.
 	*/
-	public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> ( (InputBuilder<V>) -> InputBuilder<V> ) -> Add<T, F> where V: Input {
+	public subscript<V>(dynamicMember keyPath: KeyPath<F.Argument, Argument<V>>) -> ( (InputBuilder<V>) -> Void ) -> Add<T, F> where V: Input {
 		return { inputBuilder in
 			let b = InputBuilder<V>()
-			_ = inputBuilder(b)
+			inputBuilder(b)
 			let key = F.Argument()[keyPath: keyPath].name
 			let value = "{\(b.addedInputFields.joined(separator: ","))}"
 			self.renderedArguments.append("\(key):\(value)")
