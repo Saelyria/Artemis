@@ -27,25 +27,13 @@ public extension Partial where T: Object {
 		let keyString = T.Schema()[keyPath: keyPath].key
         return self.values[keyString] as? Value.Result
 	}
-	
-	//	subscript<F: AnyField, V>(dynamicMember keyPath: KeyPath<T.Schema, F>) -> F.Value where F.Value == Optional<V>, V: Scalar {
-	//        let keyString = T.Schema()[keyPath: keyPath].key
-	//		return self.values[keyString] as? V
-	//    }
-	
+
 	subscript<Value: Collection & Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
     ) -> Value.Result? {
 		let keyString = T.Schema()[keyPath: keyPath].key
         return self.values[keyString] as? Value.Result
 	}
-	
-	//	subscript<F: AnyField, V>(dynamicMember keyPath: KeyPath<T.Schema, F>) -> F.Value
-	//		where F.Value == Optional<V>, V: Collection & Scalar
-	//	{
-	//        let keyString = T.Schema()[keyPath: keyPath].key
-	//        return self.values[keyString] as? V
-	//    }
 	
     subscript<Value: Object, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
