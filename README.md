@@ -1,16 +1,11 @@
 # Artemis
 
 <p align="center">
-<a href="https://travis-ci.com/Saelyria/Artemis"><img src="https://travis-ci.com/Saelyria/Artemis.svg?branch=master&style=flat-square" alt="Build status" /></a>
+<img src="https://github.com/Saelyria/Artemis/actions/workflows/swift.yml/badge.svg" alt="Build status" />
 <img src="https://img.shields.io/badge/platform-iOS-blue.svg?style=flat-square" alt="Platform iOS" />
 <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/swift5.3-compatible-4BC51D.svg?style=flat-square" alt="Swift 5.3 compatible" /></a>
 <a href="https://raw.githubusercontent.com/Saelyria/Artemis/master/LICENSE"><img src="http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License: MIT" /></a>
 </p>
-
-> Note that Artemis is not yet considered suitable for production development due to the unstable nature of Swift's 'function builders', 
-whose internal implementation changes greatly between Xcode versions. Until this Swift feature is officially implemented, Artemis can
-break between Xcode versions and should be considered 'beta'. Currently, Artemis builds with Swift 5.3 (which is included with the latest 
-Xcode 12 beta!)
 
 Artemis is a GraphQL library for Swift that lets you interact with a GraphQL backend entirely in Swift - no unsafe queries made of strings,
 no `Data` or `[String: Any]` responses you need to parse though manually. Artemis uses `KeyPath` objects to keep track of types used 
