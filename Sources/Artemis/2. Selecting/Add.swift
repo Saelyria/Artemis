@@ -99,60 +99,6 @@ extension Add {
 
 extension Add {
 	/**
-	Adds the given field to the operation.
-	
-	- parameter keyPath: The keypath referring to the field on the object type. The `Value` associated type of this
-	keypath object must be a GraphQL 'scalar' type.
-	- parameter alias: The alias to use for this field in the rendered GraphQL document.
-	*/
-    public convenience init<Value: Scalar>(
-        _ keyPath: KeyPath<T.Schema, Field<Value, Args>>,
-        alias: String? = nil
-    ) where Result == Value.Result {
-		let field = T.Schema()[keyPath: keyPath]
-        let fieldType: FieldType = .field(
-            key: field.key,
-            alias: alias,
-            renderedSelectionSet: nil,
-            createResult: { dict in
-                return try Value.createUnsafeResult(from: dict, key: field.key)
-            }
-        )
-        self.init(fieldType: fieldType, items: [])
-	}
-}
-
-extension Add {
-	/**
-	Adds the given field to the operation.
-	
-	- parameter keyPath: The keypath referring to the field on the object type. The `Value` associated type of this
-	keypath object must be a GraphQL 'object' type.
-	- parameter alias: The alias to use for this field in the rendered GraphQL document.
-	- parameter selectionSet: A function builder that additional `Add` components can be given in to select fields on
-	this `Add` instance's returned value.
-	*/
-    public convenience init<S: Selection, Value: Object>(
-        _ keyPath: KeyPath<T.Schema, Field<Value, Args>>,
-        alias: String? = nil,
-        @SelectionSetBuilder<Value> selectionSet: () -> S
-    ) where Result == Value.Result {
-		let field = T.Schema()[keyPath: keyPath]
-		let ss = selectionSet()
-        let fieldType: FieldType = .field(
-            key: field.key,
-            alias: alias,
-            renderedSelectionSet: ss.render(),
-            createResult: { dict in
-                return try Value.createUnsafeResult(from: dict, key: field.key)
-            }
-        )
-        self.init(fieldType: fieldType, items: ss.items)
-	}
-}
-
-extension Add {
-	/**
 	Renders this added field and its sub-selected fields into a string that can be added to a document.
 	*/
     public func render() -> String {

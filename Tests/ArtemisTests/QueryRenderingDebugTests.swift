@@ -4,8 +4,8 @@ import XCTest
 final class QueryRenderingDebugTests: XCTestCase {
     func testQueryNameRendering() {
         let query = Artemis.Operation<Query, Partial<Person>>(.query, name: "QueryName") {
-            Add(\.me) {
-                Add(\.firstName)
+            $0.me {
+                $0.firstName
             }
         }
         XCTAssertEqual(query.renderDebug(), """
@@ -19,13 +19,13 @@ final class QueryRenderingDebugTests: XCTestCase {
     
     func testQueryMultipleQueryFieldSelectionSetRendering() {
 		let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
-            Add(\.me) {
-                Add(\.firstName)
-                Add(\.lastName)
+            $0.me {
+                $0.firstName
+                $0.lastName
             }
-            Add(\.users) {
-                Add(\.pets) {
-                    Add(\.name)
+            $0.users {
+                $0.pets {
+                    $0.name
                 }
             }
         }
@@ -47,11 +47,11 @@ final class QueryRenderingDebugTests: XCTestCase {
     
     func testQueryAliasRendering() {
         let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
-            Add(\.me, alias: "first") {
-                Add(\.firstName, alias: "name")
+            $0.me(alias: "first") {
+                $0.firstName(alias: "name")
             }
-            Add(\.me, alias: "second") {
-                Add(\.lastName)
+            $0.me(alias: "second") {
+                $0.lastName
             }
         }
         
@@ -69,13 +69,13 @@ final class QueryRenderingDebugTests: XCTestCase {
     
     func testQueryArgumentRendering() {
         let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
-            Add(\.user, alias: "first") {
-                Add(\.firstName, alias: "name")
+            $0.user(alias: "first") {
+                $0.firstName(alias: "name")
             }
             .id("321")
-			.number(15)
-            Add(\.user, alias: "second") {
-                Add(\.lastName)
+            .number(15)
+            $0.user(alias: "second") {
+                $0.lastName
             }
         }
         
@@ -91,28 +91,56 @@ final class QueryRenderingDebugTests: XCTestCase {
         """)
     }
 
+    func testInputArgumentRendering() {
+        let query = Artemis.Operation<Query, Partial<Person>>(.query) {
+            $0.user {
+                $0.firstName
+            }
+            .number(15)
+            .input { input in
+                input.prop(1)
+                input.nested { nestedInput in
+                    nestedInput.prop2("s")
+                }
+            }
+        }
+
+        XCTAssertEqual(query.renderDebug(), """
+        {
+           user(number: 15, input:  {
+              prop: 1
+              nested:  {
+                 prop2: "s"
+              }
+           }) {
+              firstName
+           }
+        }
+        """)
+    }
+
     func testFragmentRendering() {
         let ageFragment = Fragment("ageField", on: LivingThing.self) {
-            Add(\.age, alias: "yearsOnEarth")
+            $0.age(alias: "yearsOnEarth")
         }
         let namesFragment = Fragment("nameFields", on: Person.self) {
-            Add(\.firstName)
-            Add(\.lastName)
+            $0.firstName
+            $0.lastName
         }
         let petsFragment = Fragment("petField", on: Person.self) {
-            Add(\.pets) {
-                Add(\.age)
+            $0.pets {
+                $0.age
             }
         }
 
         let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
-            Add(\.user) {
+            $0.user { _ in
                 Add(fieldsOn: namesFragment)
                 Add(fieldsOn: ageFragment)
             }
             .id("321")
-            Add(\.user, alias: "second") {
-                Add(\.firstName)
+            $0.user(alias: "second") {
+                $0.firstName
                 Add(fieldsOn: ageFragment)
                 Add(fieldsOn: petsFragment)
             }
