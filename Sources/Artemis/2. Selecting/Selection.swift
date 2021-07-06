@@ -1,74 +1,132 @@
 import Foundation
 
-public protocol Selection: SelectionBase {
-    associatedtype Result
-
-    func createResult(from: [String : Any]) throws -> Result
-}
-
 /**
-A type that can be the value of a field selectable for an operation.
+A type that adds a field to a selection set.
 
-'Output' types are, in GraphQL terms, 'objects', 'interfaces', 'unions', 'scalars', or 'enums'. Types conforming to
-this protocol (done by conforming to the protocol for one of the aforementioned protocols) are able to be used as the
-'return value' for a field selected in an operation (query or mutation).
+Instances of this type are created inside an operation's selection set to specify the fields that are being queried
+for on the operation. They are created using `KeyPath` objects of the type being queried. If the value of the keypath
+is an object (i.e. non-scalar value), an additional sub-selection builder of `Add` objects is also given to the `Add`
+instance.
+
+- `T`: The GraphQL object type that we are selecting fields on. For example, a `User` type.
+- `F`: The specific `Field` type (i.e. property) that this 'add' object is selecting. For example, the `name` field on
+	the `User`, which could be a `Field<String, NoArguments>`.
 */
-public protocol SelectionOutput {
-    associatedtype Result = Partial<Self>
-    static func createUnsafeResult<R>(from: Any, key: String) throws -> R
-}
-
-/**
-A type that can be used as the input for an argument to a field.
-
-'Input' types are, in GraphQL terms, 'input objects', 'scalars', or 'enums'. Types conforming to this protocol (done by
-conforming to the protocol for one of the aforementioned protocols) are able to be used as arguments on a field.
-*/
-public protocol SelectionInput {
-    /// Renders the instance for use in a GraphQL query.
-    func render() -> String
-}
-
-/**
- A type-erased reference to a selection (either `SelectionSet` or `Add`) that allows them to be put into arrays/
- individually called for their 'render' strings to build queries.
-*/
-public protocol SelectionBase {
-    var items: [SelectionBase] { get }
-    var renderedFragmentDeclarations: [String] { get }
-    var error: GraphQLError? { get }
-    func render() -> String
-}
-
-/**
- A type that holds the generic values for a set of one or more selected fields on a type.
-
- For example, given a selection set like:
- ```
- user {
-    name
-    age
- }
- ```
- The 'selection set' is an object that represents 'the selection of the 'name' and 'age' fields on a 'user' type'.
-*/
-public struct SelectionSet<Result>: Selection {
-    public var items: [SelectionBase]
-	var resultBuilder: ([String: Any]) throws -> Result
-	
-	public func createResult(from: [String : Any]) throws -> Result {
-		try self.resultBuilder(from)
+@dynamicMemberLookup
+public class Selection<T: Object, Result, Args: ArgumentsList>: SelectionProtocol {	
+	enum FieldType {
+        case field(key: String, alias: String?, renderedSelectionSet: String?, createResult: (Any) throws -> Result)
+		case fragment(inline: String, rendered: String, createResult: (Any) throws -> Result)
 	}
-
+	
+	let fieldType: FieldType
+	var key: String {
+		switch self.fieldType {
+		case .field(let key, let alias, _, _): return alias ?? key
+		case .fragment: return ""
+		}
+	}
+    public var items: [SelectionBase] = []
     public var renderedFragmentDeclarations: [String] {
-        return self.items.flatMap { $0.renderedFragmentDeclarations }
+		var frags: [String] = []
+		switch self.fieldType {
+		case .fragment(_, let rendered, _):
+			frags = [rendered]
+		case .field: break
+		}
+		frags.append(contentsOf: self.items.flatMap { $0.renderedFragmentDeclarations })
+		return frags
+	}
+    public let error: GraphQLError?
+	private var renderedArguments: [String] = []
+	
+	internal init(fieldType: FieldType, items: [SelectionBase], error: GraphQLError? = nil) {
+		self.fieldType = fieldType
+		self.items = items
+		self.error = error
+	}
+}
+
+extension Selection {
+    /**
+    Adds an argument to the queried field.
+
+    This subscript returns a closure that is called with the value to supply for the argument. Keypaths usable with this
+    subscript method are keypaths on the field's `Argument` type.
+    */
+    public subscript<V>(
+        dynamicMember keyPath: KeyPath<Args, Argument<V>>
+    ) -> (V) -> Selection<T, Result, Args> {
+        return { value in
+            let renderedArg = Args()[keyPath: keyPath].render(value: value)
+            self.renderedArguments.append(renderedArg)
+            return self
+        }
     }
 
-    public var error: GraphQLError? {
-        return self.items.compactMap { $0.error }.first
-    }
+    /**
+    Adds an 'input' object argument to the queried field.
 
+    This keypath returns a closure that is called with a closure that builds the input object to supply for the
+    argument. This second closure is passed in an 'input builder' object that values of the input object can be added
+    to via callable keypaths. It will generally look something like this:
+
+    ```
+    Add(\.somePath) {
+        ...
+    }
+    .inputObject {
+        $0.propOnInput(1)
+        $0.otherProp("")
+    }
+    ```
+    where the `$0` is referring to the 'input builder' object. The methods we are calling on it are keypaths on the
+    input object type.
+    */
+    public subscript<V>(
+        dynamicMember keyPath: KeyPath<Args, Argument<V>>
+    ) -> ( (InputBuilder<V>) -> Void ) -> Selection<T, Result, Args> where V: Input {
+        return { inputBuilder in
+            let b = InputBuilder<V>()
+            inputBuilder(b)
+            let key = Args()[keyPath: keyPath].name
+            let value = "{\(b.addedInputFields.joined(separator: ","))}"
+            self.renderedArguments.append("\(key):\(value)")
+            return self
+        }
+    }
+}
+
+extension Selection {
+	/**
+	Renders this added field and its sub-selected fields into a string that can be added to a document.
+	*/
     public func render() -> String {
-        return "\(self.items.map { "\($0.render())" }.joined(separator: ","))"
-    }
+		switch self.fieldType {
+		case .field(let key, let alias, let renderedSelectionSet, _):
+			let args: String
+			if self.renderedArguments.isEmpty {
+				args = ""
+			} else {
+				args = "(\(self.renderedArguments.joined(separator: ",")))"
+			}
+			
+			let name: String = (alias == nil) ? key : "\(alias!):\(key)"
+			let SelectionSet = (renderedSelectionSet == nil) ? "" : "{\(renderedSelectionSet!)}"
+			return "\(name)\(args)\(SelectionSet)"
+		case .fragment(let renderedInlineFragment, _, _):
+			return renderedInlineFragment
+		}
+	}
+	
+	/**
+	Creates the appropriate response object type (likely a `Partial` object specialized with this instance's `Value`
+	type) from the response JSON.
+	*/
+    public func createResult(from dict: [String : Any]) throws -> Result {
+        switch self.fieldType {
+        case .field(_, _, _, let createResult), .fragment(_, _, let createResult):
+            return try createResult(dict[self.key] as Any)
+        }
+	}
 }

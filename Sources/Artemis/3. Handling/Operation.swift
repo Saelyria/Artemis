@@ -34,7 +34,7 @@ public struct Operation<Schema: Object, Result> {
 	- parameter selection: A function builder of `Add` objects that selects the fields to include in the response to
 	this operation.
 	*/
-    init<S: Selection>(_ type: OperationType, name: String? = nil, @SelectionSetBuilder<Schema> _ selection: (Selector<Schema>) -> S) where S.Result == Result {
+    fileprivate init<S: SelectionProtocol>(_ type: OperationType, name: String? = nil, @SelectionSetBuilder<Schema> _ selection: (Selector<Schema>) -> S) where S.Result == Result {
 		self.operationType = type
 		self.name = name
 		let fieldsAggegate = selection(Selector<Schema>())
@@ -136,17 +136,31 @@ public struct Operation<Schema: Object, Result> {
 }
 
 extension Operation {
-    public static func query<Schema: Object, Sel: Selection>(
+    public static func query<Schema: Object, Sel: SelectionProtocol>(
         name: String? = nil,
         @SelectionSetBuilder<Schema> _ selection: (Selector<Schema>) -> Sel
     ) -> Operation<Schema, Sel.Result> {
         return Operation<Schema, Sel.Result>(.query, name: name, selection)
     }
 
-    public static func mutation<Schema: Object, Sel: Selection>(
+    public static func mutation<Schema: Object, Sel: SelectionProtocol>(
         name: String? = nil,
         @SelectionSetBuilder<Schema> _ selection: (Selector<Schema>) -> Sel
     ) -> Operation<Schema, Sel.Result> {
         return Operation<Schema, Sel.Result>(.mutation, name: name, selection)
+    }
+
+    public static func query<Schema: Object, Sel: SelectionProtocol>(
+        name: String? = nil,
+        @SelectionSetBuilder<Schema> _ selection: () -> Sel
+    ) -> Operation<Schema, Sel.Result> {
+        return Operation<Schema, Sel.Result>(.query, name: name, { _ in return selection() })
+    }
+
+    public static func mutation<Schema: Object, Sel: SelectionProtocol>(
+        name: String? = nil,
+        @SelectionSetBuilder<Schema> _ selection: () -> Sel
+    ) -> Operation<Schema, Sel.Result> {
+        return Operation<Schema, Sel.Result>(.mutation, name: name, { _ in return selection() })
     }
 }

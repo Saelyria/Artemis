@@ -1,90 +1,5 @@
 import Foundation
 
-@dynamicMemberLookup
-public class Selector<T: Object> {
-    /**
-     Adds the given field to the operation, returning a selector to select additional fields to add, optionally giving
-     the selected field an alias.
-    */
-    public subscript<Value: Object, Args: ArgumentsList, S: Selection>(
-        dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
-    ) -> SelectionSetBuilderWrapper<T, T.Schema, S, Value, Args> {
-        return SelectionSetBuilderWrapper(keyPath: keyPath)
-    }
-
-    /**
-     Adds the given field to the operation.
-    */
-    public subscript<Value: Scalar, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
-    ) -> Add<T, Value.Result, Args> {
-        return AliasBuilderWrapper(keyPath: keyPath)(alias: nil)
-    }
-
-    /**
-     Adds the given field to the operation, giving the selected field an alias.
-    */
-    public subscript<Value: Scalar, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
-    ) -> AliasBuilderWrapper<T, T.Schema, Value, Args> {
-        return AliasBuilderWrapper(keyPath: keyPath)
-    }
-}
-
-extension Selector {
-    // We need to return this instead of a closure so we can add the `alias` parameter name to the callsite
-    public struct AliasBuilderWrapper<T: Object, Schema, Value: Scalar, Args: ArgumentsList> where T.Schema == Schema {
-        let keyPath: KeyPath<Schema, Field<Value, Args>>
-
-        /**
-         - parameter alias: The alias to use for this field in the rendered GraphQL document.
-        */
-        public func callAsFunction(
-            alias: String?
-        ) -> Add<T, Value.Result, Args> {
-            let field = T.Schema()[keyPath: keyPath]
-            let fieldType: Add<T, Value.Result, Args>.FieldType = .field(
-                key: field.key,
-                alias: alias,
-                renderedSelectionSet: nil,
-                createResult: { dict in
-                    return try Value.createUnsafeResult(from: dict, key: field.key)
-                }
-            )
-            return Add(fieldType: fieldType, items: [])
-        }
-    }
-
-    // We need to return this instead of a closure so that the result builder syntax can work (we can't put a result
-    // builder i.e. `@SelectionSetBuilder` as an argument in a closure; needs to be in a static function). It also lets us
-    // add the `alias` parameter name to the call site
-    public struct SelectionSetBuilderWrapper<T: Object, Schema, S: Selection, Value: Object, Args: ArgumentsList> where T.Schema == Schema {
-        let keyPath: KeyPath<Schema, Field<Value, Args>>
-
-        /**
-         - parameter alias: The alias to use for this field in the rendered GraphQL document.
-         - parameter selectionSet: A function builder that additional `Add` components can be given in to select fields on
-        this `Add` instance's returned value.
-        */
-        public func callAsFunction(
-            alias: String? = nil,
-            @SelectionSetBuilder<Value> _ selectionSet: @escaping (Selector<Value>) -> S
-        ) -> Add<T, Value.Result, Args> {
-            let field = T.Schema()[keyPath: keyPath]
-            let ss = selectionSet(Selector<Value>())
-            let fieldType: Add<T, Value.Result, Args>.FieldType = .field(
-                key: field.key,
-                alias: alias,
-                renderedSelectionSet: ss.render(),
-                createResult: { dict in
-                    return try Value.createUnsafeResult(from: dict, key: field.key)
-                }
-            )
-            return Add(fieldType: fieldType, items: ss.items)
-        }
-    }
-}
-
 /**
  A function builder type that builds selection sets from `Add` instances.
 
@@ -92,17 +7,17 @@ extension Selector {
 */
 @_functionBuilder
 public struct SelectionSetBuilder<T: Object> {
-    /// Function builder method to transform an `Add` instance into a `SelectionSet` that will get piped into one of
+    /// Function builder method to transform a `Selection` instance into a `SelectionSet` that will get piped into one of
     /// the `buildBlock` methods.
     public static func buildExpression<R, A: ArgumentsList>(
-        _ ss1: Add<T, R, A>
+        _ ss1: Selection<T, R, A>
     ) -> SelectionSet<R> {
         return SelectionSet(items: [ss1], resultBuilder: { dict in
             return try ss1.createResult(from: dict)
         })
     }
 
-    public static func buildBlock<S: Selection>(_ set: S) -> S {
+    public static func buildBlock<S: SelectionProtocol>(_ set: S) -> S {
         return set
     }
 
@@ -237,5 +152,91 @@ public struct SelectionSetBuilder<T: Object> {
                 try set8.createResult(from: dict)
             )
         })
+    }
+}
+
+extension SelectionSetBuilder {
+    public static func buildExpression(
+        _ fragment: Fragment<T>
+    ) -> SelectionSet<Never> {
+        let selection = Selection<T, Never, NoArguments>(
+            fieldType: .fragment(
+                inline: "...\(fragment.name)",
+                rendered: fragment.render(),
+                createResult: { try fragment.createResult(from: $0) }
+            ),
+            items: fragment.items
+        )
+        return SelectionSet(items: [selection], resultBuilder: selection.createResult(from:))
+    }
+
+    public static func buildExpression<I: Object>(
+        _ fragment: Fragment<I>
+    ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I1 {
+        let selection = Selection<T, Never, NoArguments>(
+            fieldType: .fragment(
+                inline: "...\(fragment.name)",
+                rendered: fragment.render(),
+                createResult: { try fragment.createResult(from: $0) }
+            ),
+            items: fragment.items
+        )
+        return SelectionSet(items: [selection], resultBuilder: selection.createResult(from:))
+    }
+
+    public static func buildExpression<I: Object>(
+        _ fragment: Fragment<I>
+    ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I2 {
+        let selection = Selection<T, Never, NoArguments>(
+            fieldType: .fragment(
+                inline: "...\(fragment.name)",
+                rendered: fragment.render(),
+                createResult: { try fragment.createResult(from: $0) }
+            ),
+            items: fragment.items
+        )
+        return SelectionSet(items: [selection], resultBuilder: selection.createResult(from:))
+    }
+
+    public static func buildExpression<I: Object>(
+        _ fragment: Fragment<I>
+    ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I3 {
+        let selection = Selection<T, Never, NoArguments>(
+            fieldType: .fragment(
+                inline: "...\(fragment.name)",
+                rendered: fragment.render(),
+                createResult: { try fragment.createResult(from: $0) }
+            ),
+            items: fragment.items
+        )
+        return SelectionSet(items: [selection], resultBuilder: selection.createResult(from:))
+    }
+
+    public static func buildExpression<I: Object>(
+        _ fragment: Fragment<I>
+    ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I4 {
+        let selection = Selection<T, Never, NoArguments>(
+            fieldType: .fragment(
+                inline: "...\(fragment.name)",
+                rendered: fragment.render(),
+                createResult: { try fragment.createResult(from: $0) }
+            ),
+            items: fragment.items
+        )
+        return SelectionSet(items: [selection], resultBuilder: selection.createResult(from:))
+    }
+
+    public static func buildExpression<I: Object>(
+        _ fragment: Fragment<I>
+    ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I5 {
+        let selection = Selection<T, Never, NoArguments>(
+            fieldType: .fragment(
+                inline: "...\(fragment.name)",
+                rendered: fragment.render(),
+                createResult: { try fragment.createResult(from: $0) }
+            ),
+            items: fragment.items
+        )
+        return SelectionSet(items: [selection], resultBuilder: selection.createResult(from:))
     }
 }

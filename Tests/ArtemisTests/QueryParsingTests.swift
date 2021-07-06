@@ -3,7 +3,7 @@ import XCTest
 
 final class QueryParsingTests: XCTestCase {
     func testQueryNameParsing() throws {
-        let query = Artemis.Operation<Query, Partial<Person>>(.query, name: "QueryName") {
+        let query: Artemis.Operation<Query, Partial<Person>> = .query(name: "QueryName") {
             $0.me {
                 $0.firstName
             }
@@ -30,7 +30,7 @@ final class QueryParsingTests: XCTestCase {
     }
 
     func testQueryMultipleQueryFieldSelectionSetParsing() throws {
-        let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
+        let query: Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])> = .query {
             $0.me {
                 $0.firstName
                 $0.lastName
@@ -83,7 +83,7 @@ final class QueryParsingTests: XCTestCase {
     }
 
     func testQueryAliasParsing() throws {
-        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+        let query: Artemis.Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
             $0.me(alias: "first") {
                 $0.firstName
             }
@@ -124,7 +124,7 @@ final class QueryParsingTests: XCTestCase {
     }
 
     func testQueryArgumentParsing() throws {
-        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+        let query: Artemis.Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
             $0.user(alias: "first") {
                 $0.firstName(alias: "name")
             }
@@ -167,13 +167,10 @@ final class QueryParsingTests: XCTestCase {
     }
 
     func testInputArgumentParsing() throws {
-        let query = Artemis.Operation<Query, Partial<Person>>(.query) {
+        let query: Artemis.Operation<Query, Partial<Person>> = .query {
             $0.user {
                 $0.firstName
             }
-//            Add(\.user) {
-//                Add(\.firstName)
-//            }
             .number(15)
             .input { input in
                 input.prop(1)
@@ -217,16 +214,16 @@ final class QueryParsingTests: XCTestCase {
             }
         }
 
-        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
-            $0.user { _ in
-                Add(fieldsOn: namesFragment)
-                Add(fieldsOn: ageFragment)
+        let query: Artemis.Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
+            $0.user {
+                namesFragment
+                ageFragment
             }
             .id("321")
             $0.user(alias: "second") {
                 $0.firstName
-                Add(fieldsOn: ageFragment)
-                Add(fieldsOn: petsFragment)
+                ageFragment
+                petsFragment
             }
         }
 

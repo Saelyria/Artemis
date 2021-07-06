@@ -13,12 +13,20 @@ public struct Fragment<T: Object> {
 	Creates a new frament usable in a sub-selection with the given name, on the given type, selecting the properties
 	in the given sub-selection function builder result.
 	*/
-    public init<S: Selection>(_ name: String, on: T.Type, @SelectionSetBuilder<T> selection: (Selector<T>) -> S) {
+    public init<S: SelectionProtocol>(_ name: String, on: T.Type, @SelectionSetBuilder<T> selection: (Selector<T>) -> S) {
 		self.name = name
 		let s = selection(Selector<T>())
 		self.renderedSelectionSet = s.render()
 		self.items = s.items
 	}
+
+    /**
+    Creates a new frament usable in a sub-selection with the given name, on the given type, selecting the properties
+    in the given sub-selection function builder result.
+    */
+    public init<S: SelectionProtocol>(_ name: String, on: T.Type, @SelectionSetBuilder<T> selection: () -> S) {
+        self.init(name, on: on, selection: { _ in return selection() })
+    }
 	
 	public func render() -> String {
 		return "fragment \(self.name) on \(String(describing: T.self)){\(self.renderedSelectionSet)}"

@@ -3,7 +3,7 @@ import XCTest
 
 final class QueryRenderingDebugTests: XCTestCase {
     func testQueryNameRendering() {
-        let query = Artemis.Operation<Query, Partial<Person>>(.query, name: "QueryName") {
+        let query: Artemis.Operation<Query, Partial<Person>> = .query(name: "QueryName") {
             $0.me {
                 $0.firstName
             }
@@ -18,7 +18,7 @@ final class QueryRenderingDebugTests: XCTestCase {
     }
     
     func testQueryMultipleQueryFieldSelectionSetRendering() {
-		let query = Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])>(.query) {
+        let query: Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])> = .query {
             $0.me {
                 $0.firstName
                 $0.lastName
@@ -46,7 +46,7 @@ final class QueryRenderingDebugTests: XCTestCase {
     }
     
     func testQueryAliasRendering() {
-        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+        let query: Artemis.Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
             $0.me(alias: "first") {
                 $0.firstName(alias: "name")
             }
@@ -68,7 +68,7 @@ final class QueryRenderingDebugTests: XCTestCase {
     }
     
     func testQueryArgumentRendering() {
-        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
+        let query: Artemis.Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
             $0.user(alias: "first") {
                 $0.firstName(alias: "name")
             }
@@ -92,7 +92,7 @@ final class QueryRenderingDebugTests: XCTestCase {
     }
 
     func testInputArgumentRendering() {
-        let query = Artemis.Operation<Query, Partial<Person>>(.query) {
+        let query: Artemis.Operation<Query, Partial<Person>> = .query {
             $0.user {
                 $0.firstName
             }
@@ -133,16 +133,16 @@ final class QueryRenderingDebugTests: XCTestCase {
             }
         }
 
-        let query = Artemis.Operation<Query, (Partial<Person>, Partial<Person>)>(.query) {
-            $0.user { _ in
-                Add(fieldsOn: namesFragment)
-                Add(fieldsOn: ageFragment)
+        let query: Artemis.Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
+            $0.user {
+                namesFragment
+                ageFragment
             }
             .id("321")
             $0.user(alias: "second") {
                 $0.firstName
-                Add(fieldsOn: ageFragment)
-                Add(fieldsOn: petsFragment)
+                ageFragment
+                petsFragment
             }
         }
 
