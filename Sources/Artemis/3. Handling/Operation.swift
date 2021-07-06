@@ -11,7 +11,7 @@ These objects are generally created inside a `Client.perform(_:completion:)` met
 */
 public struct Operation<Schema: Object, Result> {
 	/// A type of GraphQL operation.
-	public enum OperationType {
+    enum OperationType {
 		/// An operation that is meant to query data from a GraphQL API.
 		case query
 		/// An operation that is meant to mutate (either update or add) data in a GraphQL API.
@@ -24,7 +24,7 @@ public struct Operation<Schema: Object, Result> {
 	let renderedSelectionSets: String
 	let renderedFragments: String
 	/// The type of GraphQL operation this operation will perform.
-	public let operationType: OperationType
+    let operationType: OperationType
 	
 	/**
 	Creates a new operation using the selection set from the given function builder.
@@ -34,7 +34,7 @@ public struct Operation<Schema: Object, Result> {
 	- parameter selection: A function builder of `Add` objects that selects the fields to include in the response to
 	this operation.
 	*/
-    public init<S: Selection>(_ type: OperationType, name: String? = nil, @SelectionSetBuilder<Schema> _ selection: () -> S) where S.Result == Result {
+    init<S: Selection>(_ type: OperationType, name: String? = nil, @SelectionSetBuilder<Schema> _ selection: () -> S) where S.Result == Result {
 		self.operationType = type
 		self.name = name
 		let fieldsAggegate = selection()
@@ -135,16 +135,18 @@ public struct Operation<Schema: Object, Result> {
 	}
 }
 
-//public class ReusableQuery<V, R> {
-//    let renderedQuery: String
-//    let renderedVariables: [String]
-//
-//    init(renderedQuery: String, renderedVariables: [String]) {
-//        self.renderedQuery = renderedQuery
-//        self.renderedVariables = renderedVariables
-//    }
-//
-//    func render(with variables: V) -> (query: String, variables: String) {
-//        return (self.renderedQuery, "")
-//    }
-//}
+extension Operation {
+    public static func query<Schema: Object, Sel: Selection>(
+        name: String? = nil,
+        @SelectionSetBuilder<Schema> _ selection: () -> Sel
+    ) -> Operation<Schema, Sel.Result> {
+        return Operation<Schema, Sel.Result>(.query, name: name, selection)
+    }
+
+    public static func mutation<Schema: Object, Sel: Selection>(
+        name: String? = nil,
+        @SelectionSetBuilder<Schema> _ selection: () -> Sel
+    ) -> Operation<Schema, Sel.Result> {
+        return Operation<Schema, Sel.Result>(.mutation, name: name, selection)
+    }
+}

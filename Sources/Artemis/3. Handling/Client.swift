@@ -17,21 +17,6 @@ public protocol NetworkDelegate {
     func send(document: String, completion: @escaping (Result<Data, Error>) -> Void)
 }
 
-//public protocol AnyVariable {
-//    associatedtype V: SelectionInput
-//}
-//public struct Variable<V: SelectionInput>: AnyVariable {
-//    public let name: String
-//
-//    public init(name: String) {
-//        self.name = name
-//    }
-//}
-//
-//public func `$`<V: SelectionInput>(_ name: String, _ type: V.Type) -> Variable<V> {
-//    return Variable<V>(name: name)
-//}
-
 /**
 An object that can interact with a GraphQL API.
 
@@ -70,7 +55,7 @@ open class Client<Q: Object> {
 		default headers, and the endpoint.
 	*/
 	public init(endpoint: URL, method: HTTPNetworkingDelegate.Method = .post, requestBuilder: ((_ request: URLRequest) -> Void)? = nil) {
-		self.networkDelegate = HTTPNetworkingDelegate(endpoint: endpoint, method: .post)
+		self.networkDelegate = HTTPNetworkingDelegate(endpoint: endpoint, method: method)
 	}
     
 	/**
@@ -86,37 +71,6 @@ open class Client<Q: Object> {
     public init(networkDelegate: NetworkDelegate) {
         self.networkDelegate = networkDelegate
     }
-    
-//    public func register<R>(
-//        _ query: () -> Operation<Q, R>)
-//        -> ReusableQuery<Void, R>
-//    {
-//        return ReusableQuery(renderedQuery: query().render(), renderedVariables: [])
-//    }
-//
-//    public func register<R, V1: AnyVariable>(
-//        usingVariables v1: V1,
-//        _ query: (V1) -> Operation<Q, R>)
-//        -> ReusableQuery<V1.V, R>
-//    {
-//        return ReusableQuery(renderedQuery: query(v1).render(), renderedVariables: [])
-//    }
-//
-//    public func register<R, V1: AnyVariable, V2: AnyVariable>(
-//        usingVariables v1: V1, _ v2: V2,
-//        _ query: (V1, V2) -> Operation<Q, R>)
-//        -> ReusableQuery<(V1.V, V2.V), R>
-//    {
-//        return ReusableQuery(renderedQuery: query(v1, v2).render(), renderedVariables: [])
-//    }
-//
-//    public func register<R, V1: AnyVariable, V2: AnyVariable, V3: AnyVariable>(
-//        usingVariables v1: V1, _ v2: V2, _ v3: V3,
-//        _ query: (V1, V2, V3) -> Operation<Q, R>)
-//        -> ReusableQuery<(V1.V, V2.V, V3.V), R>
-//    {
-//        return ReusableQuery(renderedQuery: query(v1, v2, v3).render(), renderedVariables: [])
-//    }
     
 	/**
 	Performs the given GraphQL operation.
