@@ -1,8 +1,6 @@
 @testable import Artemis
 
 final class Query: Object, ObjectSchema {
-	typealias Schema = Query
-	
 	var me = Field<Person, NoArguments>("me")
 	var user = Field<Person, UserArguments>("user")
 	struct UserArguments: ArgumentsList {
@@ -37,6 +35,8 @@ extension Person: Object {
 		var pets = Field<[Animal], PetsArguments>("pets")
         struct PetsArguments: ArgumentsList {
             var number = Argument<Int>("number", default: 10)
+            var types = Argument<[AnimalType]>("types")
+            var type = Argument<AnimalType>("type")
         }
 		var spouse = Field<Person, NoArguments>("spouse")
 	}
@@ -47,6 +47,13 @@ final class Animal: Object, ObjectSchema {
 
 	var name = Field<String, NoArguments>("name")
 	var age = Field<Int, NoArguments>("age")
+    var type = Field<AnimalType, NoArguments>("type")
+    var friendlyWithTypes = Field<[AnimalType], NoArguments>("friendlyWithTypes")
+}
+
+enum AnimalType: String, Enum {
+    case cat = "CAT"
+    case dog = "DOG"
 }
 
 final class LivingThing: Interface {

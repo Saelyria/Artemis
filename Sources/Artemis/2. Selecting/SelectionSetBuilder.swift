@@ -162,8 +162,7 @@ extension SelectionSetBuilder {
         let selection = Selection<T, Never, NoArguments>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",
-                rendered: fragment.render(),
-                createResult: { try fragment.createResult(from: $0) }
+                rendered: fragment.render()
             ),
             items: fragment.items
         )
@@ -176,8 +175,7 @@ extension SelectionSetBuilder {
         let selection = Selection<T, Never, NoArguments>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",
-                rendered: fragment.render(),
-                createResult: { try fragment.createResult(from: $0) }
+                rendered: fragment.render()
             ),
             items: fragment.items
         )
@@ -190,8 +188,7 @@ extension SelectionSetBuilder {
         let selection = Selection<T, Never, NoArguments>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",
-                rendered: fragment.render(),
-                createResult: { try fragment.createResult(from: $0) }
+                rendered: fragment.render()
             ),
             items: fragment.items
         )
@@ -204,8 +201,7 @@ extension SelectionSetBuilder {
         let selection = Selection<T, Never, NoArguments>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",
-                rendered: fragment.render(),
-                createResult: { try fragment.createResult(from: $0) }
+                rendered: fragment.render()
             ),
             items: fragment.items
         )
@@ -218,8 +214,7 @@ extension SelectionSetBuilder {
         let selection = Selection<T, Never, NoArguments>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",
-                rendered: fragment.render(),
-                createResult: { try fragment.createResult(from: $0) }
+                rendered: fragment.render()
             ),
             items: fragment.items
         )
@@ -232,8 +227,7 @@ extension SelectionSetBuilder {
         let selection = Selection<T, Never, NoArguments>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",
-                rendered: fragment.render(),
-                createResult: { try fragment.createResult(from: $0) }
+                rendered: fragment.render()
             ),
             items: fragment.items
         )

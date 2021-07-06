@@ -166,6 +166,44 @@ final class QueryParsingTests: XCTestCase {
         XCTAssertNil(second.spouse)
     }
 
+    func testQueryEnumParsing() throws {
+        let query: Artemis.Operation<Query, Partial<Person>> = .query {
+            $0.user {
+                $0.pets {
+                    $0.type
+                    $0.friendlyWithTypes
+                }
+            }
+        }
+
+        let response = Data("""
+        {
+            "data": {
+                "user": {
+                    "pets": [
+                        {
+                            "type": "CAT",
+                            "friendlyWithTypes": ["CAT", "DOG"]
+                        }
+                    ]
+                },
+            }
+        }
+        """.utf8)
+
+        let user = try query.createResult(from: response)
+
+        XCTAssertEqual(user.values.count, 1)
+        XCTAssertNil(user.firstName)
+        XCTAssertNil(user.lastName)
+        XCTAssertNil(user.age)
+        XCTAssertEqual(user.pets?.count, 1)
+        XCTAssertEqual(user.pets?.first?.values.count, 2)
+        XCTAssertEqual(user.pets?.first?.type, .cat)
+        XCTAssertEqual(user.pets?.first?.friendlyWithTypes, [.cat, .dog])
+        XCTAssertNil(user.spouse)
+    }
+
     func testInputArgumentParsing() throws {
         let query: Artemis.Operation<Query, Partial<Person>> = .query {
             $0.user {

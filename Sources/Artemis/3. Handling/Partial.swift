@@ -34,6 +34,26 @@ public extension Partial where T: Object {
 		let keyString = T.Schema()[keyPath: keyPath].key
         return self.values[keyString] as? Value.Result
 	}
+
+    subscript<Value: Enum, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
+    ) -> Value? {
+        let keyString = T.Schema()[keyPath: keyPath].key
+        if let raw = self.values[keyString] as? String {
+            return Value.init(rawValue: raw)
+        }
+        return nil
+    }
+
+    subscript<Value: Collection & Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
+    ) -> [Value.Element]? where Value.Element: Enum {
+        let keyString = T.Schema()[keyPath: keyPath].key
+        if let raw = self.values[keyString] as? [String] {
+            return raw.map { Value.Element.init(rawValue: $0) }.compactMap { $0 }
+        }
+        return nil
+    }
 	
     subscript<Value: Object, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>

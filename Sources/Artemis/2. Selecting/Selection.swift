@@ -16,7 +16,7 @@ instance.
 public class Selection<T: Object, Result, Args: ArgumentsList>: SelectionProtocol {	
 	enum FieldType {
         case field(key: String, alias: String?, renderedSelectionSet: String?, createResult: (Any) throws -> Result)
-		case fragment(inline: String, rendered: String, createResult: (Any) throws -> Result)
+		case fragment(inline: String, rendered: String)
 	}
 	
 	let fieldType: FieldType
@@ -30,7 +30,7 @@ public class Selection<T: Object, Result, Args: ArgumentsList>: SelectionProtoco
     public var renderedFragmentDeclarations: [String] {
 		var frags: [String] = []
 		switch self.fieldType {
-		case .fragment(_, let rendered, _):
+		case .fragment(_, let rendered):
 			frags = [rendered]
 		case .field: break
 		}
@@ -114,7 +114,7 @@ extension Selection {
 			let name: String = (alias == nil) ? key : "\(alias!):\(key)"
 			let SelectionSet = (renderedSelectionSet == nil) ? "" : "{\(renderedSelectionSet!)}"
 			return "\(name)\(args)\(SelectionSet)"
-		case .fragment(let renderedInlineFragment, _, _):
+		case .fragment(let renderedInlineFragment, _):
 			return renderedInlineFragment
 		}
 	}
@@ -125,8 +125,9 @@ extension Selection {
 	*/
     public func createResult(from dict: [String : Any]) throws -> Result {
         switch self.fieldType {
-        case .field(_, _, _, let createResult), .fragment(_, _, let createResult):
+        case .field(_, _, _, let createResult):
             return try createResult(dict[self.key] as Any)
+        case .fragment: throw GraphQLError.malformattedResponse(reason: "Shouldn't need to get result from a fragment")
         }
 	}
 }

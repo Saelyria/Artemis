@@ -28,15 +28,7 @@ public struct Fragment<T: Object> {
         self.init(name, on: on, selection: { _ in return selection() })
     }
 	
-	public func render() -> String {
+    func render() -> String {
 		return "fragment \(self.name) on \(String(describing: T.self)){\(self.renderedSelectionSet)}"
-	}
-	
-	public func createResult(from: Any) throws -> Never {
-		fatalError()
-	}
-	
-	public static func string(for argument: NoArguments) throws -> String {
-		return ""
 	}
 }

@@ -81,11 +81,35 @@ final class QueryRenderingDebugTests: XCTestCase {
         
         XCTAssertEqual(query.renderDebug(), """
         {
-           first: user(id: \"321\", number: 15) {
+           first: user(id: "321", number: 15) {
               name: firstName
            }
            second: user {
               lastName
+           }
+        }
+        """)
+    }
+
+    func testQueryEnumRendering() {
+        let query: Artemis.Operation<Query, Partial<Person>> = .query {
+            $0.user {
+                $0.pets {
+                    $0.type
+                    $0.friendlyWithTypes
+                }
+                .type(.cat)
+                .types([.dog])
+            }
+        }
+
+        XCTAssertEqual(query.renderDebug(), """
+        {
+           user {
+              pets(type: CAT, types: [DOG]) {
+                 type
+                 friendlyWithTypes
+              }
            }
         }
         """)
