@@ -169,7 +169,7 @@ extension SelectionSetBuilder {
         return SelectionSet(items: [selection], resultBuilder: selection.createResult(from:))
     }
 
-    public static func buildExpression<I: Object>(
+    public static func buildExpression<I: Interface>(
         _ fragment: Fragment<I>
     ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I1 {
         let selection = Selection<T, Never, NoArguments>(
@@ -182,7 +182,7 @@ extension SelectionSetBuilder {
         return SelectionSet(items: [selection], resultBuilder: selection.createResult(from:))
     }
 
-    public static func buildExpression<I: Object>(
+    public static func buildExpression<I: Interface>(
         _ fragment: Fragment<I>
     ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I2 {
         let selection = Selection<T, Never, NoArguments>(
@@ -195,7 +195,7 @@ extension SelectionSetBuilder {
         return SelectionSet(items: [selection], resultBuilder: selection.createResult(from:))
     }
 
-    public static func buildExpression<I: Object>(
+    public static func buildExpression<I: Interface>(
         _ fragment: Fragment<I>
     ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I3 {
         let selection = Selection<T, Never, NoArguments>(
@@ -208,7 +208,7 @@ extension SelectionSetBuilder {
         return SelectionSet(items: [selection], resultBuilder: selection.createResult(from:))
     }
 
-    public static func buildExpression<I: Object>(
+    public static func buildExpression<I: Interface>(
         _ fragment: Fragment<I>
     ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I4 {
         let selection = Selection<T, Never, NoArguments>(
@@ -221,7 +221,7 @@ extension SelectionSetBuilder {
         return SelectionSet(items: [selection], resultBuilder: selection.createResult(from:))
     }
 
-    public static func buildExpression<I: Object>(
+    public static func buildExpression<I: Interface>(
         _ fragment: Fragment<I>
     ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I5 {
         let selection = Selection<T, Never, NoArguments>(

@@ -6,9 +6,9 @@ A protocol that identifies a type as representing a GraphQL 'object'.
 'Objects' in GraphQL are any types that have selectable fields of other 'objects' or 'scalars'. This protocol is
 conformed to by data types that are meant to represent the various objects of your GraphQL API.
 */
-public protocol Object: SelectionOutput {
+public protocol Object: SelectionOutput, ObjectSchema {
 	/// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
-	associatedtype Schema: ObjectSchema
+	associatedtype Schema: ObjectSchema = Self
 	associatedtype Result = Partial<Self>
 }
 
@@ -18,7 +18,7 @@ A protocol that identifies a type as representing a GraphQL 'interface'.
 'Interfaces' in GraphQL are like Swift protocols that GraphQL types can declare that they implement. In Artemis, GraphQL
 types declare their conformance to interfaces via their static `implements` property.
 */
-public protocol Interface: Object, ObjectSchema { }
+public protocol Interface: Object { }
 
 /**
 A protocol that designates a type as representing a GraphQL 'enum'.
@@ -50,33 +50,29 @@ public protocol ObjectSchema {
 /**
 A type used for objects to declare the interfaces that they implement.
 */
-public struct Interfaces<I1, I2, I3, I4, I5>: AnyInterfaces {
-	init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type) { }
-}
+public struct Interfaces<I1, I2, I3, I4, I5>: AnyInterfaces { }
 public protocol AnyInterfaces {
 	associatedtype I1; associatedtype I2; associatedtype I3; associatedtype I4; associatedtype I5
 }
 
 // MARK: -
-
-public extension Interfaces where I5 == Void {
+public extension Interfaces where I5: Interface, I4: Interface, I3: Interface, I2: Interface, I1: Interface {
+    init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type, _ i4: I4.Type, _ i5: I5.Type) { }
+}
+public extension Interfaces where I5 == Void, I4: Interface, I3: Interface, I2: Interface, I1: Interface {
 	init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type, _ i4: I4.Type) { }
 }
-public extension Interfaces where I5 == Void, I4 == Void {
+public extension Interfaces where I5 == Void, I4 == Void, I3: Interface, I2: Interface, I1: Interface {
 	init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type) { }
 }
-public extension Interfaces where I5 == Void, I4 == Void, I3 == Void {
+public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2: Interface, I1: Interface {
 	init(_ i1: I1.Type, _ i2: I2.Type) { }
 }
-public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void {
+public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void, I1: Interface {
 	init(_ i1: I1.Type) { }
 }
 public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void, I1 == Void {
 	init() { }
-}
-
-public extension Object where Self: ObjectSchema {
-	typealias Schema = Self
 }
 
 public extension Enum {
@@ -102,6 +98,8 @@ public extension Object {
 		return Partial<Self>(values: dictRepresentation) as! R
 	}
 }
+
+extension Array: ObjectSchema where Element: Object { }
 
 extension Array: Object where Element: Object {
 	public typealias Schema = Element.Schema
@@ -138,6 +136,12 @@ extension Optional: SelectionInput where Wrapped: SelectionInput {
 		case .none: return "null"
 		}
 	}
+}
+
+extension Optional: ObjectSchema where Wrapped: Object {
+    public init() {
+        self = nil
+    }
 }
 
 extension Optional: Object where Wrapped: Object {
