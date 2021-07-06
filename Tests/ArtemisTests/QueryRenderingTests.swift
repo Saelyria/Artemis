@@ -61,10 +61,10 @@ final class QueryRenderingTests: XCTestCase {
 				$0.firstName
 			}
 			.number(15)
-			.input { input in
-				input.prop(1)
-                input.nested { nestedInput in
-                    nestedInput.prop2("s")
+			.input {
+				$0.prop(1)
+                $0.nested {
+                    $0.prop2("s")
                 }
 			}
 		}
