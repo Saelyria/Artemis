@@ -13,11 +13,11 @@ in queries, so this request:
 
 ```swift
 // Artemis                                  // Rendered GraphQL query
-Operation(.query) {                         query {
-    Add(\.country, alias: "canada") {           canada: country(code: "CA") {
-        Add(\.name)                                 name
-        Add(\.continent) {                          continent {
-            Add(\.name)                                 name
+.query {                                    query {
+    $0.country(alias: "canada") {               canada: country(code: "CA") {
+        $0.name                                     name
+        $0.continent {                              continent {
+            $0.name                                     name
         }                                           }
     }.code("CA")                                }
 }                                           }
@@ -29,7 +29,7 @@ instance. Artemis will populate the response object with the fetched data - so t
 ```swift
 let client = Client<Query>()
 
-client.perform(query) { result in
+client.perform(.query { ... }) { result in
     switch result {
     case .success(let country):
         country.name // "Canada"
