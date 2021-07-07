@@ -1,5 +1,11 @@
 import Foundation
 
+open class Schema {
+    var keys: [AnyKeyPath: String] = [:]
+
+    public init() { }
+}
+
 /**
 A protocol that identifies a type as representing a GraphQL 'object'.
 
