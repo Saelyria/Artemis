@@ -4,7 +4,11 @@ import Foundation
  A type used to turn keypaths from `T` into functions that build `Selection` instances.
  */
 @dynamicMemberLookup
-public class Selector<T: Schema & Object> {
+public class Selector<T: Schema & Object> { }
+
+// MARK: Selecting on Object
+
+extension Selector {
     public subscript<Value: Object, S: SelectionProtocol>(
         dynamicMember keyPath: KeyPath<T.Schema, Value>
     ) -> SelectionSetBuilderWrapper<T, S, Value, Value, NoArguments> {
@@ -20,7 +24,34 @@ public class Selector<T: Schema & Object> {
     ) -> SelectionSetBuilderWrapper<T, S, _FieldArgValue<Value, Args>, Value, Args> {
         return SelectionSetBuilderWrapper(keyPath: keyPath)
     }
+}
 
+// MARK: Selecting on [Object]
+
+extension Selector {
+    public subscript<Value: Collection, S: SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<T.Schema, Value>
+    ) -> SelectionSetBuilderWrapper<T, S, Value, Value.Element, NoArguments>
+    where Value.Element: Schema & Object {
+        return SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+
+    /**
+     Adds the given field to the operation, returning a selector to select additional fields to add, optionally giving
+     the selected field an alias.
+    */
+    public subscript<Value: Collection, Args: ArgumentsList, S: SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<T.Schema, _FieldArgValue<Value, Args>>
+    ) -> SelectionSetBuilderWrapper<T, S, _FieldArgValue<Value, Args>, Value.Element, Args>
+    where Value.Element: Schema & Object {
+        return SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+}
+
+
+// MARK: Selecting on Scalar
+
+extension Selector {
     /**
      Adds the given field to the operation.
     */
