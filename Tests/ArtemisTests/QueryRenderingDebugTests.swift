@@ -16,7 +16,7 @@ final class QueryRenderingDebugTests: XCTestCase {
         }
         """)
     }
-    
+
     func testQueryMultipleQueryFieldSelectionSetRendering() {
         let query: Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])> = .query {
             $0.me {
@@ -44,7 +44,7 @@ final class QueryRenderingDebugTests: XCTestCase {
         }
         """)
     }
-    
+
     func testQueryAliasRendering() {
         let query: Artemis.Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
             $0.me(alias: "first") {

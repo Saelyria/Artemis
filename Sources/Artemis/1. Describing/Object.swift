@@ -1,9 +1,22 @@
 import Foundation
 
+private var shared: [String: Any] = [:]
 open class Schema {
+//    private static var shared: [String: Any] = [:]
     public var keys: [AnyKeyPath: String] = [:]
 
     public init() { }
+
+    static func schema<O: Object>(for: O.Type) -> O.SubSchema {
+        let schema: O.SubSchema
+        if let s = shared[String(describing: O.SubSchema.self)] as? O.SubSchema {
+            schema = s
+        } else {
+            schema = O.SubSchema.init()
+            shared[String(describing: O.SubSchema.self)] = schema
+        }
+        return schema
+    }
 }
 
 /**
@@ -14,11 +27,13 @@ conformed to by data types that are meant to represent the various objects of yo
 */
 public protocol Object: SelectionOutput, ObjectSchema {
 	/// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
-	associatedtype Schema: ObjectSchema = Self
+	associatedtype SubSchema: Schema & ObjectSchema = Self
 	associatedtype Result = Partial<Self>
 }
-extension Object {
-    public static var `default`: Self { .init() }
+extension Object where SubSchema == Self {
+    public static var `default`: Self {
+        return Schema.schema(for: Self.self)
+    }
 }
 
 /**
@@ -34,7 +49,9 @@ A protocol that designates a type as representing a GraphQL 'enum'.
 */
 public protocol Enum: Scalar, CaseIterable, RawRepresentable where Self.RawValue == String, Self.Result == String { }
 extension Enum {
-    public static var `default`: Self { return self.allCases.first! }
+    public static var `default`: Self {
+        return self.allCases[self.allCases.startIndex]
+    }
 }
 
 /**
@@ -107,7 +124,9 @@ public extension ObjectSchema where ImplementedInterfaces == Interfaces<Void, Vo
 
 public extension Object {
 	static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
-		guard R.self == Result.self else { throw GraphQLError.invalidOperation }
+		guard R.self == Result.self else {
+            throw GraphQLError.invalidOperation
+        }
 		guard let dictRepresentation = object as? [String: Any] else { throw GraphQLError.singleItemParseFailure(operation: key) }
 		return Partial<Self>(values: dictRepresentation) as! R
 	}
@@ -126,7 +145,7 @@ extension Array: ObjectSchema where Element: Object & AnyObject {
 }
 
 extension Array: Object where Element: Object & AnyObject {
-	public typealias Schema = Element.Schema
+	public typealias SubSchema = Element.SubSchema
 }
 
 extension Array: SelectionOutput where Element: SelectionOutput {
@@ -134,18 +153,22 @@ extension Array: SelectionOutput where Element: SelectionOutput {
 	public typealias Value = Self
 	
 	public static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
-		guard R.self == Result.self else { throw GraphQLError.invalidOperation }
+		guard R.self == Result.self else {
+            throw GraphQLError.invalidOperation
+        }
 		guard let resultArray = object as? [Any] else { throw GraphQLError.arrayParseFailure(operation: key) }
 		let mappedArray: [Element.Result] = try resultArray.map { try Element.createUnsafeResult(from: $0, key: key) }
 		guard let returnedArray = mappedArray as? R else { throw GraphQLError.arrayParseFailure(operation: key) }
 		return returnedArray
 	}
-    public static var `default`: Array<Element> { [] }
 }
 extension Array: SelectionInput where Element: SelectionInput {
 	public func render() -> String {
 		return "[\(self.map { $0.render() }.joined(separator: ","))]"
 	}
+}
+extension Array {
+    public static var `default`: Array<Element> { [] }
 }
 
 extension Optional: SelectionOutput where Wrapped: SelectionOutput {
@@ -153,7 +176,6 @@ extension Optional: SelectionOutput where Wrapped: SelectionOutput {
 	public static func createUnsafeResult<R>(from: Any, key: String) throws -> R {
 		return try Wrapped.createUnsafeResult(from: from, key: key)
 	}
-    public static var `default`: Optional<Wrapped> { nil }
 }
 extension Optional: SelectionInput where Wrapped: SelectionInput {
 	public func render() -> String {
@@ -162,6 +184,9 @@ extension Optional: SelectionInput where Wrapped: SelectionInput {
 		case .none: return "null"
 		}
 	}
+}
+extension Optional {
+    public static var `default`: Optional<Wrapped> { nil }
 }
 
 extension Optional: ObjectSchema where Wrapped: Object {
@@ -186,7 +211,7 @@ extension Optional: ObjectSchema where Wrapped: Object {
 }
 
 extension Optional: Object where Wrapped: Object {
-	public typealias Schema = Wrapped.Schema
+	public typealias SubSchema = Wrapped.SubSchema
 }
 
 extension Optional: Input where Wrapped: Input {

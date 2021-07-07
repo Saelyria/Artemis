@@ -13,9 +13,9 @@ public class InputBuilder<I: Input> {
 	/**
 	Adds the given property value to the input object.
 	*/
-	public subscript<X, V: Scalar, T>(dynamicMember keyPath: KeyPath<I.Schema, Field<X, V, T>>) -> (V) -> Void {
+	public subscript<X, V: Scalar, T>(dynamicMember keyPath: KeyPath<I.SubSchema, Field<X, V, T>>) -> (V) -> Void {
 		return { value in
-			let key = I.Schema()[keyPath: keyPath].key
+			let key = I.SubSchema()[keyPath: keyPath].key
 			self.addedInputFields.append("\(key):\(value.render())")
 		}
 	}
@@ -23,11 +23,11 @@ public class InputBuilder<I: Input> {
 	/**
 	Adds the given property input object value to the input object.
 	*/
-	public subscript<X, V, T>(dynamicMember keyPath: KeyPath<I.Schema, Field<X, V, T>>) -> ( (InputBuilder<V>) -> Void ) -> Void where V: Input {
+	public subscript<X, V, T>(dynamicMember keyPath: KeyPath<I.SubSchema, Field<X, V, T>>) -> ( (InputBuilder<V>) -> Void ) -> Void where V: Input {
 		return { inputBuilder in
 			let b = InputBuilder<V>()
 			_ = inputBuilder(b)
-			let key = I.Schema()[keyPath: keyPath].key
+			let key = I.SubSchema()[keyPath: keyPath].key
 			let value = "{\(b.addedInputFields.joined(separator: ","))}"
 			self.addedInputFields.append("\(key):\(value)")
 		}

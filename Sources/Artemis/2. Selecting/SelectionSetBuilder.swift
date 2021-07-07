@@ -171,7 +171,7 @@ extension SelectionSetBuilder {
 
     public static func buildExpression<I: Interface>(
         _ fragment: Fragment<I>
-    ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I1 {
+    ) -> SelectionSet<Never> where I == T.SubSchema.ImplementedInterfaces.I1 {
         let selection = Selection<T, Never, NoArguments>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",
@@ -184,7 +184,7 @@ extension SelectionSetBuilder {
 
     public static func buildExpression<I: Interface>(
         _ fragment: Fragment<I>
-    ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I2 {
+    ) -> SelectionSet<Never> where I == T.SubSchema.ImplementedInterfaces.I2 {
         let selection = Selection<T, Never, NoArguments>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",
@@ -197,7 +197,7 @@ extension SelectionSetBuilder {
 
     public static func buildExpression<I: Interface>(
         _ fragment: Fragment<I>
-    ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I3 {
+    ) -> SelectionSet<Never> where I == T.SubSchema.ImplementedInterfaces.I3 {
         let selection = Selection<T, Never, NoArguments>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",
@@ -210,7 +210,7 @@ extension SelectionSetBuilder {
 
     public static func buildExpression<I: Interface>(
         _ fragment: Fragment<I>
-    ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I4 {
+    ) -> SelectionSet<Never> where I == T.SubSchema.ImplementedInterfaces.I4 {
         let selection = Selection<T, Never, NoArguments>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",
@@ -223,7 +223,7 @@ extension SelectionSetBuilder {
 
     public static func buildExpression<I: Interface>(
         _ fragment: Fragment<I>
-    ) -> SelectionSet<Never> where I == T.Schema.ImplementedInterfaces.I5 {
+    ) -> SelectionSet<Never> where I == T.SubSchema.ImplementedInterfaces.I5 {
         let selection = Selection<T, Never, NoArguments>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",

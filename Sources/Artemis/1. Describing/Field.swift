@@ -18,7 +18,7 @@ public struct Field<T, Value: SelectionOutput, ArgType: ArgumentsList> {
     ) -> T {
         get {
             object.keys[wrappedKeyPath] = object[keyPath: storageKeyPath].key
-            return object[keyPath: storageKeyPath].throwawayValue
+            return object[keyPath: storageKeyPath].throwawayValue()
         }
         set { }
     }
@@ -30,22 +30,22 @@ public struct Field<T, Value: SelectionOutput, ArgType: ArgumentsList> {
         get { fatalError() }
         set { fatalError() }
     }
-    private let throwawayValue: T
+    private let throwawayValue: () -> T
 
     public var projectedValue: Self { self }
 }
 
 extension Field where T == _FieldArgValue<Value, ArgType> {
-    public init(wrappedValue: T = (.default, .init()), _ key: String) {
+    public init(wrappedValue: T! = nil, _ key: String) {
         self.key = key
-        self.throwawayValue = wrappedValue
+        self.throwawayValue = { (.default, .init()) }
     }
 }
 
 extension Field where Value: SelectionOutput, ArgType == NoArguments, T == Value {
-    public init(wrappedValue: T = .default, _ key: String) {
+    public init(wrappedValue: T! = nil, _ key: String) {
         self.key = key
-        self.throwawayValue = wrappedValue
+        self.throwawayValue = { .default }
     }
 }
 
@@ -72,18 +72,23 @@ public struct Argument<Value: SelectionInput> {
     public let name: String
     let defaultValue: Value?
     public var projectedValue: Self { self }
+    private let throwawayValue: () -> Value
     
-    public init(_ name: String, default: Value? = nil) {
+    public init(wrappedValue: Value! = nil, _ name: String, default d: Value? = nil) {
         self.name = name
-        self.defaultValue = `default`
+        self.defaultValue = d
+        self.throwawayValue = { .default }
     }
 
-    public static subscript<OuterSelf: ArgumentsList>(
+    public static subscript<OuterSelf: Schema & ArgumentsList>(
         _enclosingInstance object: OuterSelf,
         wrapped wrappedKeyPath: ReferenceWritableKeyPath<OuterSelf, Value>,
         storage storageKeyPath: ReferenceWritableKeyPath<OuterSelf, Self>
     ) -> Value {
-      get { fatalError() }
+      get {
+        object.keys[wrappedKeyPath] = object[keyPath: storageKeyPath].name
+        return object[keyPath: storageKeyPath].throwawayValue()
+      }
       set { }
     }
 

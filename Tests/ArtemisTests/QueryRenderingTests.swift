@@ -62,8 +62,8 @@ final class QueryRenderingTests: XCTestCase {
                     $0.type
                     $0.friendlyWithTypes
                 }
-                .type(.cat)
-                .types([.dog])
+                .$type(.cat)
+                .$types([.dog])
             }
         }
 

@@ -7,9 +7,9 @@ final class Query: Schema, Object {
     @Field("number") var number: Int
     @Field("numbers") var numbers: [Int]
 
-    final class UserArguments: ArgumentsList {
+    final class UserArguments: Schema, ArgumentsList {
         @Argument("id") var id: String
-        @Argument("number", default: 10) var number: Int
+        @Argument("number") var number: Int
         @Argument("input") var input: UserInput
     }
 }
@@ -29,8 +29,8 @@ final class Person: Schema, Object {
     @Field("pets") var pets: ([Animal], PetsArguments)
     @Field("spouse") var spouse: Person
 
-    final class PetsArguments: ArgumentsList {
-        @Argument("id", default: 10) var number: Int
+    final class PetsArguments: Schema, ArgumentsList {
+        @Argument("number") var number: Int
         @Argument("types") var types: [AnimalType]
         @Argument("type") var type: AnimalType
     }
@@ -46,6 +46,8 @@ final class Animal: Schema, Object {
 }
 
 enum AnimalType: String, Enum {
+    static var `default`: AnimalType = .cat
+
     case cat = "CAT"
     case dog = "DOG"
 }
