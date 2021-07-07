@@ -32,7 +32,10 @@ public protocol Interface: Object { }
 /**
 A protocol that designates a type as representing a GraphQL 'enum'.
 */
-public protocol Enum: Scalar, RawRepresentable where Self.RawValue == String, Self.Result == String { }
+public protocol Enum: Scalar, CaseIterable, RawRepresentable where Self.RawValue == String, Self.Result == String { }
+extension Enum {
+    public static var `default`: Self { return self.allCases.first! }
+}
 
 /**
 A protocol that designates a type as representing a GraphQL 'input object' type.
@@ -203,6 +206,12 @@ extension Optional: RawRepresentable where Wrapped: RawRepresentable, Wrapped.Ra
 		case .none: return ""
 		}
 	}
+}
+
+extension Optional: CaseIterable where Wrapped: Enum {
+    public static var allCases: AllCases {
+        return Wrapped.allCases.map { $0 }
+    }
 }
 
 extension Optional: Enum where Wrapped: Enum { }

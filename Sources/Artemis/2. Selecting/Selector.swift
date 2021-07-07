@@ -89,6 +89,50 @@ extension Selector {
     }
 }
 
+// MARK: Selecting on [Scalar]
+
+extension Selector {
+    /**
+     Adds the given field to the operation.
+    */
+    public subscript<Value: Collection>(
+        dynamicMember keyPath: KeyPath<T.Schema, Value>
+    ) -> Selection<T, Value.Element.Result, NoArguments>
+    where Value.Element: Scalar {
+        return AliasBuilderWrapper<T, Value, Value.Element, NoArguments>(keyPath: keyPath)(alias: nil)
+    }
+
+    /**
+     Adds the given field to the operation.
+    */
+    public subscript<Value: Collection, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<T.Schema, _FieldArgValue<Value, Args>>
+    ) -> Selection<T, Value.Element.Result, Args>
+    where Value.Element: Scalar {
+        return AliasBuilderWrapper<T, _FieldArgValue<Value, Args>, Value.Element, Args>(keyPath: keyPath)(alias: nil)
+    }
+
+    /**
+     Adds the given field to the operation, giving the selected field an alias.
+    */
+    public subscript<Value: Collection>(
+        dynamicMember keyPath: KeyPath<T.Schema, Value>
+    ) -> AliasBuilderWrapper<T, Value, Value.Element, NoArguments>
+    where Value.Element: Scalar {
+        return AliasBuilderWrapper<T, Value, Value.Element, NoArguments>(keyPath: keyPath)
+    }
+
+    /**
+     Adds the given field to the operation, giving the selected field an alias.
+    */
+    public subscript<Value: Collection, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<T.Schema, _FieldArgValue<Value, Args>>
+    ) -> AliasBuilderWrapper<T, _FieldArgValue<Value, Args>, Value.Element, Args> {
+        return AliasBuilderWrapper(keyPath: keyPath)
+    }
+}
+
+
 extension Selector {
     // We need to return this instead of a closure so we can add the `alias` parameter name to the callsite
     public struct AliasBuilderWrapper<T: Schema & Object, FieldVal, Value: Scalar, Args: ArgumentsList> {

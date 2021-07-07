@@ -22,11 +22,11 @@ final class QueryParsingTests: XCTestCase {
         let me = try query.createResult(from: response)
 
         XCTAssertEqual(me.values.count, 1)
-        XCTAssertEqual(me.firstName, "Aaron")
-        XCTAssertNil(me.lastName)
-        XCTAssertNil(me.age)
-        XCTAssertNil(me.pets)
-        XCTAssertNil(me.spouse)
+        XCTAssertEqual(me.$firstName, "Aaron")
+        XCTAssertNil(me.$lastName)
+        XCTAssertNil(me.$age)
+        XCTAssertNil(me.$pets)
+        XCTAssertNil(me.$spouse)
     }
 
     func testQueryMultipleQueryFieldSelectionSetParsing() throws {
@@ -65,21 +65,21 @@ final class QueryParsingTests: XCTestCase {
         let (me, users) = try query.createResult(from: response)
 
         XCTAssertEqual(me.values.count, 2)
-        XCTAssertEqual(me.firstName, "Aaron")
-        XCTAssertEqual(me.lastName, "Bosnjak")
-        XCTAssertNil(me.age)
-        XCTAssertNil(me.pets)
-        XCTAssertNil(me.spouse)
+        XCTAssertEqual(me.$firstName, "Aaron")
+        XCTAssertEqual(me.$lastName, "Bosnjak")
+        XCTAssertNil(me.$age)
+        XCTAssertNil(me.$pets)
+        XCTAssertNil(me.$spouse)
 
         XCTAssertEqual(users.count, 1)
         XCTAssertEqual(users.first?.values.count, 1)
-        XCTAssertNil(users.first?.firstName)
-        XCTAssertNil(users.first?.lastName)
-        XCTAssertNil(users.first?.age)
-        XCTAssertNil(users.first?.spouse)
-        XCTAssertEqual(users.first?.pets?.count, 1)
-        XCTAssertEqual(users.first?.pets?.first?.name, "Tiny")
-        XCTAssertNil(users.first?.pets?.first?.age)
+        XCTAssertNil(users.first?.$firstName)
+        XCTAssertNil(users.first?.$lastName)
+        XCTAssertNil(users.first?.$age)
+        XCTAssertNil(users.first?.$spouse)
+        XCTAssertEqual(users.first?.$pets?.count, 1)
+        XCTAssertEqual(users.first?.$pets?.first?.$name, "Tiny")
+        XCTAssertNil(users.first?.$pets?.first?.$age)
     }
 
     func testQueryAliasParsing() throws {
@@ -108,19 +108,19 @@ final class QueryParsingTests: XCTestCase {
         let (first, second) = try query.createResult(from: response)
 
         XCTAssertEqual(first.values.count, 1)
-        XCTAssertNil(first.firstName)
-        XCTAssertEqual(first.get(\.firstName, alias: "name"), "Aaron")
-        XCTAssertNil(first.lastName)
-        XCTAssertNil(first.age)
-        XCTAssertNil(first.pets)
-        XCTAssertNil(first.spouse)
+        XCTAssertNil(first.$firstName)
+        XCTAssertEqual(first.get(\.$firstName, alias: "name"), "Aaron")
+        XCTAssertNil(first.$lastName)
+        XCTAssertNil(first.$age)
+        XCTAssertNil(first.$pets)
+        XCTAssertNil(first.$spouse)
 
         XCTAssertEqual(second.values.count, 1)
-        XCTAssertNil(second.firstName)
-        XCTAssertEqual(second.lastName, "Bosnjak")
-        XCTAssertNil(second.age)
-        XCTAssertNil(second.pets)
-        XCTAssertNil(second.spouse)
+        XCTAssertNil(second.$firstName)
+        XCTAssertEqual(second.$lastName, "Bosnjak")
+        XCTAssertNil(second.$age)
+        XCTAssertNil(second.$pets)
+        XCTAssertNil(second.$spouse)
     }
 
     func testQueryArgumentParsing() throws {
@@ -128,8 +128,8 @@ final class QueryParsingTests: XCTestCase {
             $0.user(alias: "first") {
                 $0.firstName(alias: "name")
             }
-            .id("321")
-            .number(15)
+            .$id("321")
+            .$number(15)
             $0.user(alias: "second") {
                 $0.lastName
             }
@@ -151,19 +151,19 @@ final class QueryParsingTests: XCTestCase {
         let (first, second) = try query.createResult(from: response)
 
         XCTAssertEqual(first.values.count, 1)
-        XCTAssertNil(first.firstName)
-        XCTAssertEqual(first.get(\.firstName, alias: "name"), "Aaron")
-        XCTAssertNil(first.lastName)
-        XCTAssertNil(first.age)
-        XCTAssertNil(first.pets)
-        XCTAssertNil(first.spouse)
+        XCTAssertNil(first.$firstName)
+        XCTAssertEqual(first.get(\.$firstName, alias: "name"), "Aaron")
+        XCTAssertNil(first.$lastName)
+        XCTAssertNil(first.$age)
+        XCTAssertNil(first.$pets)
+        XCTAssertNil(first.$spouse)
 
         XCTAssertEqual(second.values.count, 1)
-        XCTAssertNil(second.firstName)
-        XCTAssertEqual(second.lastName, "Bosnjak")
-        XCTAssertNil(second.age)
-        XCTAssertNil(second.pets)
-        XCTAssertNil(second.spouse)
+        XCTAssertNil(second.$firstName)
+        XCTAssertEqual(second.$lastName, "Bosnjak")
+        XCTAssertNil(second.$age)
+        XCTAssertNil(second.$pets)
+        XCTAssertNil(second.$spouse)
     }
 
     func testQueryEnumParsing() throws {
@@ -194,14 +194,14 @@ final class QueryParsingTests: XCTestCase {
         let user = try query.createResult(from: response)
 
         XCTAssertEqual(user.values.count, 1)
-        XCTAssertNil(user.firstName)
-        XCTAssertNil(user.lastName)
-        XCTAssertNil(user.age)
-        XCTAssertEqual(user.pets?.count, 1)
-        XCTAssertEqual(user.pets?.first?.values.count, 2)
-        XCTAssertEqual(user.pets?.first?.type, .cat)
-        XCTAssertEqual(user.pets?.first?.friendlyWithTypes, [.cat, .dog])
-        XCTAssertNil(user.spouse)
+        XCTAssertNil(user.$firstName)
+        XCTAssertNil(user.$lastName)
+        XCTAssertNil(user.$age)
+        XCTAssertEqual(user.$pets?.count, 1)
+        XCTAssertEqual(user.$pets?.first?.values.count, 2)
+        XCTAssertEqual(user.$pets?.first?.$type, .cat)
+        XCTAssertEqual(user.$pets?.first?.$friendlyWithTypes, [.cat, .dog])
+        XCTAssertNil(user.$spouse)
     }
 
     func testInputArgumentParsing() throws {
@@ -209,11 +209,11 @@ final class QueryParsingTests: XCTestCase {
             $0.user {
                 $0.firstName
             }
-            .number(15)
-            .input {
-                $0.prop(1)
-                $0.nested {
-                    $0.prop2("s")
+            .$number(15)
+            .$input {
+                $0.$prop(1)
+                $0.$nested {
+                    $0.$prop2("s")
                 }
             }
         }
@@ -231,11 +231,11 @@ final class QueryParsingTests: XCTestCase {
         let user = try query.createResult(from: response)
 
         XCTAssertEqual(user.values.count, 1)
-        XCTAssertEqual(user.firstName, "Aaron")
-        XCTAssertNil(user.lastName)
-        XCTAssertNil(user.age)
-        XCTAssertNil(user.pets)
-        XCTAssertNil(user.spouse)
+        XCTAssertEqual(user.$firstName, "Aaron")
+        XCTAssertNil(user.$lastName)
+        XCTAssertNil(user.$age)
+        XCTAssertNil(user.$pets)
+        XCTAssertNil(user.$spouse)
     }
 
     func testFragmentParsing() throws {
@@ -257,7 +257,7 @@ final class QueryParsingTests: XCTestCase {
                 namesFragment
                 ageFragment
             }
-            .id("321")
+            .$id("321")
             $0.user(alias: "second") {
                 $0.firstName
                 ageFragment
@@ -289,22 +289,22 @@ final class QueryParsingTests: XCTestCase {
         let (user, second) = try query.createResult(from: response)
 
         XCTAssertEqual(user.values.count, 3)
-        XCTAssertEqual(user.firstName, "Aaron")
-        XCTAssertEqual(user.lastName, "Bosnjak")
-        XCTAssertNil(user.age)
-        XCTAssertEqual(user.get(\.age, alias: "yearsOnEarth"), 26)
-        XCTAssertNil(user.pets)
-        XCTAssertNil(user.spouse)
+        XCTAssertEqual(user.$firstName, "Aaron")
+        XCTAssertEqual(user.$lastName, "Bosnjak")
+        XCTAssertNil(user.$age)
+        XCTAssertEqual(user.get(\.$age, alias: "yearsOnEarth"), 26)
+        XCTAssertNil(user.$pets)
+        XCTAssertNil(user.$spouse)
 
         XCTAssertEqual(second.values.count, 3)
-        XCTAssertEqual(second.firstName, "Ashley")
-        XCTAssertNil(second.lastName)
-        XCTAssertNil(user.age)
-        XCTAssertEqual(user.get(\.age, alias: "yearsOnEarth"), 26)
-        XCTAssertEqual(second.pets?.count, 1)
-        XCTAssertEqual(second.pets?.first?.name, "Tiny")
-        XCTAssertNil(second.pets?.first?.age)
-        XCTAssertNil(second.spouse)
+        XCTAssertEqual(second.$firstName, "Ashley")
+        XCTAssertNil(second.$lastName)
+        XCTAssertNil(user.$age)
+        XCTAssertEqual(user.get(\.$age, alias: "yearsOnEarth"), 26)
+        XCTAssertEqual(second.$pets?.count, 1)
+        XCTAssertEqual(second.$pets?.first?.$name, "Tiny")
+        XCTAssertNil(second.$pets?.first?.$age)
+        XCTAssertNil(second.$spouse)
     }
 
     static var allTests = [

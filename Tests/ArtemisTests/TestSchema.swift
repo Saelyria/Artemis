@@ -1,46 +1,48 @@
 @testable import Artemis
 
-final class Query: Object {
-	var me = Field<Person, NoArguments>("me")
-	var user = Field<Person, UserArguments>("user")
-	struct UserArguments: ArgumentsList {
-		var id = Argument<String>("id")
-		var number = Argument<Int>("number", default: 10)
-		var input = Argument<UserInput>("input")
-	}
-	var users = Field<[Person], NoArguments>("users")
-	var number = Field<Int, NoArguments>("number")
-	var numbers = Field<[Int], NoArguments>("numbers")
-}
+final class Query: Schema, Object {
+    @Field("me") var me: Person
+    @Field("user") var user: (Person, UserArguments)
+    @Field("users") var users: [Person]
+    @Field("number") var number: Int
+    @Field("numbers") var numbers: [Int]
 
-final class UserInput: Input {
-	var prop = Field<Int, NoArguments>("prop")
-	var prop2 = Field<String, NoArguments>("prop2")
-	var nested = Field<UserInput, NoArguments>("nested")
-}
-
-final class Person: Object {
-    static let implements = Interfaces(LivingThing.self)
-
-    var firstName = Field<String, NoArguments>("firstName")
-    var lastName = Field<String, NoArguments>("lastName")
-    var age = Field<Int, NoArguments>("age")
-    var pets = Field<[Animal], PetsArguments>("pets")
-    struct PetsArguments: ArgumentsList {
-        var number = Argument<Int>("number", default: 10)
-        var types = Argument<[AnimalType]>("types")
-        var type = Argument<AnimalType>("type")
+    final class UserArguments: ArgumentsList {
+        @Argument("id") var id: String
+        @Argument("number", default: 10) var number: Int
+        @Argument("input") var input: UserInput
     }
-    var spouse = Field<Person, NoArguments>("spouse")
 }
 
-final class Animal: Object {
+final class UserInput: Schema, Input {
+    @Field("prop") var prop: Int
+    @Field("prop2") var prop2: String
+    @Field("nested") var nested: UserInput
+}
+
+final class Person: Schema, Object {
     static let implements = Interfaces(LivingThing.self)
 
-	var name = Field<String, NoArguments>("name")
-	var age = Field<Int, NoArguments>("age")
-    var type = Field<AnimalType, NoArguments>("type")
-    var friendlyWithTypes = Field<[AnimalType], NoArguments>("friendlyWithTypes")
+    @Field("firstName") var firstName: String
+    @Field("lastName") var lastName: String
+    @Field("age") var age: Int
+    @Field("pets") var pets: ([Animal], PetsArguments)
+    @Field("spouse") var spouse: Person
+
+    final class PetsArguments: ArgumentsList {
+        @Argument("id", default: 10) var number: Int
+        @Argument("types") var types: [AnimalType]
+        @Argument("type") var type: AnimalType
+    }
+}
+
+final class Animal: Schema, Object {
+    static let implements = Interfaces(LivingThing.self)
+
+    @Field("name") var name: String
+    @Field("age") var age: Int
+    @Field("type") var type: AnimalType
+    @Field("friendlyWithTypes") var friendlyWithTypes: [AnimalType]
 }
 
 enum AnimalType: String, Enum {
@@ -48,6 +50,6 @@ enum AnimalType: String, Enum {
     case dog = "DOG"
 }
 
-final class LivingThing: Interface {
-	var age = Field<Int, NoArguments>("age")
+final class LivingThing: Schema, Interface {
+    @Field("age") var age: Int
 }
