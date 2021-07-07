@@ -5,7 +5,7 @@ import Foundation
 
  T: The object that the selection set is selecting keypaths from
 */
-@_functionBuilder
+@resultBuilder
 public struct SelectionSetBuilder<T: Object> {
     /// Function builder method to transform a `Selection` instance into a `SelectionSet` that will get piped into one of
     /// the `buildBlock` methods.
