@@ -1,7 +1,7 @@
 import Foundation
 
 open class Schema {
-    var keys: [AnyKeyPath: String] = [:]
+    public var keys: [AnyKeyPath: String] = [:]
 
     public init() { }
 }
@@ -16,6 +16,9 @@ public protocol Object: SelectionOutput, ObjectSchema {
 	/// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
 	associatedtype Schema: ObjectSchema = Self
 	associatedtype Result = Partial<Self>
+}
+extension Object {
+    public static var `default`: Self { .init() }
 }
 
 /**
@@ -49,6 +52,8 @@ public protocol ObjectSchema {
 	associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void, Void, Void>
 	
 	static var implements: ImplementedInterfaces { get }
+
+    var keys: [AnyKeyPath: String] { get set }
 	
 	init()
 }
@@ -105,9 +110,19 @@ public extension Object {
 	}
 }
 
-extension Array: ObjectSchema where Element: Object { }
+extension Array: ObjectSchema where Element: Object & AnyObject {
+    public var keys: [AnyKeyPath : String] {
+        get {
+            return self.first?.keys ?? [:]
+        }
+        set {
+            var obj = self.first
+            obj?.keys = newValue
+        }
+    }
+}
 
-extension Array: Object where Element: Object {
+extension Array: Object where Element: Object & AnyObject {
 	public typealias Schema = Element.Schema
 }
 
@@ -122,6 +137,7 @@ extension Array: SelectionOutput where Element: SelectionOutput {
 		guard let returnedArray = mappedArray as? R else { throw GraphQLError.arrayParseFailure(operation: key) }
 		return returnedArray
 	}
+    public static var `default`: Array<Element> { [] }
 }
 extension Array: SelectionInput where Element: SelectionInput {
 	public func render() -> String {
@@ -134,6 +150,7 @@ extension Optional: SelectionOutput where Wrapped: SelectionOutput {
 	public static func createUnsafeResult<R>(from: Any, key: String) throws -> R {
 		return try Wrapped.createUnsafeResult(from: from, key: key)
 	}
+    public static var `default`: Optional<Wrapped> { nil }
 }
 extension Optional: SelectionInput where Wrapped: SelectionInput {
 	public func render() -> String {
@@ -145,6 +162,21 @@ extension Optional: SelectionInput where Wrapped: SelectionInput {
 }
 
 extension Optional: ObjectSchema where Wrapped: Object {
+    public var keys: [AnyKeyPath : String] {
+        get {
+            switch self {
+            case .some(let obj): return obj.keys
+            case .none: return [:]
+            }
+        }
+        set {
+            switch self {
+            case .some(var obj): obj.keys = newValue
+            case .none: return
+            }
+        }
+    }
+
     public init() {
         self = nil
     }

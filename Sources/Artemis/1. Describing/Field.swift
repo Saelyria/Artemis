@@ -1,5 +1,7 @@
 import Foundation
 
+public typealias _FieldArgValue<V: SelectionOutput, A: ArgumentsList> = (V, A)
+
 /**
 An object containing the information about a field on a GraphQL type.
 
@@ -8,36 +10,42 @@ on that oject. Via generic associated types, `Field` objects contain type inform
 when this field is queried as well as the type whose properties represent the arguments to this field.
 */
 @propertyWrapper
-public struct Field<Value: SelectionOutput, ArgType: ArgumentsList> {
-    public typealias Argument = ArgType
-
+public struct Field<T, Value: SelectionOutput, ArgType: ArgumentsList> {
     public static subscript<OuterSelf: Schema & Object>(
         _enclosingInstance object: OuterSelf,
-        wrapped wrappedKeyPath: ReferenceWritableKeyPath<OuterSelf, Value>,
+        wrapped wrappedKeyPath: ReferenceWritableKeyPath<OuterSelf, T>,
         storage storageKeyPath: ReferenceWritableKeyPath<OuterSelf, Self>
-    ) -> Value {
-      get { fatalError() }
-      set { }
+    ) -> T {
+        get {
+            object.keys[wrappedKeyPath] = object[keyPath: storageKeyPath].key
+            return object[keyPath: storageKeyPath].throwawayValue
+        }
+        set { }
     }
     
 	/// The string name of the field as it should appear in a document.
     public let key: String
     @available(*, unavailable, message: "Values are not accessed on Fields")
-    public var wrappedValue: Value {
+    public var wrappedValue: T {
         get { fatalError() }
         set { fatalError() }
     }
+    private let throwawayValue: T
 
     public var projectedValue: Self { self }
+}
 
-    public init(_ key: String, arguments: ArgType.Type) {
+extension Field where T == _FieldArgValue<Value, ArgType> {
+    public init(wrappedValue: T = (.default, .init()), _ key: String) {
         self.key = key
+        self.throwawayValue = wrappedValue
     }
 }
 
-extension Field where ArgType == NoArguments {
-    public init(_ key: String) {
+extension Field where Value: SelectionOutput, ArgType == NoArguments, T == Value {
+    public init(wrappedValue: T = .default, _ key: String) {
         self.key = key
+        self.throwawayValue = wrappedValue
     }
 }
 

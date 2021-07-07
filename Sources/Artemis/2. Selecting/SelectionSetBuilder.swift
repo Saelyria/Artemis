@@ -6,7 +6,7 @@ import Foundation
  T: The object that the selection set is selecting keypaths from
 */
 @resultBuilder
-public struct SelectionSetBuilder<T: Object> {
+public struct SelectionSetBuilder<T: Schema & Object> {
     /// Function builder method to transform a `Selection` instance into a `SelectionSet` that will get piped into one of
     /// the `buildBlock` methods.
     public static func buildExpression<R, A: ArgumentsList>(

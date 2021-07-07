@@ -4,40 +4,64 @@ import Foundation
  A type used to turn keypaths from `T` into functions that build `Selection` instances.
  */
 @dynamicMemberLookup
-public class Selector<T: Object> {
+public class Selector<T: Schema & Object> {
+    public subscript<Value: Object, S: SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<T.Schema, Value>
+    ) -> SelectionSetBuilderWrapper<T, S, Value, Value, NoArguments> {
+        return SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+
     /**
      Adds the given field to the operation, returning a selector to select additional fields to add, optionally giving
      the selected field an alias.
     */
     public subscript<Value: Object, Args: ArgumentsList, S: SelectionProtocol>(
-        dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
-    ) -> SelectionSetBuilderWrapper<T, T.Schema, S, Value, Args> {
+        dynamicMember keyPath: KeyPath<T.Schema, _FieldArgValue<Value, Args>>
+    ) -> SelectionSetBuilderWrapper<T, S, _FieldArgValue<Value, Args>, Value, Args> {
         return SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 
     /**
      Adds the given field to the operation.
     */
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<T.Schema, Value>
+    ) -> Selection<T, Value.Result, NoArguments> {
+        return AliasBuilderWrapper<T, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+    }
+
+    /**
+     Adds the given field to the operation.
+    */
     public subscript<Value: Scalar, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
+        dynamicMember keyPath: KeyPath<T.Schema, _FieldArgValue<Value, Args>>
     ) -> Selection<T, Value.Result, Args> {
-        return AliasBuilderWrapper(keyPath: keyPath)(alias: nil)
+        return AliasBuilderWrapper<T, _FieldArgValue<Value, Args>, Value, Args>(keyPath: keyPath)(alias: nil)
+    }
+
+    /**
+     Adds the given field to the operation, giving the selected field an alias.
+    */
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<T.Schema, Value>
+    ) -> AliasBuilderWrapper<T, Value, Value, NoArguments> {
+        return AliasBuilderWrapper<T, Value, Value, NoArguments>(keyPath: keyPath)
     }
 
     /**
      Adds the given field to the operation, giving the selected field an alias.
     */
     public subscript<Value: Scalar, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.Schema, Field<Value, Args>>
-    ) -> AliasBuilderWrapper<T, T.Schema, Value, Args> {
+        dynamicMember keyPath: KeyPath<T.Schema, _FieldArgValue<Value, Args>>
+    ) -> AliasBuilderWrapper<T, _FieldArgValue<Value, Args>, Value, Args> {
         return AliasBuilderWrapper(keyPath: keyPath)
     }
 }
 
 extension Selector {
     // We need to return this instead of a closure so we can add the `alias` parameter name to the callsite
-    public struct AliasBuilderWrapper<T: Object, Schema, Value: Scalar, Args: ArgumentsList> where T.Schema == Schema {
-        let keyPath: KeyPath<Schema, Field<Value, Args>>
+    public struct AliasBuilderWrapper<T: Schema & Object, FieldVal, Value: Scalar, Args: ArgumentsList> {
+        let keyPath: KeyPath<T.Schema, FieldVal>
 
         /**
          - parameter alias: The alias to use for this field in the rendered GraphQL document.
@@ -45,13 +69,14 @@ extension Selector {
         public func callAsFunction(
             alias: String?
         ) -> Selection<T, Value.Result, Args> {
-            let field = T.Schema()[keyPath: keyPath]
+            let schema = T.Schema()
+            let _ = schema[keyPath: keyPath]
             let fieldType: Selection<T, Value.Result, Args>.FieldType = .field(
-                key: field.key,
+                key: schema.keys[keyPath] ?? "",
                 alias: alias,
                 renderedSelectionSet: nil,
                 createResult: { dict in
-                    return try Value.createUnsafeResult(from: dict, key: field.key)
+                    return try Value.createUnsafeResult(from: dict, key: schema.keys[keyPath] ?? "")
                 }
             )
             return Selection(fieldType: fieldType, items: [])
@@ -61,8 +86,8 @@ extension Selector {
     // We need to return this instead of a closure so that the result builder syntax can work (we can't put a result
     // builder i.e. `@SelectionSetBuilder` as an argument in a closure; needs to be in a static function). It also lets us
     // add the `alias` parameter name to the call site
-    public struct SelectionSetBuilderWrapper<T: Object, Schema, S: SelectionProtocol, Value: Object, Args: ArgumentsList> where T.Schema == Schema {
-        let keyPath: KeyPath<Schema, Field<Value, Args>>
+    public struct SelectionSetBuilderWrapper<T: Schema & Object, S: SelectionProtocol, FieldVal, Value: Schema & Object, Args: ArgumentsList> {
+        let keyPath: KeyPath<T.Schema, FieldVal>
 
         /**
          - parameter alias: The alias to use for this field in the rendered GraphQL document.
@@ -73,14 +98,15 @@ extension Selector {
             alias: String? = nil,
             @SelectionSetBuilder<Value> _ selectionSet: @escaping (Selector<Value>) -> S
         ) -> Selection<T, Value.Result, Args> {
-            let field = T.Schema()[keyPath: keyPath]
+            let schema = T.Schema()
+            let _ = schema[keyPath: keyPath]
             let ss = selectionSet(Selector<Value>())
             let fieldType: Selection<T, Value.Result, Args>.FieldType = .field(
-                key: field.key,
+                key: schema.keys[keyPath] ?? "",
                 alias: alias,
                 renderedSelectionSet: ss.render(),
                 createResult: { dict in
-                    return try Value.createUnsafeResult(from: dict, key: field.key)
+                    return try Value.createUnsafeResult(from: dict, key: schema.keys[keyPath] ?? "")
                 }
             )
             return Selection(fieldType: fieldType, items: ss.items)

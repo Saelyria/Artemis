@@ -16,6 +16,8 @@ this protocol (done by conforming to the protocol for one of the aforementioned 
 public protocol SelectionOutput {
     associatedtype Result = Partial<Self>
     static func createUnsafeResult<R>(from: Any, key: String) throws -> R
+
+    static var `default`: Self { get }
 }
 
 /**

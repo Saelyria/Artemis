@@ -31,6 +31,7 @@ extension String: Scalar {
     public func render() -> String {
         return "\"\(self)\""
     }
+    public static var `default`: String { "" }
 }
 extension Int: Scalar {
     public typealias Result = Int
@@ -38,6 +39,7 @@ extension Int: Scalar {
     public func render() -> String {
         return String(describing: self)
     }
+    public static var `default`: Int { 0 }
 }
 extension Float: Scalar {
     public typealias Result = Float
@@ -45,6 +47,7 @@ extension Float: Scalar {
     public func render() -> String {
         return String(describing: self)
     }
+    public static var `default`: Float { 0 }
 }
 extension Double: Scalar {
     public typealias Result = Double
@@ -52,6 +55,7 @@ extension Double: Scalar {
     public func render() -> String {
         return String(describing: self)
     }
+    public static var `default`: Double { 0 }
 }
 extension Bool: Scalar {
     public typealias Result = Bool
@@ -59,4 +63,5 @@ extension Bool: Scalar {
     public func render() -> String {
         return String(describing: self)
     }
+    public static var `default`: Bool { false }
 }
