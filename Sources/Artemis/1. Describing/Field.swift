@@ -1,6 +1,6 @@
 import Foundation
 
-public typealias _FieldArgValue<V: SelectionOutput, A: ArgumentsList> = (V, A)
+public typealias _FieldArgValue<V: _SelectionOutput, A: ArgumentsList> = (V, A)
 
 /**
 An object containing the information about a field on a GraphQL type.
@@ -10,7 +10,7 @@ on that oject. Via generic associated types, `Field` objects contain type inform
 when this field is queried as well as the type whose properties represent the arguments to this field.
 */
 @propertyWrapper
-public struct Field<T, Value: SelectionOutput, ArgType: ArgumentsList> {
+public struct Field<T, Value: _SelectionOutput, ArgType: ArgumentsList> {
     public static subscript<OuterSelf: Object>(
         _enclosingInstance object: OuterSelf,
         wrapped wrappedKeyPath: ReferenceWritableKeyPath<OuterSelf, T>,
@@ -42,7 +42,7 @@ extension Field where T == _FieldArgValue<Value, ArgType> {
     }
 }
 
-extension Field where Value: SelectionOutput, ArgType == NoArguments, T == Value {
+extension Field where Value: _SelectionOutput, ArgType == NoArguments, T == Value {
     public init(wrappedValue: T! = nil, _ key: String) {
         self.key = key
         self.throwawayValue = { .default }
@@ -82,7 +82,7 @@ public struct NoArguments: ArgumentsList {
 An object containing the information about an argument on a field.
 */
 @propertyWrapper
-public struct Argument<Value: SelectionInput> {
+public struct Argument<Value: _SelectionInput> {
 	/// The string name of the argument as it should appear in a document.
     public let name: String
     let defaultValue: Value?

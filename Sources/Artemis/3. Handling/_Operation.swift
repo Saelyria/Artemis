@@ -9,7 +9,7 @@ describe the GraphQL request document by being created with the selected fields 
 These objects are generally created inside a `Client.perform(_:completion:)` method call so that their `Schema` and
 `Result` types can be inferred from the selections done inside their function builders.
 */
-public struct Operation<FullSchema: Object, Result> {
+public struct _Operation<FullSchema: Object, Result> {
 	/// A type of GraphQL operation.
     enum OperationType {
 		/// An operation that is meant to query data from a GraphQL API.
@@ -21,7 +21,7 @@ public struct Operation<FullSchema: Object, Result> {
 	private let name: String?
 	let error: GraphQLError?
 	let resultCreator: ([String: Any]) throws -> Result
-	let renderedSelectionSets: String
+	let rendered_SelectionSets: String
 	let renderedFragments: String
 	/// The type of GraphQL operation this operation will perform.
     let operationType: OperationType
@@ -34,12 +34,12 @@ public struct Operation<FullSchema: Object, Result> {
 	- parameter selection: A function builder of `Add` objects that selects the fields to include in the response to
 	this operation.
 	*/
-    fileprivate init<S: SelectionProtocol>(_ type: OperationType, name: String? = nil, @SelectionSetBuilder<FullSchema> _ selection: (Selector<FullSchema>) -> S) where S.Result == Result {
+    fileprivate init<S: _SelectionProtocol>(_ type: OperationType, name: String? = nil, @_SelectionSetBuilder<FullSchema> _ selection: (_Selector<FullSchema>) -> S) where S.Result == Result {
 		self.operationType = type
 		self.name = name
-		let fieldsAggegate = selection(Selector<FullSchema>())
+		let fieldsAggegate = selection(_Selector<FullSchema>())
 		self.error = fieldsAggegate.error
-		self.renderedSelectionSets = fieldsAggegate.render()
+		self.rendered_SelectionSets = fieldsAggegate.render()
 		self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
 		self.renderedFragments = Set(fieldsAggegate.renderedFragmentDeclarations).sorted().joined(separator: ",")
 	}
@@ -58,7 +58,7 @@ public struct Operation<FullSchema: Object, Result> {
 			opName = "mutation\(nameString)"
 		}
 		let fragmentString = (self.renderedFragments.isEmpty) ? "" : ",\(self.renderedFragments)"
-		return "\(opName){\(self.renderedSelectionSets)}\(fragmentString)"
+		return "\(opName){\(self.rendered_SelectionSets)}\(fragmentString)"
 	}
 	
 	/**
@@ -135,32 +135,32 @@ public struct Operation<FullSchema: Object, Result> {
 	}
 }
 
-extension Operation {
-    public static func query<FullSchema: Object, Sel: SelectionProtocol>(
+extension _Operation {
+    public static func query<FullSchema: Object, Sel: _SelectionProtocol>(
         name: String? = nil,
-        @SelectionSetBuilder<FullSchema> _ selection: (Selector<FullSchema>) -> Sel
-    ) -> Operation<FullSchema, Sel.Result> {
-        return Operation<FullSchema, Sel.Result>(.query, name: name, selection)
+        @_SelectionSetBuilder<FullSchema> _ selection: (_Selector<FullSchema>) -> Sel
+    ) -> _Operation<FullSchema, Sel.Result> {
+        return _Operation<FullSchema, Sel.Result>(.query, name: name, selection)
     }
 
-    public static func mutation<FullSchema: Object, Sel: SelectionProtocol>(
+    public static func mutation<FullSchema: Object, Sel: _SelectionProtocol>(
         name: String? = nil,
-        @SelectionSetBuilder<FullSchema> _ selection: (Selector<FullSchema>) -> Sel
-    ) -> Operation<FullSchema, Sel.Result> {
-        return Operation<FullSchema, Sel.Result>(.mutation, name: name, selection)
+        @_SelectionSetBuilder<FullSchema> _ selection: (_Selector<FullSchema>) -> Sel
+    ) -> _Operation<FullSchema, Sel.Result> {
+        return _Operation<FullSchema, Sel.Result>(.mutation, name: name, selection)
     }
 
-    public static func query<FullSchema: Object, Sel: SelectionProtocol>(
+    public static func query<FullSchema: Object, Sel: _SelectionProtocol>(
         name: String? = nil,
-        @SelectionSetBuilder<FullSchema> _ selection: () -> Sel
-    ) -> Operation<FullSchema, Sel.Result> {
-        return Operation<FullSchema, Sel.Result>(.query, name: name, { _ in return selection() })
+        @_SelectionSetBuilder<FullSchema> _ selection: () -> Sel
+    ) -> _Operation<FullSchema, Sel.Result> {
+        return _Operation<FullSchema, Sel.Result>(.query, name: name, { _ in return selection() })
     }
 
-    public static func mutation<FullSchema: Object, Sel: SelectionProtocol>(
+    public static func mutation<FullSchema: Object, Sel: _SelectionProtocol>(
         name: String? = nil,
-        @SelectionSetBuilder<FullSchema> _ selection: () -> Sel
-    ) -> Operation<FullSchema, Sel.Result> {
-        return Operation<FullSchema, Sel.Result>(.mutation, name: name, { _ in return selection() })
+        @_SelectionSetBuilder<FullSchema> _ selection: () -> Sel
+    ) -> _Operation<FullSchema, Sel.Result> {
+        return _Operation<FullSchema, Sel.Result>(.mutation, name: name, { _ in return selection() })
     }
 }

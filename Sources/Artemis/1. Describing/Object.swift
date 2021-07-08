@@ -42,9 +42,9 @@ A protocol that identifies a type as representing a GraphQL 'object'.
 'Objects' in GraphQL are any types that have selectable fields of other 'objects' or 'scalars'. This protocol is
 conformed to by data types that are meant to represent the various objects of your GraphQL API.
 */
-public protocol Object: SelectionOutput, ObjectSchema {
+public protocol Object: _SelectionOutput, _ObjectSchema {
 	/// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
-	associatedtype SubSchema: ObjectSchema = Self
+	associatedtype SubSchema: _ObjectSchema = Self
 	associatedtype Result = Partial<Self>
 }
 extension Object where SubSchema == Self {
@@ -74,7 +74,7 @@ extension Enum {
 /**
 A protocol that designates a type as representing a GraphQL 'input object' type.
 */
-public protocol Input: SelectionInput, Object { }
+public protocol Input: _SelectionInput, Object { }
 
 // MARK: -
 
@@ -85,7 +85,7 @@ This protocol is separate from the `Object` protocol to allow existing model typ
 `objects`, but to specify another type as representing its 'schema' (i.e. another type that contains all the heavily-
 marked-up `Field` properties). When object types are generated, they will generally conform to both of these protocols.
 */
-public protocol ObjectSchema {
+public protocol _ObjectSchema {
 	associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void, Void, Void>
 	
 	static var implements: ImplementedInterfaces { get }
@@ -133,7 +133,7 @@ public extension Input {
 	}
 }
 
-public extension ObjectSchema where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
+public extension _ObjectSchema where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
 	static var implements: ImplementedInterfaces { return Interfaces() }
 }
 

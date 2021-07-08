@@ -7,7 +7,7 @@ This object is specialized with the type of an 'input' object being used as the 
 the closure on that argument, where it is called with the keypaths of the wrapped 'input' type with the input's values.
 */
 @dynamicMemberLookup
-public class InputBuilder<I: Input> {
+public class _InputBuilder<I: Input> {
 	internal var addedInputFields: [String] = []
 	
 	/**
@@ -23,10 +23,10 @@ public class InputBuilder<I: Input> {
 	/**
 	Adds the given property input object value to the input object.
 	*/
-	public subscript<X, V, T>(dynamicMember keyPath: KeyPath<I.SubSchema, Field<X, V, T>>) -> ( (InputBuilder<V>) -> Void ) -> Void where V: Input {
+	public subscript<X, V, T>(dynamicMember keyPath: KeyPath<I.SubSchema, Field<X, V, T>>) -> ( (_InputBuilder<V>) -> Void ) -> Void where V: Input {
 		return { inputBuilder in
-			let b = InputBuilder<V>()
-			_ = inputBuilder(b)
+			let b = _InputBuilder<V>()
+			inputBuilder(b)
 			let key = I.SubSchema()[keyPath: keyPath].key
 			let value = "{\(b.addedInputFields.joined(separator: ","))}"
 			self.addedInputFields.append("\(key):\(value)")

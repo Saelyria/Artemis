@@ -83,7 +83,7 @@ open class Client<Q: Object> {
 	- parameter mock:
 	*/
     open func perform<R>(
-        _ operation: Operation<Q, R>,
+        _ operation: _Operation<Q, R>,
         mock: Data? = nil,
         completion: @escaping (Result<R, GraphQLError>) -> Void)
     {

@@ -4,9 +4,9 @@ extension Array: Object where Element: Object {
     public typealias SubSchema = Element.SubSchema
 }
 
-extension Array: ObjectSchema where Element: ObjectSchema { }
+extension Array: _ObjectSchema where Element: _ObjectSchema { }
 
-extension Array: SelectionOutput where Element: SelectionOutput {
+extension Array: _SelectionOutput where Element: _SelectionOutput {
     public typealias Result = [Element.Result]
 
     public static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
@@ -17,7 +17,7 @@ extension Array: SelectionOutput where Element: SelectionOutput {
         return returnedArray
     }
 }
-extension Array: SelectionInput where Element: SelectionInput {
+extension Array: _SelectionInput where Element: _SelectionInput {
     public func render() -> String {
         return "[\(self.map { $0.render() }.joined(separator: ","))]"
     }

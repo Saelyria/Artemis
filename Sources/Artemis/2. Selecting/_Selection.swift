@@ -13,9 +13,9 @@ instance.
 	the `User`, which could be a `Field<String, NoArguments>`.
 */
 @dynamicMemberLookup
-public class Selection<T: Object, Result, Args: ArgumentsList>: SelectionProtocol {	
+public class _Selection<T: Object, Result, Args: ArgumentsList>: _SelectionProtocol {	
 	enum FieldType {
-        case field(key: String, alias: String?, renderedSelectionSet: String?, createResult: (Any) throws -> Result)
+        case field(key: String, alias: String?, rendered_SelectionSet: String?, createResult: (Any) throws -> Result)
 		case fragment(inline: String, rendered: String)
 	}
 	
@@ -26,7 +26,7 @@ public class Selection<T: Object, Result, Args: ArgumentsList>: SelectionProtoco
 		case .fragment: return ""
 		}
 	}
-    public var items: [SelectionBase] = []
+    public var items: [_SelectionBase] = []
     public var renderedFragmentDeclarations: [String] {
 		var frags: [String] = []
 		switch self.fieldType {
@@ -40,14 +40,14 @@ public class Selection<T: Object, Result, Args: ArgumentsList>: SelectionProtoco
     public let error: GraphQLError?
 	private var renderedArguments: [String] = []
 	
-	internal init(fieldType: FieldType, items: [SelectionBase], error: GraphQLError? = nil) {
+	internal init(fieldType: FieldType, items: [_SelectionBase], error: GraphQLError? = nil) {
 		self.fieldType = fieldType
 		self.items = items
 		self.error = error
 	}
 }
 
-extension Selection {
+extension _Selection {
     /**
     Adds an argument to the queried field.
 
@@ -56,7 +56,7 @@ extension Selection {
     */
     public subscript<V>(
         dynamicMember keyPath: KeyPath<Args, Argument<V>>
-    ) -> (V) -> Selection<T, Result, Args> {
+    ) -> (V) -> _Selection<T, Result, Args> {
         return { value in
             let renderedArg = Args()[keyPath: keyPath].render(value: value)
             self.renderedArguments.append(renderedArg)
@@ -85,9 +85,9 @@ extension Selection {
     */
     public subscript<V>(
         dynamicMember keyPath: KeyPath<Args, Argument<V>>
-    ) -> ( (InputBuilder<V>) -> Void ) -> Selection<T, Result, Args> where V: Input {
+    ) -> ( (_InputBuilder<V>) -> Void ) -> _Selection<T, Result, Args> where V: Input {
         return { inputBuilder in
-            let b = InputBuilder<V>()
+            let b = _InputBuilder<V>()
             inputBuilder(b)
             let key = Args()[keyPath: keyPath].name
             let value = "{\(b.addedInputFields.joined(separator: ","))}"
@@ -97,13 +97,13 @@ extension Selection {
     }
 }
 
-extension Selection {
+extension _Selection {
 	/**
 	Renders this added field and its sub-selected fields into a string that can be added to a document.
 	*/
     public func render() -> String {
 		switch self.fieldType {
-		case .field(let key, let alias, let renderedSelectionSet, _):
+		case .field(let key, let alias, let rendered_SelectionSet, _):
 			let args: String
 			if self.renderedArguments.isEmpty {
 				args = ""
@@ -112,8 +112,8 @@ extension Selection {
 			}
 			
 			let name: String = (alias == nil) ? key : "\(alias!):\(key)"
-			let SelectionSet = (renderedSelectionSet == nil) ? "" : "{\(renderedSelectionSet!)}"
-			return "\(name)\(args)\(SelectionSet)"
+			let _SelectionSet = (rendered_SelectionSet == nil) ? "" : "{\(rendered_SelectionSet!)}"
+			return "\(name)\(args)\(_SelectionSet)"
 		case .fragment(let renderedInlineFragment, _):
 			return renderedInlineFragment
 		}

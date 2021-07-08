@@ -1,12 +1,12 @@
 import Foundation
 
-extension Optional: SelectionOutput where Wrapped: SelectionOutput {
+extension Optional: _SelectionOutput where Wrapped: _SelectionOutput {
     public typealias Result = Wrapped.Result
     public static func createUnsafeResult<R>(from: Any, key: String) throws -> R {
         return try Wrapped.createUnsafeResult(from: from, key: key)
     }
 }
-extension Optional: SelectionInput where Wrapped: SelectionInput {
+extension Optional: _SelectionInput where Wrapped: _SelectionInput {
     public func render() -> String {
         switch self {
         case .some(let wrapped): return wrapped.render()
@@ -18,7 +18,7 @@ extension Optional {
     public static var `default`: Optional<Wrapped> { nil }
 }
 
-extension Optional: ObjectSchema where Wrapped: Object {
+extension Optional: _ObjectSchema where Wrapped: Object {
     public init() {
         self = nil
     }

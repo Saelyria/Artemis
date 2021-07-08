@@ -4,37 +4,37 @@ import Foundation
  A type used to turn keypaths from `T` into functions that build `Selection` instances.
  */
 @dynamicMemberLookup
-public class Selector<T: Object> { }
+public class _Selector<T: Object> { }
 
 // MARK: Selecting on Object
 
-extension Selector {
-    public subscript<Value: Object, S: SelectionProtocol>(
+extension _Selector {
+    public subscript<Value: Object, S: _SelectionProtocol>(
         dynamicMember keyPath: KeyPath<T.SubSchema, Value>
-    ) -> SelectionSetBuilderWrapper<T, S, Value, Value, NoArguments> {
-        return SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _SelectionSetBuilderWrapper<T, S, Value, Value, NoArguments> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 
     /**
      Adds the given field to the operation, returning a selector to select additional fields to add, optionally giving
      the selected field an alias.
     */
-    public subscript<Value: Object, Args: ArgumentsList, S: SelectionProtocol>(
+    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
         dynamicMember keyPath: KeyPath<T.SubSchema, _FieldArgValue<Value, Args>>
-    ) -> SelectionSetBuilderWrapper<T, S, _FieldArgValue<Value, Args>, Value, Args> {
-        return SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _SelectionSetBuilderWrapper<T, S, _FieldArgValue<Value, Args>, Value, Args> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 }
 
 // MARK: Selecting on Scalar
 
-extension Selector {
+extension _Selector {
     /**
      Adds the given field to the operation.
     */
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<T.SubSchema, Value>
-    ) -> Selection<T, Value.Result, NoArguments> {
+    ) -> _Selection<T, Value.Result, NoArguments> {
         return AliasBuilderWrapper<T, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
     }
 
@@ -43,7 +43,7 @@ extension Selector {
     */
     public subscript<Value: Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<T.SubSchema, _FieldArgValue<Value, Args>>
-    ) -> Selection<T, Value.Result, Args> {
+    ) -> _Selection<T, Value.Result, Args> {
         return AliasBuilderWrapper<T, _FieldArgValue<Value, Args>, Value, Args>(keyPath: keyPath)(alias: nil)
     }
 
@@ -66,7 +66,7 @@ extension Selector {
     }
 }
 
-extension Selector {
+extension _Selector {
     // We need to return this instead of a closure so we can add the `alias` parameter name to the callsite
     public struct AliasBuilderWrapper<
         T: Object,
@@ -81,27 +81,27 @@ extension Selector {
         */
         public func callAsFunction(
             alias: String?
-        ) -> Selection<T, Value.Result, Args> {
+        ) -> _Selection<T, Value.Result, Args> {
             let schema: T.SubSchema = T.schema
             let _ = schema[keyPath: keyPath]
-            let fieldType: Selection<T, Value.Result, Args>.FieldType = .field(
+            let fieldType: _Selection<T, Value.Result, Args>.FieldType = .field(
                 key: T.key(forPath: keyPath),
                 alias: alias,
-                renderedSelectionSet: nil,
+                rendered_SelectionSet: nil,
                 createResult: { dict in
                     return try Value.createUnsafeResult(from: dict, key: T.key(forPath: keyPath))
                 }
             )
-            return Selection(fieldType: fieldType, items: [])
+            return _Selection(fieldType: fieldType, items: [])
         }
     }
 
     // We need to return this instead of a closure so that the result builder syntax can work (we can't put a result
-    // builder i.e. `@SelectionSetBuilder` as an argument in a closure; needs to be in a static function). It also lets us
+    // builder i.e. `@_SelectionSetBuilder` as an argument in a closure; needs to be in a static function). It also lets us
     // add the `alias` parameter name to the call site
-    public struct SelectionSetBuilderWrapper<
+    public struct _SelectionSetBuilderWrapper<
         T: Object,
-        S: SelectionProtocol,
+        S: _SelectionProtocol,
         FieldVal,
         Value: Object,
         Args: ArgumentsList
@@ -110,37 +110,37 @@ extension Selector {
 
         /**
          - parameter alias: The alias to use for this field in the rendered GraphQL document.
-         - parameter selectionSet: A function builder that additional `Add` components can be given in to select fields on
+         - parameter _SelectionSet: A function builder that additional `Add` components can be given in to select fields on
         this `Add` instance's returned value.
         */
         public func callAsFunction(
             alias: String? = nil,
-            @SelectionSetBuilder<Value> _ selectionSet: @escaping (Selector<Value>) -> S
-        ) -> Selection<T, Value.Result, Args> {
+            @_SelectionSetBuilder<Value> _ _SelectionSet: @escaping (_Selector<Value>) -> S
+        ) -> _Selection<T, Value.Result, Args> {
             let schema: T.SubSchema = T.schema
             let _ = schema[keyPath: keyPath]
-            let ss = selectionSet(Selector<Value>())
-            let fieldType: Selection<T, Value.Result, Args>.FieldType = .field(
+            let ss = _SelectionSet(_Selector<Value>())
+            let fieldType: _Selection<T, Value.Result, Args>.FieldType = .field(
                 key: T.key(forPath: keyPath),
                 alias: alias,
-                renderedSelectionSet: ss.render(),
+                rendered_SelectionSet: ss.render(),
                 createResult: { dict in
                     return try Value.createUnsafeResult(from: dict, key: T.key(forPath: keyPath))
                 }
             )
-            return Selection(fieldType: fieldType, items: ss.items)
+            return _Selection(fieldType: fieldType, items: ss.items)
         }
 
         /**
          - parameter alias: The alias to use for this field in the rendered GraphQL document.
-         - parameter selectionSet: A function builder that additional `Add` components can be given in to select fields on
+         - parameter _SelectionSet: A function builder that additional `Add` components can be given in to select fields on
         this `Add` instance's returned value.
         */
         public func callAsFunction(
             alias: String? = nil,
-            @SelectionSetBuilder<Value> _ selectionSet: @escaping () -> S
-        ) -> Selection<T, Value.Result, Args> {
-            return self.callAsFunction(alias: alias) { _ in return selectionSet() }
+            @_SelectionSetBuilder<Value> _ _SelectionSet: @escaping () -> S
+        ) -> _Selection<T, Value.Result, Args> {
+            return self.callAsFunction(alias: alias) { _ in return _SelectionSet() }
         }
     }
 }

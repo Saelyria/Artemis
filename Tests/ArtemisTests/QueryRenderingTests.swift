@@ -3,7 +3,7 @@ import XCTest
 
 final class QueryRenderingTests: XCTestCase {
 	func testQueryNameRendering() {
-        let query: Artemis.Operation<Query, Partial<Person>> = .query(name: "QueryName") {
+        let query: _Operation<Query, Partial<Person>> = .query(name: "QueryName") {
             $0.me {
                 $0.firstName
             }
@@ -11,8 +11,8 @@ final class QueryRenderingTests: XCTestCase {
         XCTAssertEqual(query.render(), "query QueryName{me{firstName}}")
 	}
 	
-	func testQueryMultipleQueryFieldSelectionSetRendering() {
-        let query: Artemis.Operation<Query, (Partial<Person>, [Partial<Person>])> = .query {
+	func testQueryMultipleQueryField_SelectionSetRendering() {
+        let query: _Operation<Query, (Partial<Person>, [Partial<Person>])> = .query {
             $0.me {
                 $0.firstName
                 $0.lastName
@@ -28,7 +28,7 @@ final class QueryRenderingTests: XCTestCase {
 	}
 	
 	func testQueryAliasRendering() {
-        let query: Artemis.Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
+        let query: _Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
             $0.me(alias: "first") {
                 $0.firstName(alias: "name")
             }
@@ -41,7 +41,7 @@ final class QueryRenderingTests: XCTestCase {
 	}
 	
 	func testQueryArgumentRendering() {
-        let query: Artemis.Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
+        let query: _Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
             $0.user(alias: "first") {
                 $0.firstName(alias: "name")
             }
@@ -56,7 +56,7 @@ final class QueryRenderingTests: XCTestCase {
 	}
 
     func testQueryEnumRendering() {
-        let query: Artemis.Operation<Query, Partial<Person>> = .query {
+        let query: _Operation<Query, Partial<Person>> = .query {
             $0.user {
                 $0.pets {
                     $0.type
@@ -71,7 +71,7 @@ final class QueryRenderingTests: XCTestCase {
     }
 	
 	func testInputArgumentRendering() {
-		let query: Artemis.Operation<Query, Partial<Person>> = .query {
+		let query: _Operation<Query, Partial<Person>> = .query {
 			$0.user {
 				$0.firstName
 			}
@@ -101,7 +101,7 @@ final class QueryRenderingTests: XCTestCase {
             }
         }
 
-        let query: Artemis.Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
+        let query: _Operation<Query, (Partial<Person>, Partial<Person>)> = .query {
             $0.user {
                 namesFragment
                 ageFragment
@@ -121,7 +121,7 @@ final class QueryRenderingTests: XCTestCase {
 	
 	static var allTests = [
 		("testQueryNameRendering", testQueryNameRendering),
-		("testQueryMultipleQueryFieldSelectionSetRendering", testQueryMultipleQueryFieldSelectionSetRendering),
+		("testQueryMultipleQueryField_SelectionSetRendering", testQueryMultipleQueryField_SelectionSetRendering),
 		("testQueryAliasRendering", testQueryAliasRendering),
 		("testQueryArgumentRendering", testQueryArgumentRendering),
 		("testInputArgumentRendering", testInputArgumentRendering),

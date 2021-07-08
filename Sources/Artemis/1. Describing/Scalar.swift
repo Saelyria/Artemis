@@ -5,7 +5,7 @@ A protocol that identifies a type as representing a GraphQL 'scalar'.
 
 'Scalars' are base types like `String`, `Int`, or `Bool` that can be used as the leaves for an operation.
 */
-public protocol Scalar: SelectionOutput, SelectionInput {
+public protocol Scalar: _SelectionOutput, _SelectionInput {
     associatedtype Result = Self
 }
 

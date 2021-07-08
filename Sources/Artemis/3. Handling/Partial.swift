@@ -11,7 +11,7 @@ instances are specialized with a type to represent, and are returned as the resu
 names as the represented type in a type-safe way using `KeyPath` objects.
 */
 @dynamicMemberLookup
-public struct Partial<T: SelectionOutput> {
+public struct Partial<T: _SelectionOutput> {
 	let values: [String: Any]
 	
 	init(values: [String: Any]) {
