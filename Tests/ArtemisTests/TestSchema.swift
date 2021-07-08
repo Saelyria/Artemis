@@ -46,8 +46,6 @@ final class Animal: Object {
 }
 
 enum AnimalType: String, Enum {
-    static var `default`: AnimalType = .cat
-
     case cat = "CAT"
     case dog = "DOG"
 }

@@ -25,7 +25,7 @@ public struct Field<T, Value: _SelectionOutput, ArgType: ArgumentsList> {
     
 	/// The string name of the field as it should appear in a document.
     public let key: String
-    @available(*, unavailable, message: "Values are not accessed on Fields")
+    @available(*, unavailable, message: "Fields are only available on classes conforming to Object, Interface, or Input")
     public var wrappedValue: T {
         get { fatalError() }
         set { fatalError() }
@@ -107,7 +107,7 @@ public struct Argument<Value: _SelectionInput> {
       set { }
     }
 
-    @available(*, unavailable, message: "Values are not accessed on Arguments")
+    @available(*, unavailable, message: "Arguments are only available on classes conforming to ArgumentsList")
     public var wrappedValue: Value {
         get { fatalError() }
         set { fatalError() }
