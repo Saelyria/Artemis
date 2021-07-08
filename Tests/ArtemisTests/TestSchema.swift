@@ -1,26 +1,26 @@
 @testable import Artemis
 
-final class Query: Schema, Object {
+final class Query: Object {
     @Field("me") var me: Person
     @Field("user") var user: (Person, UserArguments)
     @Field("users") var users: [Person]
     @Field("number") var number: Int
     @Field("numbers") var numbers: [Int]
 
-    final class UserArguments: Schema, ArgumentsList {
+    final class UserArguments: ArgumentsList {
         @Argument("id") var id: String
         @Argument("number") var number: Int
         @Argument("input") var input: UserInput
     }
 }
 
-final class UserInput: Schema, Input {
+final class UserInput: Input {
     @Field("prop") var prop: Int
     @Field("prop2") var prop2: String
     @Field("nested") var nested: UserInput
 }
 
-final class Person: Schema, Object {
+final class Person: Object {
     static let implements = Interfaces(LivingThing.self)
 
     @Field("firstName") var firstName: String
@@ -29,14 +29,14 @@ final class Person: Schema, Object {
     @Field("pets") var pets: ([Animal], PetsArguments)
     @Field("spouse") var spouse: Person
 
-    final class PetsArguments: Schema, ArgumentsList {
+    final class PetsArguments: ArgumentsList {
         @Argument("number") var number: Int
         @Argument("types") var types: [AnimalType]
         @Argument("type") var type: AnimalType
     }
 }
 
-final class Animal: Schema, Object {
+final class Animal: Object {
     static let implements = Interfaces(LivingThing.self)
 
     @Field("name") var name: String
@@ -52,6 +52,6 @@ enum AnimalType: String, Enum {
     case dog = "DOG"
 }
 
-final class LivingThing: Schema, Interface {
+final class LivingThing: Interface {
     @Field("age") var age: Int
 }

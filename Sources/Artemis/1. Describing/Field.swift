@@ -11,13 +11,13 @@ when this field is queried as well as the type whose properties represent the ar
 */
 @propertyWrapper
 public struct Field<T, Value: SelectionOutput, ArgType: ArgumentsList> {
-    public static subscript<OuterSelf: Schema & Object>(
+    public static subscript<OuterSelf: Object>(
         _enclosingInstance object: OuterSelf,
         wrapped wrappedKeyPath: ReferenceWritableKeyPath<OuterSelf, T>,
         storage storageKeyPath: ReferenceWritableKeyPath<OuterSelf, Self>
     ) -> T {
         get {
-            object.keys[wrappedKeyPath] = object[keyPath: storageKeyPath].key
+            OuterSelf.set(key: object[keyPath: storageKeyPath].key, forPath: wrappedKeyPath)
             return object[keyPath: storageKeyPath].throwawayValue()
         }
         set { }
@@ -55,6 +55,21 @@ A protocol that a type whose properties represent arguments for a `Field` must c
 public protocol ArgumentsList {
     init()
 }
+private var argumentNames: [TypeName: [AnyKeyPath: String]] = [:]
+extension ArgumentsList {
+    private static var typeName: TypeName { String(describing: Self.self) }
+
+    static func set(key: String, forPath keyPath: AnyKeyPath) {
+        if argumentNames[typeName] == nil {
+            argumentNames[typeName] = [:]
+        }
+        argumentNames[typeName]?[keyPath] = key
+    }
+
+    static func key(forPath keyPath: AnyKeyPath) -> String {
+        return argumentNames[typeName]?[keyPath] ?? ""
+    }
+}
 
 /**
 A type that can be used with a `Field` instance to indicate that the field takes no arguments.
@@ -80,13 +95,13 @@ public struct Argument<Value: SelectionInput> {
         self.throwawayValue = { .default }
     }
 
-    public static subscript<OuterSelf: Schema & ArgumentsList>(
+    public static subscript<OuterSelf: ArgumentsList>(
         _enclosingInstance object: OuterSelf,
         wrapped wrappedKeyPath: ReferenceWritableKeyPath<OuterSelf, Value>,
         storage storageKeyPath: ReferenceWritableKeyPath<OuterSelf, Self>
     ) -> Value {
       get {
-        object.keys[wrappedKeyPath] = object[keyPath: storageKeyPath].name
+        OuterSelf.set(key: object[keyPath: storageKeyPath].name, forPath: wrappedKeyPath)
         return object[keyPath: storageKeyPath].throwawayValue()
       }
       set { }

@@ -9,7 +9,7 @@ describe the GraphQL request document by being created with the selected fields 
 These objects are generally created inside a `Client.perform(_:completion:)` method call so that their `Schema` and
 `Result` types can be inferred from the selections done inside their function builders.
 */
-public struct Operation<FullSchema: Schema & Object, Result> {
+public struct Operation<FullSchema: Object, Result> {
 	/// A type of GraphQL operation.
     enum OperationType {
 		/// An operation that is meant to query data from a GraphQL API.
@@ -136,28 +136,28 @@ public struct Operation<FullSchema: Schema & Object, Result> {
 }
 
 extension Operation {
-    public static func query<FullSchema: Schema & Object, Sel: SelectionProtocol>(
+    public static func query<FullSchema: Object, Sel: SelectionProtocol>(
         name: String? = nil,
         @SelectionSetBuilder<FullSchema> _ selection: (Selector<FullSchema>) -> Sel
     ) -> Operation<FullSchema, Sel.Result> {
         return Operation<FullSchema, Sel.Result>(.query, name: name, selection)
     }
 
-    public static func mutation<FullSchema: Schema & Object, Sel: SelectionProtocol>(
+    public static func mutation<FullSchema: Object, Sel: SelectionProtocol>(
         name: String? = nil,
         @SelectionSetBuilder<FullSchema> _ selection: (Selector<FullSchema>) -> Sel
     ) -> Operation<FullSchema, Sel.Result> {
         return Operation<FullSchema, Sel.Result>(.mutation, name: name, selection)
     }
 
-    public static func query<FullSchema: Schema & Object, Sel: SelectionProtocol>(
+    public static func query<FullSchema: Object, Sel: SelectionProtocol>(
         name: String? = nil,
         @SelectionSetBuilder<FullSchema> _ selection: () -> Sel
     ) -> Operation<FullSchema, Sel.Result> {
         return Operation<FullSchema, Sel.Result>(.query, name: name, { _ in return selection() })
     }
 
-    public static func mutation<FullSchema: Schema & Object, Sel: SelectionProtocol>(
+    public static func mutation<FullSchema: Object, Sel: SelectionProtocol>(
         name: String? = nil,
         @SelectionSetBuilder<FullSchema> _ selection: () -> Sel
     ) -> Operation<FullSchema, Sel.Result> {
