@@ -18,7 +18,11 @@ extension Optional {
     public static var `default`: Optional<Wrapped> { nil }
 }
 
-extension Optional: _ObjectSchema where Wrapped: Object {
+extension Optional: _ObjectSchema where Wrapped: _ObjectSchema {
+    public typealias ImplementedInterfaces = Wrapped.ImplementedInterfaces
+
+    public static var implements: ImplementedInterfaces { Wrapped.implements }
+
     public init() {
         self = nil
     }

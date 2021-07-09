@@ -6,7 +6,7 @@ import Foundation
 @dynamicMemberLookup
 public class _Selector<T: Object> { }
 
-// MARK: Selecting on Object
+// MARK: Selecting on Object and Scalar on T
 
 extension _Selector {
     public subscript<Value: Object, S: _SelectionProtocol>(
@@ -15,18 +15,12 @@ extension _Selector {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 
-    /**
-     Adds the given field to the operation, returning a selector to select additional fields to add, optionally giving
-     the selected field an alias.
-    */
     public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
         dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args)>
     ) -> _SelectionSetBuilderWrapper<T, S, (Value, Args), Value, Args> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 }
-
-// MARK: Selecting on Scalar
 
 extension _Selector {
     /**
@@ -66,6 +60,53 @@ extension _Selector {
     }
 }
 
+// MARK: Selecting on Object and Scalar on I1
+
+extension _Selector where T.ImplementedInterfaces.I1: Interface {
+    public typealias I1 = T.ImplementedInterfaces.I1
+}
+
+extension _Selector where T.ImplementedInterfaces.I1: Interface {
+    public subscript<Value: Object, S: _SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<I1.SubSchema, Value>
+    ) -> _SelectionSetBuilderWrapper<I1, S, Value, Value, NoArguments> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+
+    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<I1.SubSchema, (Value, Args)>
+    ) -> _SelectionSetBuilderWrapper<I1, S, (Value, Args), Value, Args> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+}
+
+extension _Selector where T.ImplementedInterfaces.I1: Interface {
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<I1.SubSchema, Value>
+    ) -> _Selection<I1, Value.Result, NoArguments> {
+        return AliasBuilderWrapper<I1, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+    }
+
+    public subscript<Value: Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I1.SubSchema, (Value, Args)>
+    ) -> _Selection<I1, Value.Result, Args> {
+        return AliasBuilderWrapper<I1, (Value, Args), Value, Args>(keyPath: keyPath)(alias: nil)
+    }
+
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<I1.SubSchema, Value>
+    ) -> AliasBuilderWrapper<I1, Value, Value, NoArguments> {
+        return AliasBuilderWrapper<I1, Value, Value, NoArguments>(keyPath: keyPath)
+    }
+
+    public subscript<Value: Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I1.SubSchema, (Value, Args)>
+    ) -> AliasBuilderWrapper<I1, (Value, Args), Value, Args> {
+        return AliasBuilderWrapper(keyPath: keyPath)
+    }
+}
+
+
 extension _Selector {
     // We need to return this instead of a closure so we can add the `alias` parameter name to the callsite
     public struct AliasBuilderWrapper<
@@ -85,12 +126,15 @@ extension _Selector {
             // Accessing the keypath makes the Field property wrapper populate a dictionary for the Object instance
             // with the string name of the keypath.
             let _ = T.schema[keyPath: keyPath]
+            guard let key = T.key(forPath: keyPath) else {
+                fatalError("No key set - is this value wrapped in a @Field property wrapper?")
+            }
             let fieldType: _Selection<T, Value.Result, Args>.FieldType = .field(
-                key: T.key(forPath: keyPath),
+                key: key,
                 alias: alias,
                 renderedSelectionSet: nil,
                 createResult: { dict in
-                    return try Value.createUnsafeResult(from: dict, key: T.key(forPath: keyPath))
+                    return try Value.createUnsafeResult(from: dict, key: key)
                 }
             )
             return _Selection(fieldType: fieldType, items: [])
@@ -116,19 +160,21 @@ extension _Selector {
         */
         public func callAsFunction(
             alias: String? = nil,
-            @_SelectionSetBuilder<Value> _ _SelectionSet: @escaping (_Selector<Value>) -> S
+            @_SelectionSetBuilder<Value> _ builder: @escaping (_Selector<Value>) -> S
         ) -> _Selection<T, Value.Result, Args> {
             // Accessing the keypath makes the Field property wrapper populate a dictionary for the Object instance
             // with the string name of the keypath.
             let _ = T.schema[keyPath: keyPath]
-            let selectedFields = _SelectionSet(_Selector<Value>())
-            let fieldKey = T.key(forPath: keyPath)
+            let selectedFields = builder(_Selector<Value>())
+            guard let key = T.key(forPath: keyPath) else {
+                fatalError("No key set - is this value wrapped in a @Field property wrapper?")
+            }
             let fieldType: _Selection<T, Value.Result, Args>.FieldType = .field(
-                key: fieldKey,
+                key: key,
                 alias: alias,
                 renderedSelectionSet: selectedFields.render(),
                 createResult: { dict in
-                    return try Value.createUnsafeResult(from: dict, key: fieldKey)
+                    return try Value.createUnsafeResult(from: dict, key: key)
                 }
             )
             return _Selection(fieldType: fieldType, items: selectedFields.items)

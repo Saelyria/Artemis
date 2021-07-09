@@ -17,6 +17,16 @@ public struct _SelectionSetBuilder<T: Object> {
         })
     }
 
+    public static func buildExpression<R, A: ArgumentsList>(
+        _ ss1: _Selection<T.ImplementedInterfaces.I1, R, A>
+    ) -> _SelectionSet<R> where T.ImplementedInterfaces.I1: Interface {
+        return _SelectionSet(items: [ss1], resultBuilder: { dict in
+            return try ss1.createResult(from: dict)
+        })
+    }
+}
+
+extension _SelectionSetBuilder {
     public static func buildBlock<S: _SelectionProtocol>(_ set: S) -> S {
         return set
     }

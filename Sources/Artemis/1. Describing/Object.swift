@@ -46,27 +46,9 @@ extension Object {
         keyStringsForSchemaKeyPaths[_schemaName]?[keyPath] = key
     }
 
-    static func key(forPath keyPath: AnyKeyPath) -> String {
-        // In case the key was populated from a fragment on one of the object's interfaces, make sure to check under
-        // each of the object's implemented interface names for the key string as well.
-        let possibleTypes: [_AnyObject.Type] = [
-            Self.self,
-            ImplementedInterfaces.I1.self,
-            ImplementedInterfaces.I2.self,
-            ImplementedInterfaces.I3.self,
-            ImplementedInterfaces.I4.self,
-            ImplementedInterfaces.I5.self
-        ]
-        .map { $0 as? _AnyObject.Type }
-        .compactMap { $0 }
-
-        for type in possibleTypes {
-            if let key = keyStringsForSchemaKeyPaths[type._schemaName]?[keyPath] {
-                return key
-            }
-        }
-        assertionFailure("Couldn't find a key registered for keypath")
-        return ""
+    static func key(forPath keyPath: AnyKeyPath) -> String? {
+        print(keyStringsForSchemaKeyPaths)
+        return keyStringsForSchemaKeyPaths[_schemaName]?[keyPath]
     }
 }
 
