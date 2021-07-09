@@ -24,6 +24,38 @@ public struct _SelectionSetBuilder<T: Object> {
             return try ss1.createResult(from: dict)
         })
     }
+
+    public static func buildExpression<R, A: ArgumentsList>(
+        _ ss1: _Selection<T.ImplementedInterfaces.I2, R, A>
+    ) -> _SelectionSet<R> where T.ImplementedInterfaces.I2: Interface {
+        return _SelectionSet(items: [ss1], resultBuilder: { dict in
+            return try ss1.createResult(from: dict)
+        })
+    }
+
+    public static func buildExpression<R, A: ArgumentsList>(
+        _ ss1: _Selection<T.ImplementedInterfaces.I3, R, A>
+    ) -> _SelectionSet<R> where T.ImplementedInterfaces.I3: Interface {
+        return _SelectionSet(items: [ss1], resultBuilder: { dict in
+            return try ss1.createResult(from: dict)
+        })
+    }
+
+    public static func buildExpression<R, A: ArgumentsList>(
+        _ ss1: _Selection<T.ImplementedInterfaces.I4, R, A>
+    ) -> _SelectionSet<R> where T.ImplementedInterfaces.I4: Interface {
+        return _SelectionSet(items: [ss1], resultBuilder: { dict in
+            return try ss1.createResult(from: dict)
+        })
+    }
+
+    public static func buildExpression<R, A: ArgumentsList>(
+        _ ss1: _Selection<T.ImplementedInterfaces.I5, R, A>
+    ) -> _SelectionSet<R> where T.ImplementedInterfaces.I5: Interface {
+        return _SelectionSet(items: [ss1], resultBuilder: { dict in
+            return try ss1.createResult(from: dict)
+        })
+    }
 }
 
 extension _SelectionSetBuilder {

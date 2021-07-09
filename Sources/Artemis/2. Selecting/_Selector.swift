@@ -106,6 +106,189 @@ extension _Selector where T.ImplementedInterfaces.I1: Interface {
     }
 }
 
+// MARK: Selecting on Object and Scalar on I2
+
+extension _Selector where T.ImplementedInterfaces.I2: Interface {
+    public typealias I2 = T.ImplementedInterfaces.I2
+}
+
+extension _Selector where T.ImplementedInterfaces.I2: Interface {
+    public subscript<Value: Object, S: _SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<I2.SubSchema, Value>
+    ) -> _SelectionSetBuilderWrapper<I2, S, Value, Value, NoArguments> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+
+    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<I2.SubSchema, (Value, Args)>
+    ) -> _SelectionSetBuilderWrapper<I2, S, (Value, Args), Value, Args> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+}
+
+extension _Selector where T.ImplementedInterfaces.I2: Interface {
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<I2.SubSchema, Value>
+    ) -> _Selection<I2, Value.Result, NoArguments> {
+        return AliasBuilderWrapper<I2, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+    }
+
+    public subscript<Value: Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I2.SubSchema, (Value, Args)>
+    ) -> _Selection<I2, Value.Result, Args> {
+        return AliasBuilderWrapper<I2, (Value, Args), Value, Args>(keyPath: keyPath)(alias: nil)
+    }
+
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<I2.SubSchema, Value>
+    ) -> AliasBuilderWrapper<I2, Value, Value, NoArguments> {
+        return AliasBuilderWrapper<I2, Value, Value, NoArguments>(keyPath: keyPath)
+    }
+
+    public subscript<Value: Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I2.SubSchema, (Value, Args)>
+    ) -> AliasBuilderWrapper<I2, (Value, Args), Value, Args> {
+        return AliasBuilderWrapper(keyPath: keyPath)
+    }
+}
+
+// MARK: Selecting on Object and Scalar on I3
+
+extension _Selector where T.ImplementedInterfaces.I3: Interface {
+    public typealias I3 = T.ImplementedInterfaces.I3
+}
+
+extension _Selector where T.ImplementedInterfaces.I3: Interface {
+    public subscript<Value: Object, S: _SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
+    ) -> _SelectionSetBuilderWrapper<I3, S, Value, Value, NoArguments> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+
+    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args)>
+    ) -> _SelectionSetBuilderWrapper<I3, S, (Value, Args), Value, Args> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+}
+
+extension _Selector where T.ImplementedInterfaces.I3: Interface {
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
+    ) -> _Selection<I3, Value.Result, NoArguments> {
+        return AliasBuilderWrapper<I3, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+    }
+
+    public subscript<Value: Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args)>
+    ) -> _Selection<I3, Value.Result, Args> {
+        return AliasBuilderWrapper<I3, (Value, Args), Value, Args>(keyPath: keyPath)(alias: nil)
+    }
+
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
+    ) -> AliasBuilderWrapper<I3, Value, Value, NoArguments> {
+        return AliasBuilderWrapper<I3, Value, Value, NoArguments>(keyPath: keyPath)
+    }
+
+    public subscript<Value: Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args)>
+    ) -> AliasBuilderWrapper<I3, (Value, Args), Value, Args> {
+        return AliasBuilderWrapper(keyPath: keyPath)
+    }
+}
+
+// MARK: Selecting on Object and Scalar on I4
+
+extension _Selector where T.ImplementedInterfaces.I4: Interface {
+    public typealias I4 = T.ImplementedInterfaces.I4
+}
+
+extension _Selector where T.ImplementedInterfaces.I4: Interface {
+    public subscript<Value: Object, S: _SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<I4.SubSchema, Value>
+    ) -> _SelectionSetBuilderWrapper<I4, S, Value, Value, NoArguments> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+
+    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<I4.SubSchema, (Value, Args)>
+    ) -> _SelectionSetBuilderWrapper<I4, S, (Value, Args), Value, Args> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+}
+
+extension _Selector where T.ImplementedInterfaces.I4: Interface {
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<I4.SubSchema, Value>
+    ) -> _Selection<I4, Value.Result, NoArguments> {
+        return AliasBuilderWrapper<I4, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+    }
+
+    public subscript<Value: Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I4.SubSchema, (Value, Args)>
+    ) -> _Selection<I4, Value.Result, Args> {
+        return AliasBuilderWrapper<I4, (Value, Args), Value, Args>(keyPath: keyPath)(alias: nil)
+    }
+
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<I4.SubSchema, Value>
+    ) -> AliasBuilderWrapper<I4, Value, Value, NoArguments> {
+        return AliasBuilderWrapper<I4, Value, Value, NoArguments>(keyPath: keyPath)
+    }
+
+    public subscript<Value: Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I4.SubSchema, (Value, Args)>
+    ) -> AliasBuilderWrapper<I4, (Value, Args), Value, Args> {
+        return AliasBuilderWrapper(keyPath: keyPath)
+    }
+}
+
+// MARK: Selecting on Object and Scalar on I5
+
+extension _Selector where T.ImplementedInterfaces.I5: Interface {
+    public typealias I5 = T.ImplementedInterfaces.I5
+}
+
+extension _Selector where T.ImplementedInterfaces.I5: Interface {
+    public subscript<Value: Object, S: _SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<I5.SubSchema, Value>
+    ) -> _SelectionSetBuilderWrapper<I5, S, Value, Value, NoArguments> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+
+    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
+        dynamicMember keyPath: KeyPath<I5.SubSchema, (Value, Args)>
+    ) -> _SelectionSetBuilderWrapper<I5, S, (Value, Args), Value, Args> {
+        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    }
+}
+
+extension _Selector where T.ImplementedInterfaces.I5: Interface {
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<I5.SubSchema, Value>
+    ) -> _Selection<I5, Value.Result, NoArguments> {
+        return AliasBuilderWrapper<I5, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+    }
+
+    public subscript<Value: Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I5.SubSchema, (Value, Args)>
+    ) -> _Selection<I5, Value.Result, Args> {
+        return AliasBuilderWrapper<I5, (Value, Args), Value, Args>(keyPath: keyPath)(alias: nil)
+    }
+
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<I5.SubSchema, Value>
+    ) -> AliasBuilderWrapper<I5, Value, Value, NoArguments> {
+        return AliasBuilderWrapper<I5, Value, Value, NoArguments>(keyPath: keyPath)
+    }
+
+    public subscript<Value: Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I5.SubSchema, (Value, Args)>
+    ) -> AliasBuilderWrapper<I5, (Value, Args), Value, Args> {
+        return AliasBuilderWrapper(keyPath: keyPath)
+    }
+}
 
 extension _Selector {
     // We need to return this instead of a closure so we can add the `alias` parameter name to the callsite

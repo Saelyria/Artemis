@@ -19,7 +19,9 @@ public class _InputBuilder<I: Input> {
         return { value in
             let schema: I.SubSchema = I.schema
             let _ = schema[keyPath: keyPath]
-            let fieldKey = I.key(forPath: keyPath)
+            guard let fieldKey = I.key(forPath: keyPath) else {
+                fatalError("No key set - is this value wrapped in a @Field property wrapper?")
+            }
             self.addedInputFields.append("\(fieldKey):\(value.render())")
         }
     }
@@ -32,7 +34,9 @@ public class _InputBuilder<I: Input> {
     ) -> (Value) -> Void {
 		return { value in
             let _ = I.schema[keyPath: keyPath]
-            let fieldKey = I.key(forPath: keyPath)
+            guard let fieldKey = I.key(forPath: keyPath) else {
+                fatalError("No key set - is this value wrapped in a @Field property wrapper?")
+            }
 			self.addedInputFields.append("\(fieldKey):\(value.render())")
 		}
 	}
@@ -47,7 +51,9 @@ public class _InputBuilder<I: Input> {
 			let b = _InputBuilder<Value>()
 			inputBuilder(b)
             let _ = I.schema[keyPath: keyPath]
-            let fieldKey = I.key(forPath: keyPath)
+            guard let fieldKey = I.key(forPath: keyPath) else {
+                fatalError("No key set - is this value wrapped in a @Field property wrapper?")
+            }
 			let value = "{\(b.addedInputFields.joined(separator: ","))}"
 			self.addedInputFields.append("\(fieldKey):\(value)")
 		}
@@ -63,7 +69,9 @@ public class _InputBuilder<I: Input> {
             let b = _InputBuilder<Value>()
             inputBuilder(b)
             let _ = I.schema[keyPath: keyPath]
-            let fieldKey = I.key(forPath: keyPath)
+            guard let fieldKey = I.key(forPath: keyPath) else {
+                fatalError("No key set - is this value wrapped in a @Field property wrapper?")
+            }
             let value = "{\(b.addedInputFields.joined(separator: ","))}"
             self.addedInputFields.append("\(fieldKey):\(value)")
         }
