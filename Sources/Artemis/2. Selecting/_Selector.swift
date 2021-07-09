@@ -20,8 +20,8 @@ extension _Selector {
      the selected field an alias.
     */
     public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
-        dynamicMember keyPath: KeyPath<T.SubSchema, _FieldArgValue<Value, Args>>
-    ) -> _SelectionSetBuilderWrapper<T, S, _FieldArgValue<Value, Args>, Value, Args> {
+        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args)>
+    ) -> _SelectionSetBuilderWrapper<T, S, (Value, Args), Value, Args> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 }
@@ -42,9 +42,9 @@ extension _Selector {
      Adds the given field to the operation.
     */
     public subscript<Value: Scalar, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.SubSchema, _FieldArgValue<Value, Args>>
+        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args)>
     ) -> _Selection<T, Value.Result, Args> {
-        return AliasBuilderWrapper<T, _FieldArgValue<Value, Args>, Value, Args>(keyPath: keyPath)(alias: nil)
+        return AliasBuilderWrapper<T, (Value, Args), Value, Args>(keyPath: keyPath)(alias: nil)
     }
 
     /**
@@ -60,8 +60,8 @@ extension _Selector {
      Adds the given field to the operation, giving the selected field an alias.
     */
     public subscript<Value: Scalar, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.SubSchema, _FieldArgValue<Value, Args>>
-    ) -> AliasBuilderWrapper<T, _FieldArgValue<Value, Args>, Value, Args> {
+        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args)>
+    ) -> AliasBuilderWrapper<T, (Value, Args), Value, Args> {
         return AliasBuilderWrapper(keyPath: keyPath)
     }
 }
@@ -82,12 +82,13 @@ extension _Selector {
         public func callAsFunction(
             alias: String?
         ) -> _Selection<T, Value.Result, Args> {
-            let schema: T.SubSchema = T.schema
-            let _ = schema[keyPath: keyPath]
+            // Accessing the keypath makes the Field property wrapper populate a dictionary for the Object instance
+            // with the string name of the keypath.
+            let _ = T.schema[keyPath: keyPath]
             let fieldType: _Selection<T, Value.Result, Args>.FieldType = .field(
                 key: T.key(forPath: keyPath),
                 alias: alias,
-                rendered_SelectionSet: nil,
+                renderedSelectionSet: nil,
                 createResult: { dict in
                     return try Value.createUnsafeResult(from: dict, key: T.key(forPath: keyPath))
                 }
@@ -117,18 +118,20 @@ extension _Selector {
             alias: String? = nil,
             @_SelectionSetBuilder<Value> _ _SelectionSet: @escaping (_Selector<Value>) -> S
         ) -> _Selection<T, Value.Result, Args> {
-            let schema: T.SubSchema = T.schema
-            let _ = schema[keyPath: keyPath]
-            let ss = _SelectionSet(_Selector<Value>())
+            // Accessing the keypath makes the Field property wrapper populate a dictionary for the Object instance
+            // with the string name of the keypath.
+            let _ = T.schema[keyPath: keyPath]
+            let selectedFields = _SelectionSet(_Selector<Value>())
+            let fieldKey = T.key(forPath: keyPath)
             let fieldType: _Selection<T, Value.Result, Args>.FieldType = .field(
-                key: T.key(forPath: keyPath),
+                key: fieldKey,
                 alias: alias,
-                rendered_SelectionSet: ss.render(),
+                renderedSelectionSet: selectedFields.render(),
                 createResult: { dict in
-                    return try Value.createUnsafeResult(from: dict, key: T.key(forPath: keyPath))
+                    return try Value.createUnsafeResult(from: dict, key: fieldKey)
                 }
             )
-            return _Selection(fieldType: fieldType, items: ss.items)
+            return _Selection(fieldType: fieldType, items: selectedFields.items)
         }
 
         /**

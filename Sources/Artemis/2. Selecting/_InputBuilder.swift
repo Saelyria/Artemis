@@ -9,27 +9,63 @@ the closure on that argument, where it is called with the keypaths of the wrappe
 @dynamicMemberLookup
 public class _InputBuilder<I: Input> {
 	internal var addedInputFields: [String] = []
+
+    /**
+    Adds the given property value to the input object.
+    */
+    public subscript<Value: Scalar>(
+        dynamicMember keyPath: KeyPath<I.SubSchema, Value>
+    ) -> (Value) -> Void {
+        return { value in
+            let schema: I.SubSchema = I.schema
+            let _ = schema[keyPath: keyPath]
+            let fieldKey = I.key(forPath: keyPath)
+            self.addedInputFields.append("\(fieldKey):\(value.render())")
+        }
+    }
 	
 	/**
 	Adds the given property value to the input object.
 	*/
-	public subscript<X, V: Scalar, T>(dynamicMember keyPath: KeyPath<I.SubSchema, Field<X, V, T>>) -> (V) -> Void {
+    public subscript<Value: Scalar, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I.SubSchema, (Value, Args)>
+    ) -> (Value) -> Void {
 		return { value in
-			let key = I.SubSchema()[keyPath: keyPath].key
-			self.addedInputFields.append("\(key):\(value.render())")
+            let _ = I.schema[keyPath: keyPath]
+            let fieldKey = I.key(forPath: keyPath)
+			self.addedInputFields.append("\(fieldKey):\(value.render())")
 		}
 	}
 	
 	/**
 	Adds the given property input object value to the input object.
 	*/
-	public subscript<X, V, T>(dynamicMember keyPath: KeyPath<I.SubSchema, Field<X, V, T>>) -> ( (_InputBuilder<V>) -> Void ) -> Void where V: Input {
+    public subscript<Value: Input, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<I.SubSchema, (Value, Args)>
+    ) -> ( (_InputBuilder<Value>) -> Void ) -> Void {
 		return { inputBuilder in
-			let b = _InputBuilder<V>()
+			let b = _InputBuilder<Value>()
 			inputBuilder(b)
-			let key = I.SubSchema()[keyPath: keyPath].key
+            let _ = I.schema[keyPath: keyPath]
+            let fieldKey = I.key(forPath: keyPath)
 			let value = "{\(b.addedInputFields.joined(separator: ","))}"
-			self.addedInputFields.append("\(key):\(value)")
+			self.addedInputFields.append("\(fieldKey):\(value)")
 		}
 	}
+
+    /**
+    Adds the given property input object value to the input object.
+    */
+    public subscript<Value: Input>(
+        dynamicMember keyPath: KeyPath<I.SubSchema, Value>
+    ) -> ( (_InputBuilder<Value>) -> Void ) -> Void {
+        return { inputBuilder in
+            let b = _InputBuilder<Value>()
+            inputBuilder(b)
+            let _ = I.schema[keyPath: keyPath]
+            let fieldKey = I.key(forPath: keyPath)
+            let value = "{\(b.addedInputFields.joined(separator: ","))}"
+            self.addedInputFields.append("\(fieldKey):\(value)")
+        }
+    }
 }

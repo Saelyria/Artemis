@@ -24,6 +24,10 @@ extension Optional: _ObjectSchema where Wrapped: Object {
     }
 }
 
+extension Optional: _AnyObject where Wrapped: _AnyObject {
+    public static var _schemaName: String { Wrapped._schemaName }
+}
+
 extension Optional: Object where Wrapped: Object {
     public typealias SubSchema = Wrapped.SubSchema
 }

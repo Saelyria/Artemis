@@ -1,5 +1,9 @@
 import Foundation
 
+extension Array: _AnyObject where Element: _AnyObject {
+    public static var _schemaName: String { Element._schemaName }
+}
+
 extension Array: Object where Element: Object {
     public typealias SubSchema = Element.SubSchema
 }

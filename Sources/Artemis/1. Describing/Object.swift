@@ -1,48 +1,12 @@
 import Foundation
 
-/// For optimization, instantiated `Object.SubSchema` objects are stored here under the string names of their parent
-/// `Object` types.
-private var cachedSchemasForTypes: [TypeName: Any] = [:]
-/// Since there's no way to get string names for `KeyPath` instances, we store them here after pulling them from
-/// `Field` instances, under the string names of their parent `Object` types. The `AnyKeyPath`s here are paths on the
-/// `Object.SubSchema`, and the `String` value returned is the string name of the keypath we can use with GraphQL.
-private var keyStringsForSchemaKeyPaths: [TypeName: [AnyKeyPath: String]] = [:]
-
-typealias TypeName = String
-
-extension Object {
-    private static var typeName: TypeName { String(describing: SubSchema.self) }
-
-    static var schema: SubSchema {
-        let schema: SubSchema
-        if let s = cachedSchemasForTypes[typeName] as? SubSchema {
-            schema = s
-        } else {
-            schema = SubSchema.init()
-            cachedSchemasForTypes[typeName] = schema
-        }
-        return schema
-    }
-
-    static func set(key: String, forPath keyPath: AnyKeyPath) {
-        if keyStringsForSchemaKeyPaths[typeName] == nil {
-            keyStringsForSchemaKeyPaths[typeName] = [:]
-        }
-        keyStringsForSchemaKeyPaths[typeName]?[keyPath] = key
-    }
-
-    static func key(forPath keyPath: AnyKeyPath) -> String {
-        return keyStringsForSchemaKeyPaths[typeName]?[keyPath] ?? ""
-    }
-}
-
 /**
 A protocol that identifies a type as representing a GraphQL 'object'.
 
 'Objects' in GraphQL are any types that have selectable fields of other 'objects' or 'scalars'. This protocol is
 conformed to by data types that are meant to represent the various objects of your GraphQL API.
 */
-public protocol Object: _SelectionOutput, _ObjectSchema {
+public protocol Object: _SelectionOutput, _ObjectSchema, _AnyObject {
 	/// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
 	associatedtype SubSchema: _ObjectSchema = Self
 	associatedtype Result = Partial<Self>
@@ -50,6 +14,59 @@ public protocol Object: _SelectionOutput, _ObjectSchema {
 extension Object where SubSchema == Self {
     public static var `default`: Self {
         return self.schema
+    }
+}
+
+/// For optimization, instantiated `Object.SubSchema` objects are stored here under the string names of their parent
+/// `Object` types.
+private var cachedSchemasForTypes: [String: Any] = [:]
+/// Since there's no way to get string names for `KeyPath` instances, we store them here after pulling them from
+/// `Field` instances, under the string names of their parent `Object` types. The `AnyKeyPath`s here are paths on the
+/// `Object.SubSchema`, and the `String` value returned is the string name of the keypath we can use with GraphQL.
+private var keyStringsForSchemaKeyPaths: [String: [AnyKeyPath: String]] = [:]
+
+extension Object {
+    public static var _schemaName: String { String(describing: SubSchema.self) }
+
+    static var schema: SubSchema {
+        let schema: SubSchema
+        if let s = cachedSchemasForTypes[_schemaName] as? SubSchema {
+            schema = s
+        } else {
+            schema = SubSchema.init()
+            cachedSchemasForTypes[_schemaName] = schema
+        }
+        return schema
+    }
+
+    static func set(key: String, forPath keyPath: AnyKeyPath) {
+        if keyStringsForSchemaKeyPaths[_schemaName] == nil {
+            keyStringsForSchemaKeyPaths[_schemaName] = [:]
+        }
+        keyStringsForSchemaKeyPaths[_schemaName]?[keyPath] = key
+    }
+
+    static func key(forPath keyPath: AnyKeyPath) -> String {
+        // In case the key was populated from a fragment on one of the object's interfaces, make sure to check under
+        // each of the object's implemented interface names for the key string as well.
+        let possibleTypes: [_AnyObject.Type] = [
+            Self.self,
+            ImplementedInterfaces.I1.self,
+            ImplementedInterfaces.I2.self,
+            ImplementedInterfaces.I3.self,
+            ImplementedInterfaces.I4.self,
+            ImplementedInterfaces.I5.self
+        ]
+        .map { $0 as? _AnyObject.Type }
+        .compactMap { $0 }
+
+        for type in possibleTypes {
+            if let key = keyStringsForSchemaKeyPaths[type._schemaName]?[keyPath] {
+                return key
+            }
+        }
+        assertionFailure("Couldn't find a key registered for keypath")
+        return ""
     }
 }
 
@@ -91,6 +108,10 @@ public protocol _ObjectSchema {
 	static var implements: ImplementedInterfaces { get }
 
 	init()
+}
+
+public protocol _AnyObject {
+    static var _schemaName: String { get }
 }
 
 /**
