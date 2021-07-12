@@ -1,7 +1,5 @@
 import Foundation
 
-public typealias _FieldArgValue<V: _SelectionOutput, A: ArgumentsList> = (V, A)
-
 /**
 An object containing the information about a field on a GraphQL type.
 
@@ -35,7 +33,7 @@ public struct Field<T, Value: _SelectionOutput, ArgType: ArgumentsList> {
     public var projectedValue: Self { self }
 }
 
-extension Field where T == _FieldArgValue<Value, ArgType> {
+extension Field where T == (Value, ArgType) {
     public init(wrappedValue: T! = nil, _ key: String) {
         self.key = key
         self.throwawayValue = { (.default, .init()) }
@@ -55,19 +53,38 @@ A protocol that a type whose properties represent arguments for a `Field` must c
 public protocol ArgumentsList {
     init()
 }
-private var argumentNames: [TypeName: [AnyKeyPath: String]] = [:]
-extension ArgumentsList {
-    private static var typeName: TypeName { String(describing: Self.self) }
 
-    static func set(key: String, forPath keyPath: AnyKeyPath) {
-        if argumentNames[typeName] == nil {
-            argumentNames[typeName] = [:]
+/// For optimization, instantiated `ArgumentsList` objects are stored here under the string names of their parent
+/// `ArgumentsList` types.
+private var cachedArgListsForTypes: [String: Any] = [:]
+/// Since there's no way to get string names for `KeyPath` instances, we store them here after pulling them from
+/// `Argument` instances, under the string names of their parent `ArgumentsList` types. The `AnyKeyPath`s here are paths
+///  on the `ArgumentsList`, and the `String` value returned is the string name of the keypath we can use with GraphQL.
+private var nameStringsForArgumentKeyPaths: [String: [AnyKeyPath: String]] = [:]
+
+extension ArgumentsList {
+    private static var typeName: String { String(describing: Self.self) }
+
+    static var instance: Self {
+        let instance: Self
+        if let i = cachedArgListsForTypes[typeName] as? Self {
+            instance = i
+        } else {
+            instance = Self.init()
+            cachedArgListsForTypes[typeName] = instance
         }
-        argumentNames[typeName]?[keyPath] = key
+        return instance
     }
 
-    static func key(forPath keyPath: AnyKeyPath) -> String {
-        return argumentNames[typeName]?[keyPath] ?? ""
+    static func set(name: String, forPath keyPath: AnyKeyPath) {
+        if nameStringsForArgumentKeyPaths[typeName] == nil {
+            nameStringsForArgumentKeyPaths[typeName] = [:]
+        }
+        nameStringsForArgumentKeyPaths[typeName]?[keyPath] = name
+    }
+
+    static func name(forPath keyPath: AnyKeyPath) -> String {
+        return nameStringsForArgumentKeyPaths[typeName]![keyPath]!
     }
 }
 
@@ -101,7 +118,7 @@ public struct Argument<Value: _SelectionInput> {
         storage storageKeyPath: ReferenceWritableKeyPath<OuterSelf, Self>
     ) -> Value {
       get {
-        OuterSelf.set(key: object[keyPath: storageKeyPath].name, forPath: wrappedKeyPath)
+        OuterSelf.set(name: object[keyPath: storageKeyPath].name, forPath: wrappedKeyPath)
         return object[keyPath: storageKeyPath].throwawayValue()
       }
       set { }
@@ -111,12 +128,5 @@ public struct Argument<Value: _SelectionInput> {
     public var wrappedValue: Value {
         get { fatalError() }
         set { fatalError() }
-    }
-    
-	/**
-	Renders the argument into a string that can be added to a rendered field in a document.
-	*/
-    func render(value: Value) -> String {
-        return "\(name):\(value.render())"
     }
 }

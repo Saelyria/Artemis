@@ -128,8 +128,8 @@ final class QueryParsingTests: XCTestCase {
             $0.user(alias: "first") {
                 $0.firstName(alias: "name")
             }
-            .$id("321")
-            .$number(15)
+            .id("321")
+            .number(15)
             $0.user(alias: "second") {
                 $0.lastName
             }
@@ -209,11 +209,11 @@ final class QueryParsingTests: XCTestCase {
             $0.user {
                 $0.firstName
             }
-            .$number(15)
-            .$input {
-                $0.$prop(1)
-                $0.$nested {
-                    $0.$prop2("s")
+            .number(15)
+            .input {
+                $0.prop(1)
+                $0.nested {
+                    $0.prop2("s")
                 }
             }
         }
@@ -248,7 +248,7 @@ final class QueryParsingTests: XCTestCase {
         }
         let petsFragment = Fragment("petField", on: Person.self) {
             $0.pets {
-                $0.age
+                $0.name
             }
         }
 
@@ -257,7 +257,7 @@ final class QueryParsingTests: XCTestCase {
                 namesFragment
                 ageFragment
             }
-            .$id("321")
+            .id("321")
             $0.user(alias: "second") {
                 $0.firstName
                 ageFragment

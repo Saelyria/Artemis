@@ -25,7 +25,6 @@ final class Person: Object {
 
     @Field("firstName") var firstName: String
     @Field("lastName") var lastName: String
-    @Field("age") var age: Int
     @Field("pets") var pets: ([Animal], PetsArguments)
     @Field("spouse") var spouse: Person
 
@@ -40,7 +39,6 @@ final class Animal: Object {
     static let implements = Interfaces(LivingThing.self)
 
     @Field("name") var name: String
-    @Field("age") var age: Int
     @Field("type") var type: AnimalType
     @Field("friendlyWithTypes") var friendlyWithTypes: [AnimalType]
 }

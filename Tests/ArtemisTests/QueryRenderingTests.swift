@@ -45,8 +45,8 @@ final class QueryRenderingTests: XCTestCase {
             $0.user(alias: "first") {
                 $0.firstName(alias: "name")
             }
-            .$id("321")
-            .$number(15)
+            .id("321")
+            .number(15)
             $0.user(alias: "second") {
                 $0.lastName
             }
@@ -62,8 +62,8 @@ final class QueryRenderingTests: XCTestCase {
                     $0.type
                     $0.friendlyWithTypes
                 }
-                .$type(.cat)
-                .$types([.dog])
+                .type(.cat)
+                .types([.dog])
             }
         }
 
@@ -75,11 +75,11 @@ final class QueryRenderingTests: XCTestCase {
 			$0.user {
 				$0.firstName
 			}
-			.$number(15)
-			.$input {
-				$0.$prop(1)
-                $0.$nested {
-                    $0.$prop2("s")
+			.number(15)
+			.input {
+				$0.prop(1)
+                $0.nested {
+                    $0.prop2("s")
                 }
 			}
 		}
@@ -106,7 +106,7 @@ final class QueryRenderingTests: XCTestCase {
                 namesFragment
                 ageFragment
             }
-            .$id("321")
+            .id("321")
             $0.user(alias: "second") {
                 $0.firstName
                 ageFragment

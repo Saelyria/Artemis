@@ -1,10 +1,18 @@
 import Foundation
 
+extension Array: _AnyObject where Element: _AnyObject {
+    public static var _schemaName: String { Element._schemaName }
+}
+
 extension Array: Object where Element: Object {
     public typealias SubSchema = Element.SubSchema
 }
 
-extension Array: _ObjectSchema where Element: _ObjectSchema { }
+extension Array: _ObjectSchema where Element: _ObjectSchema {
+    public typealias ImplementedInterfaces = Element.ImplementedInterfaces
+
+    public static var implements: ImplementedInterfaces { Element.implements }
+}
 
 extension Array: _SelectionOutput where Element: _SelectionOutput {
     public typealias Result = [Element.Result]
