@@ -44,18 +44,21 @@ public class _InputBuilder<I: Input> {
 	/**
 	Adds the given property input object value to the input object.
 	*/
-    public subscript<Value: Input, Args: ArgumentsList>(
+    public subscript<Value: Collection, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<I.SubSchema, (Value, Args)>
-    ) -> ( (_InputBuilder<Value>) -> Void ) -> Void {
-		return { inputBuilder in
-			let b = _InputBuilder<Value>()
-			inputBuilder(b)
-            let _ = I.schema[keyPath: keyPath]
-            guard let fieldKey = I.key(forPath: keyPath) else {
-                fatalError("No key set - is this value wrapped in a @Field property wrapper?")
+    ) -> ( [(_InputBuilder<Value.Element>) -> Void] ) -> Void
+    where Value.Element: Input {
+		return { inputBuilders in
+            inputBuilders.forEach { (inputBuilder: (_InputBuilder<Value.Element>) -> Void) in
+                let b = _InputBuilder<Value.Element>()
+                inputBuilder(b)
+                let _ = I.schema[keyPath: keyPath]
+                guard let fieldKey = I.key(forPath: keyPath) else {
+                    fatalError("No key set - is this value wrapped in a @Field property wrapper?")
+                }
+                let value = "{\(b.addedInputFields.joined(separator: ","))}"
+                self.addedInputFields.append("\(fieldKey):\(value)")
             }
-			let value = "{\(b.addedInputFields.joined(separator: ","))}"
-			self.addedInputFields.append("\(fieldKey):\(value)")
 		}
 	}
 

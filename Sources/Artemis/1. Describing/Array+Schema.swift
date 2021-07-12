@@ -8,6 +8,8 @@ extension Array: Object where Element: Object {
     public typealias SubSchema = Element.SubSchema
 }
 
+extension Array: Input where Element: Input { }
+
 extension Array: _ObjectSchema where Element: _ObjectSchema {
     public typealias ImplementedInterfaces = Element.ImplementedInterfaces
 

@@ -54,9 +54,9 @@ extension _Selection {
     This subscript returns a closure that is called with the value to supply for the argument. Keypaths usable with this
     subscript method are keypaths on the field's `Argument` type.
     */
-    public subscript<V: _SelectionInput>(
-        dynamicMember keyPath: KeyPath<Args, V>
-    ) -> (V) -> _Selection<T, Result, Args> {
+    public subscript<Value: _SelectionInput>(
+        dynamicMember keyPath: KeyPath<Args, Value>
+    ) -> (Value) -> _Selection<T, Result, Args> {
         return { value in
             let args: Args = Args.instance
             // Accessing the keypath makes the Argument property wrapper populate a dictionary for the ArgumentsList
@@ -88,11 +88,11 @@ extension _Selection {
     where the `$0` is referring to the 'input builder' object. The methods we are calling on it are keypaths on the
     input object type.
     */
-    public subscript<V: Input>(
-        dynamicMember keyPath: KeyPath<Args, V>
-    ) -> ( (_InputBuilder<V>) -> Void ) -> _Selection<T, Result, Args> {
+    public subscript<Value: Input>(
+        dynamicMember keyPath: KeyPath<Args, Value>
+    ) -> ( (_InputBuilder<Value>) -> Void ) -> _Selection<T, Result, Args> {
         return { inputBuilder in
-            let b = _InputBuilder<V>()
+            let b = _InputBuilder<Value>()
             inputBuilder(b)
 
             let args: Args = Args.instance
@@ -102,6 +102,30 @@ extension _Selection {
             let argName = Args.name(forPath: keyPath)
             let value = "{\(b.addedInputFields.joined(separator: ","))}"
             self.renderedArguments.append("\(argName):\(value)")
+            return self
+        }
+    }
+
+    /**
+    Adds an array of 'input' object argument to the queried field.
+    */
+    public subscript<Value: Collection>(
+        dynamicMember keyPath: KeyPath<Args, Value>
+    ) -> ( [(_InputBuilder<Value.Element>) -> Void] ) -> _Selection<T, Result, Args>
+    where Value.Element: Input {
+        return { inputBuilders in
+            inputBuilders.forEach { (inputBuilder: (_InputBuilder<Value.Element>) -> Void) in
+                let b = _InputBuilder<Value.Element>()
+                inputBuilder(b)
+
+                let args: Args = Args.instance
+                // Accessing the keypath makes the Argument property wrapper populate a dictionary for the ArgumentsList
+                // instance with the string name of the keypath.
+                let _ = args[keyPath: keyPath]
+                let argName = Args.name(forPath: keyPath)
+                let value = "{\(b.addedInputFields.joined(separator: ","))}"
+                self.renderedArguments.append("\(argName):\(value)")
+            }
             return self
         }
     }
