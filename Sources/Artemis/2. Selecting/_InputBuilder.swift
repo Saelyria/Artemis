@@ -6,6 +6,7 @@ An object used when adding arguments to a field selection that builds a string o
 This object is specialized with the type of an 'input' object being used as the value for an argument. It is passed into
 the closure on that argument, where it is called with the keypaths of the wrapped 'input' type with the input's values.
 */
+/*
 @dynamicMemberLookup
 public class _InputBuilder<I: Input> {
 	internal var addedInputFields: [String] = []
@@ -80,3 +81,4 @@ public class _InputBuilder<I: Input> {
         }
     }
 }
+*/

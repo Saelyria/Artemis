@@ -63,17 +63,26 @@ public protocol Interface: Object { }
 /**
 A protocol that designates a type as representing a GraphQL 'enum'.
 */
-public protocol Enum: Scalar, CaseIterable, RawRepresentable where Self.RawValue == String, Self.Result == String { }
+public protocol Enum: Scalar, CaseIterable, RawRepresentable, Encodable where Self.RawValue == String, Self.Result == String { }
 extension Enum {
     public static var `default`: Self {
         return self.allCases[self.allCases.startIndex]
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(EncodedEnum(rawValue: self.rawValue))
+    }
+}
+
+internal struct EncodedEnum: Encodable {
+    var rawValue: String
 }
 
 /**
 A protocol that designates a type as representing a GraphQL 'input object' type.
 */
-public protocol Input: _SelectionInput, Object { }
+public protocol Input: _SelectionInput, Encodable { }
 
 // MARK: -
 

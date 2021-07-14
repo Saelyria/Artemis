@@ -1,6 +1,7 @@
 import XCTest
 @testable import Artemis
 
+/*
 final class QueryRenderingTests: XCTestCase {
 	func testQueryNameRendering() {
         let query: _Operation<Query, Partial<Person>> = .query(name: "QueryName") {
@@ -128,3 +129,4 @@ final class QueryRenderingTests: XCTestCase {
 		("testFragmentRendering", testFragmentRendering)
 	]
 }
+*/

@@ -29,8 +29,6 @@ conforming to the protocol for one of the aforementioned protocols) are able to 
 public protocol _SelectionInput {
     /// Renders the instance for use in a GraphQL query.
     func render() -> String
-
-    static var `default`: Self { get }
 }
 
 /**

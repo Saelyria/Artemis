@@ -29,19 +29,17 @@ public struct Field<T, Value: _SelectionOutput, ArgType: ArgumentsList> {
         set { fatalError() }
     }
     private let throwawayValue: () -> T
-
-    public var projectedValue: Self { self }
 }
 
-extension Field where T == (Value, ArgType) {
-    public init(wrappedValue: T! = nil, _ key: String) {
+extension Field where T == (Value, ArgType.Type) {
+    public init(_ key: String) {
         self.key = key
-        self.throwawayValue = { (.default, .init()) }
+        self.throwawayValue = { (.default, ArgType.self) }
     }
 }
 
 extension Field where Value: _SelectionOutput, ArgType == NoArguments, T == Value {
-    public init(wrappedValue: T! = nil, _ key: String) {
+    public init(_ key: String) {
         self.key = key
         self.throwawayValue = { .default }
     }
@@ -50,9 +48,7 @@ extension Field where Value: _SelectionOutput, ArgType == NoArguments, T == Valu
 /**
 A protocol that a type whose properties represent arguments for a `Field` must conform to.
 */
-public protocol ArgumentsList {
-    init()
-}
+public protocol ArgumentsList: Encodable { }
 
 /// For optimization, instantiated `ArgumentsList` objects are stored here under the string names of their parent
 /// `ArgumentsList` types.
@@ -66,14 +62,15 @@ extension ArgumentsList {
     private static var typeName: String { String(describing: Self.self) }
 
     static var instance: Self {
-        let instance: Self
-        if let i = cachedArgListsForTypes[typeName] as? Self {
-            instance = i
-        } else {
-            instance = Self.init()
-            cachedArgListsForTypes[typeName] = instance
-        }
-        return instance
+//        let instance: Self
+//        if let i = cachedArgListsForTypes[typeName] as? Self {
+//            instance = i
+//        } else {
+//            instance = Self.init()
+//            cachedArgListsForTypes[typeName] = instance
+//        }
+//        return instance
+        fatalError()
     }
 
     static func set(name: String, forPath keyPath: AnyKeyPath) {
@@ -92,41 +89,5 @@ extension ArgumentsList {
 A type that can be used with a `Field` instance to indicate that the field takes no arguments.
 */
 public struct NoArguments: ArgumentsList {
-    public init() { }
-}
-
-/**
-An object containing the information about an argument on a field.
-*/
-@propertyWrapper
-public struct Argument<Value: _SelectionInput> {
-	/// The string name of the argument as it should appear in a document.
-    public let name: String
-    let defaultValue: Value?
-    public var projectedValue: Self { self }
-    private let throwawayValue: () -> Value
-    
-    public init(wrappedValue: Value! = nil, _ name: String, default d: Value? = nil) {
-        self.name = name
-        self.defaultValue = d
-        self.throwawayValue = { .default }
-    }
-
-    public static subscript<OuterSelf: ArgumentsList>(
-        _enclosingInstance object: OuterSelf,
-        wrapped wrappedKeyPath: ReferenceWritableKeyPath<OuterSelf, Value>,
-        storage storageKeyPath: ReferenceWritableKeyPath<OuterSelf, Self>
-    ) -> Value {
-      get {
-        OuterSelf.set(name: object[keyPath: storageKeyPath].name, forPath: wrappedKeyPath)
-        return object[keyPath: storageKeyPath].throwawayValue()
-      }
-      set { }
-    }
-
-    @available(*, unavailable, message: "Arguments are only available on classes conforming to ArgumentsList")
-    public var wrappedValue: Value {
-        get { fatalError() }
-        set { fatalError() }
-    }
+    public func encode(to encoder: Encoder) throws { }
 }
