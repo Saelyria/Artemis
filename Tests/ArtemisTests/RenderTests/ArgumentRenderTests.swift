@@ -6,7 +6,7 @@ import XCTest
  */
 final class ArgumentsListRenderTests: XCTestCase {
     func testArgsListRender() throws {
-        let rendered = try ArgumentEncoder().encode(Schema.TestArguments.testDefault)
-        XCTAssertEqual(rendered, Schema.TestArguments.expectedTestRenderedString)
+        let rendered = try ArgumentEncoder().encode(TestArguments.testDefault)
+        XCTAssertEqual(rendered, TestArguments.expectedTestRenderedString)
     }
 }

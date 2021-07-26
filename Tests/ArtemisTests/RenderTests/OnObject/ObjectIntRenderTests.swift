@@ -4,69 +4,77 @@ import XCTest
 /**
  Test for selecting ints on a query, ensuring they render the expected query string.
  */
-final class ObjectIntRenderTests: XCTestCase {
+final class ObjectIntRenderTests: XCTestCase { }
+
+// MARK: - Tests to ensure single selections of Int and [Int] render as expected
+
+extension ObjectIntRenderTests {
     func testSingleRender() {
-        let query: _Operation<Schema.Query, Int> = .query {
+        let query: _Operation<Query, Int> = .query {
             $0.int
         }
         XCTAssertEqual(query.render(), "{int}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Schema.Query, Int> = .query {
+        let query: _Operation<Query, Int> = .query {
             $0.intArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{intArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Schema.Query, [Int]> = .query {
+        let query: _Operation<Query, [Int]> = .query {
             $0.ints
         }
         XCTAssertEqual(query.render(), "{ints}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Schema.Query, [Int]> = .query {
+        let query: _Operation<Query, [Int]> = .query {
             $0.intsArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{intsArgs\(testArgs)}")
     }
 }
 
+// MARK: - Tests to ensure single selections of Int and [Int] with aliases render as expected
+
 extension ObjectIntRenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Schema.Query, Int> = .query {
+        let query: _Operation<Query, Int> = .query {
             $0.int(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:int}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Schema.Query, Int> = .query {
+        let query: _Operation<Query, Int> = .query {
             $0.intArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:intArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Schema.Query, [Int]> = .query {
+        let query: _Operation<Query, [Int]> = .query {
             $0.ints(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:ints}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Schema.Query, [Int]> = .query {
+        let query: _Operation<Query, [Int]> = .query {
             $0.intsArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:intsArgs\(testArgs)}")
     }
 }
 
+// MARK: - Tests to ensure multiple sibling selections of Int and [Int] render as expected
+
 extension ObjectIntRenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Schema.Query, (Int, Int)> = .query {
+        let query: _Operation<Query, (Int, Int)> = .query {
             $0.int
             $0.int
         }
@@ -74,7 +82,7 @@ extension ObjectIntRenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Schema.Query, (Int, Int)> = .query {
+        let query: _Operation<Query, (Int, Int)> = .query {
             $0.intArgs(arguments: .testDefault)
             $0.intArgs(arguments: .testDefault)
         }
@@ -82,7 +90,7 @@ extension ObjectIntRenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Schema.Query, ([Int], [Int])> = .query {
+        let query: _Operation<Query, ([Int], [Int])> = .query {
             $0.ints
             $0.ints
         }
@@ -90,7 +98,7 @@ extension ObjectIntRenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Schema.Query, ([Int], [Int])> = .query {
+        let query: _Operation<Query, ([Int], [Int])> = .query {
             $0.intsArgs(arguments: .testDefault)
             $0.intsArgs(arguments: .testDefault)
         }
@@ -98,11 +106,11 @@ extension ObjectIntRenderTests {
     }
 }
 
-// MARK: -
+// MARK: - Tests to ensure selections render as expected on selections of Int and [Int]
 
 extension ObjectIntRenderTests {
     func testSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.int
             }
@@ -111,7 +119,7 @@ extension ObjectIntRenderTests {
     }
 
     func testSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.intsArgs(arguments: .testDefault)
             }
@@ -120,7 +128,7 @@ extension ObjectIntRenderTests {
     }
 
     func testArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.ints
             }
@@ -129,7 +137,7 @@ extension ObjectIntRenderTests {
     }
 
     func testArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.intsArgs(arguments: .testDefault)
             }
@@ -138,9 +146,11 @@ extension ObjectIntRenderTests {
     }
 }
 
+// MARK: - Tests to ensure aliases render as expected on sub-selections of Int and [Int]
+
 extension ObjectIntRenderTests {
     func testSingleAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.int(alias: "alias")
             }
@@ -149,7 +159,7 @@ extension ObjectIntRenderTests {
     }
 
     func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.intArgs(alias: "alias", arguments: .testDefault)
             }
@@ -158,7 +168,7 @@ extension ObjectIntRenderTests {
     }
 
     func testArrayAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.ints(alias: "alias")
             }
@@ -167,7 +177,7 @@ extension ObjectIntRenderTests {
     }
 
     func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.intsArgs(alias: "alias", arguments: .testDefault)
             }
@@ -176,9 +186,11 @@ extension ObjectIntRenderTests {
     }
 }
 
+// MARK: - Tests to ensure Int and [Int] can be selected on a sub-selection of Object
+
 extension ObjectIntRenderTests {
     func testMultipleSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.int
                 $0.int
@@ -188,7 +200,7 @@ extension ObjectIntRenderTests {
     }
 
     func testMultipleSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.intArgs(arguments: .testDefault)
                 $0.intArgs(arguments: .testDefault)
@@ -198,7 +210,7 @@ extension ObjectIntRenderTests {
     }
 
     func testMultipleArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.ints
                 $0.ints
@@ -208,7 +220,7 @@ extension ObjectIntRenderTests {
     }
 
     func testMultipleArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.intsArgs(arguments: .testDefault)
                 $0.intsArgs(arguments: .testDefault)
@@ -218,42 +230,44 @@ extension ObjectIntRenderTests {
     }
 }
 
+// MARK: - Tests to ensure fragments on Query selecting Int and [Int] can be used at the top level of an operation
+
 extension ObjectIntRenderTests {
     func testSingleOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.int
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{int}")
     }
 
     func testSingleArgsOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.intArgs(arguments: .testDefault)
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{intArgs\(testArgs)}")
     }
 
     func testArrayOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.ints
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{ints}")
     }
 
     func testArrayArgsOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.intsArgs(arguments: .testDefault)
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{intsArgs\(testArgs)}")

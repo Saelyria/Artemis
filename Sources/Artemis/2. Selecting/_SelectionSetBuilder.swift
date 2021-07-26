@@ -198,9 +198,9 @@ extension _SelectionSetBuilder {
 }
 
 extension _SelectionSetBuilder {
-    public static func buildExpression(
-        _ fragment: Fragment<T>
-    ) -> _SelectionSet<Never> {
+    public static func buildExpression<F>(
+        _ fragment: Fragment<F>
+    ) -> _SelectionSet<Never> where F.SubSchema == T.SubSchema {
         let selection = _Selection<T, Never>(
             fieldType: .fragment(
                 inline: "...\(fragment.name)",

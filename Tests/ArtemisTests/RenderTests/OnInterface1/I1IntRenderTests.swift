@@ -2,33 +2,33 @@ import XCTest
 @testable import Artemis
 
 /**
- Test for selecting ints on a query where the field is declared on the first interface, ensuring they render the
+ Test for selecting ints on a query where the field is declared on the second interface, ensuring they render the
  expected query string.
  */
 final class I1IntRenderTests: XCTestCase {
     func testSingleRender() {
-        let query: _Operation<Schema.Query, Int> = .query {
+        let query: _Operation<Query, Int> = .query {
             $0.i1_int
         }
         XCTAssertEqual(query.render(), "{i1_int}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Schema.Query, Int> = .query {
+        let query: _Operation<Query, Int> = .query {
             $0.i1_intArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{i1_intArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Schema.Query, [Int]> = .query {
+        let query: _Operation<Query, [Int]> = .query {
             $0.i1_ints
         }
         XCTAssertEqual(query.render(), "{i1_ints}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Schema.Query, [Int]> = .query {
+        let query: _Operation<Query, [Int]> = .query {
             $0.i1_intsArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{i1_intsArgs\(testArgs)}")
@@ -37,28 +37,28 @@ final class I1IntRenderTests: XCTestCase {
 
 extension I1IntRenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Schema.Query, Int> = .query {
+        let query: _Operation<Query, Int> = .query {
             $0.i1_int(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:i1_int}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Schema.Query, Int> = .query {
+        let query: _Operation<Query, Int> = .query {
             $0.i1_intArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:i1_intArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Schema.Query, [Int]> = .query {
+        let query: _Operation<Query, [Int]> = .query {
             $0.i1_ints(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:i1_ints}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Schema.Query, [Int]> = .query {
+        let query: _Operation<Query, [Int]> = .query {
             $0.i1_intsArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:i1_intsArgs\(testArgs)}")
@@ -67,7 +67,7 @@ extension I1IntRenderTests {
 
 extension I1IntRenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Schema.Query, (Int, Int)> = .query {
+        let query: _Operation<Query, (Int, Int)> = .query {
             $0.i1_int
             $0.i1_int
         }
@@ -75,7 +75,7 @@ extension I1IntRenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Schema.Query, (Int, Int)> = .query {
+        let query: _Operation<Query, (Int, Int)> = .query {
             $0.i1_intArgs(arguments: .testDefault)
             $0.i1_intArgs(arguments: .testDefault)
         }
@@ -83,7 +83,7 @@ extension I1IntRenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Schema.Query, ([Int], [Int])> = .query {
+        let query: _Operation<Query, ([Int], [Int])> = .query {
             $0.i1_ints
             $0.i1_ints
         }
@@ -91,7 +91,7 @@ extension I1IntRenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Schema.Query, ([Int], [Int])> = .query {
+        let query: _Operation<Query, ([Int], [Int])> = .query {
             $0.i1_intsArgs(arguments: .testDefault)
             $0.i1_intsArgs(arguments: .testDefault)
         }
@@ -103,7 +103,7 @@ extension I1IntRenderTests {
 
 extension I1IntRenderTests {
     func testSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_int
             }
@@ -112,7 +112,7 @@ extension I1IntRenderTests {
     }
 
     func testSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_intsArgs(arguments: .testDefault)
             }
@@ -121,7 +121,7 @@ extension I1IntRenderTests {
     }
 
     func testArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_ints
             }
@@ -130,7 +130,7 @@ extension I1IntRenderTests {
     }
 
     func testArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_intsArgs(arguments: .testDefault)
             }
@@ -141,7 +141,7 @@ extension I1IntRenderTests {
 
 extension I1IntRenderTests {
     func testSingleAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_int(alias: "alias")
             }
@@ -150,7 +150,7 @@ extension I1IntRenderTests {
     }
 
     func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_intArgs(alias: "alias", arguments: .testDefault)
             }
@@ -159,7 +159,7 @@ extension I1IntRenderTests {
     }
 
     func testArrayAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_ints(alias: "alias")
             }
@@ -168,7 +168,7 @@ extension I1IntRenderTests {
     }
 
     func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_intsArgs(alias: "alias", arguments: .testDefault)
             }
@@ -179,7 +179,7 @@ extension I1IntRenderTests {
 
 extension I1IntRenderTests {
     func testMultipleSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_int
                 $0.i1_int
@@ -189,7 +189,7 @@ extension I1IntRenderTests {
     }
 
     func testMultipleSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_intArgs(arguments: .testDefault)
                 $0.i1_intArgs(arguments: .testDefault)
@@ -199,7 +199,7 @@ extension I1IntRenderTests {
     }
 
     func testMultipleArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_ints
                 $0.i1_ints
@@ -209,12 +209,54 @@ extension I1IntRenderTests {
     }
 
     func testMultipleArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_intsArgs(arguments: .testDefault)
                 $0.i1_intsArgs(arguments: .testDefault)
             }
         }
         XCTAssertEqual(query.render(), "{object{i1_intsArgs\(testArgs),i1_intsArgs\(testArgs)}}")
+    }
+}
+
+extension I1IntRenderTests {
+    func testSingleOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i1_int
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_int}")
+    }
+
+    func testSingleArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i1_intArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_intArgs\(testArgs)}")
+    }
+
+    func testArrayOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i1_ints
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_ints}")
+    }
+
+    func testArrayArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i1_intsArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_intsArgs\(testArgs)}")
     }
 }

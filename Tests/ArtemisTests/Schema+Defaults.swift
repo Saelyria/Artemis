@@ -1,9 +1,9 @@
 import Foundation
 
-let testArgs = Schema.TestArguments.expectedTestRenderedString
+let testArgs = TestArguments.expectedTestRenderedString
 
-extension Schema.TestArguments {
-    static let testDefault = Schema.TestArguments(
+extension TestArguments {
+    static let testDefault = TestArguments(
         input: .testDefault,
         inputs: [.testDefault],
         enum: .first,
@@ -22,8 +22,8 @@ extension Schema.TestArguments {
 
     static let expectedTestRenderedString: String = {
         return "(" +
-            "input:\(Schema.TestInput.expectedTestRenderedString)," +
-            "inputs:[\(Schema.TestInput.expectedTestRenderedString)]," +
+            "input:\(TestInput.expectedTestRenderedString)," +
+            "inputs:[\(TestInput.expectedTestRenderedString)]," +
             "enum:FIRST," +
             "enums:[FIRST,FIRST]," +
             "int:123," +
@@ -40,8 +40,8 @@ extension Schema.TestArguments {
     }()
 }
 
-extension Schema.TestInput {
-    static let testDefault = Schema.TestInput(
+extension TestInput {
+    static let testDefault = TestInput(
         input: .testDefault,
         inputs: [.testDefault],
         enum: .second,
@@ -60,8 +60,8 @@ extension Schema.TestInput {
 
     static let expectedTestRenderedString: String = {
         return "{" +
-            "input:\(Schema.TestInput.TestSubInput.expectedTestRenderedString)," +
-            "inputs:[\(Schema.TestInput.TestSubInput.expectedTestRenderedString)]," +
+            "input:\(TestInput.TestSubInput.expectedTestRenderedString)," +
+            "inputs:[\(TestInput.TestSubInput.expectedTestRenderedString)]," +
             "enum:SECOND," +
             "enums:[SECOND,SECOND]," +
             "int:234," +
@@ -78,8 +78,8 @@ extension Schema.TestInput {
     }()
 }
 
-extension Schema.TestInput.TestSubInput {
-    static let testDefault = Schema.TestInput.TestSubInput(
+extension TestInput.TestSubInput {
+    static let testDefault = TestInput.TestSubInput(
         enum: .third,
         enums: [.third, .third],
         int: 345,

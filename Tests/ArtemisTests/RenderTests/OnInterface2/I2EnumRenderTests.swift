@@ -7,28 +7,28 @@ import XCTest
  */
 final class I2EnumRenderTests: XCTestCase {
     func testSingleRender() {
-        let query: _Operation<Schema.Query, Schema.TestEnum.Result> = .query {
+        let query: _Operation<Query, TestEnum.Result> = .query {
             $0.i2_enum
         }
         XCTAssertEqual(query.render(), "{i2_enum}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Schema.Query, Schema.TestEnum.Result> = .query {
+        let query: _Operation<Query, TestEnum.Result> = .query {
             $0.i2_enumArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{i2_enumArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Schema.Query, [Schema.TestEnum.Result]> = .query {
+        let query: _Operation<Query, [TestEnum.Result]> = .query {
             $0.i2_enums
         }
         XCTAssertEqual(query.render(), "{i2_enums}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Schema.Query, [Schema.TestEnum.Result]> = .query {
+        let query: _Operation<Query, [TestEnum.Result]> = .query {
             $0.i2_enumsArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{i2_enumsArgs\(testArgs)}")
@@ -37,28 +37,28 @@ final class I2EnumRenderTests: XCTestCase {
 
 extension I2EnumRenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Schema.Query, Schema.TestEnum.Result> = .query {
+        let query: _Operation<Query, TestEnum.Result> = .query {
             $0.i2_enum(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:i2_enum}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Schema.Query, Schema.TestEnum.Result> = .query {
+        let query: _Operation<Query, TestEnum.Result> = .query {
             $0.i2_enumArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:i2_enumArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Schema.Query, [Schema.TestEnum.Result]> = .query {
+        let query: _Operation<Query, [TestEnum.Result]> = .query {
             $0.i2_enums(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:i2_enums}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Schema.Query, [Schema.TestEnum.Result]> = .query {
+        let query: _Operation<Query, [TestEnum.Result]> = .query {
             $0.i2_enumsArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:i2_enumsArgs\(testArgs)}")
@@ -67,7 +67,7 @@ extension I2EnumRenderTests {
 
 extension I2EnumRenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Schema.Query, (Schema.TestEnum.Result, Schema.TestEnum.Result)> = .query {
+        let query: _Operation<Query, (TestEnum.Result, TestEnum.Result)> = .query {
             $0.i2_enum
             $0.i2_enum
         }
@@ -75,7 +75,7 @@ extension I2EnumRenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Schema.Query, (Schema.TestEnum.Result, Schema.TestEnum.Result)> = .query {
+        let query: _Operation<Query, (TestEnum.Result, TestEnum.Result)> = .query {
             $0.i2_enumArgs(arguments: .testDefault)
             $0.i2_enumArgs(arguments: .testDefault)
         }
@@ -83,7 +83,7 @@ extension I2EnumRenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Schema.Query, ([Schema.TestEnum.Result], [Schema.TestEnum.Result])> = .query {
+        let query: _Operation<Query, ([TestEnum.Result], [TestEnum.Result])> = .query {
             $0.i2_enums
             $0.i2_enums
         }
@@ -91,7 +91,7 @@ extension I2EnumRenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Schema.Query, ([Schema.TestEnum.Result], [Schema.TestEnum.Result])> = .query {
+        let query: _Operation<Query, ([TestEnum.Result], [TestEnum.Result])> = .query {
             $0.i2_enumsArgs(arguments: .testDefault)
             $0.i2_enumsArgs(arguments: .testDefault)
         }
@@ -103,7 +103,7 @@ extension I2EnumRenderTests {
 
 extension I2EnumRenderTests {
     func testSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enum
             }
@@ -112,7 +112,7 @@ extension I2EnumRenderTests {
     }
 
     func testSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enumsArgs(arguments: .testDefault)
             }
@@ -121,7 +121,7 @@ extension I2EnumRenderTests {
     }
 
     func testArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enums
             }
@@ -130,7 +130,7 @@ extension I2EnumRenderTests {
     }
 
     func testArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enumsArgs(arguments: .testDefault)
             }
@@ -141,7 +141,7 @@ extension I2EnumRenderTests {
 
 extension I2EnumRenderTests {
     func testSingleAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enum(alias: "alias")
             }
@@ -150,7 +150,7 @@ extension I2EnumRenderTests {
     }
 
     func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enumArgs(alias: "alias", arguments: .testDefault)
             }
@@ -159,7 +159,7 @@ extension I2EnumRenderTests {
     }
 
     func testArrayAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enums(alias: "alias")
             }
@@ -168,7 +168,7 @@ extension I2EnumRenderTests {
     }
 
     func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enumsArgs(alias: "alias", arguments: .testDefault)
             }
@@ -179,7 +179,7 @@ extension I2EnumRenderTests {
 
 extension I2EnumRenderTests {
     func testMultipleSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enum
                 $0.i2_enum
@@ -189,7 +189,7 @@ extension I2EnumRenderTests {
     }
 
     func testMultipleSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enumArgs(arguments: .testDefault)
                 $0.i2_enumArgs(arguments: .testDefault)
@@ -199,7 +199,7 @@ extension I2EnumRenderTests {
     }
 
     func testMultipleArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enums
                 $0.i2_enums
@@ -209,12 +209,54 @@ extension I2EnumRenderTests {
     }
 
     func testMultipleArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_enumsArgs(arguments: .testDefault)
                 $0.i2_enumsArgs(arguments: .testDefault)
             }
         }
         XCTAssertEqual(query.render(), "{object{i2_enumsArgs\(testArgs),i2_enumsArgs\(testArgs)}}")
+    }
+}
+
+extension I2EnumRenderTests {
+    func testSingleOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_enum
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_enum}")
+    }
+
+    func testSingleArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_enumArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_enumArgs\(testArgs)}")
+    }
+
+    func testArrayOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_enums
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_enums}")
+    }
+
+    func testArrayArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_enumsArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_enumsArgs\(testArgs)}")
     }
 }

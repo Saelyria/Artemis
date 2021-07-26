@@ -4,69 +4,77 @@ import XCTest
 /**
  Test for selecting doubles on a query, ensuring they render the expected query string.
  */
-final class ObjectDoubleRenderTests: XCTestCase {
+final class ObjectDoubleRenderTests: XCTestCase { }
+
+// MARK: - Tests to ensure single selections of Double and [Double] render as expected
+
+extension ObjectDoubleRenderTests {
     func testSingleRender() {
-        let query: _Operation<Schema.Query, Double> = .query {
+        let query: _Operation<Query, Double> = .query {
             $0.double
         }
         XCTAssertEqual(query.render(), "{double}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Schema.Query, Double> = .query {
+        let query: _Operation<Query, Double> = .query {
             $0.doubleArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{doubleArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Schema.Query, [Double]> = .query {
+        let query: _Operation<Query, [Double]> = .query {
             $0.doubles
         }
         XCTAssertEqual(query.render(), "{doubles}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Schema.Query, [Double]> = .query {
+        let query: _Operation<Query, [Double]> = .query {
             $0.doublesArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{doublesArgs\(testArgs)}")
     }
 }
 
+// MARK: - Tests to ensure single selections of Double and [Double] with aliases render as expected
+
 extension ObjectDoubleRenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Schema.Query, Double> = .query {
+        let query: _Operation<Query, Double> = .query {
             $0.double(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:double}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Schema.Query, Double> = .query {
+        let query: _Operation<Query, Double> = .query {
             $0.doubleArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:doubleArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Schema.Query, [Double]> = .query {
+        let query: _Operation<Query, [Double]> = .query {
             $0.doubles(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:doubles}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Schema.Query, [Double]> = .query {
+        let query: _Operation<Query, [Double]> = .query {
             $0.doublesArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:doublesArgs\(testArgs)}")
     }
 }
 
+// MARK: - Tests to ensure multiple sibling selections of Double and [Double] render as expected
+
 extension ObjectDoubleRenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Schema.Query, (Double, Double)> = .query {
+        let query: _Operation<Query, (Double, Double)> = .query {
             $0.double
             $0.double
         }
@@ -74,7 +82,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Schema.Query, (Double, Double)> = .query {
+        let query: _Operation<Query, (Double, Double)> = .query {
             $0.doubleArgs(arguments: .testDefault)
             $0.doubleArgs(arguments: .testDefault)
         }
@@ -82,7 +90,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Schema.Query, ([Double], [Double])> = .query {
+        let query: _Operation<Query, ([Double], [Double])> = .query {
             $0.doubles
             $0.doubles
         }
@@ -90,7 +98,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Schema.Query, ([Double], [Double])> = .query {
+        let query: _Operation<Query, ([Double], [Double])> = .query {
             $0.doublesArgs(arguments: .testDefault)
             $0.doublesArgs(arguments: .testDefault)
         }
@@ -98,11 +106,11 @@ extension ObjectDoubleRenderTests {
     }
 }
 
-// MARK: -
+// MARK: - Tests to ensure selections render as expected on selections of Double and [Double]
 
 extension ObjectDoubleRenderTests {
     func testSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.double
             }
@@ -111,7 +119,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.doublesArgs(arguments: .testDefault)
             }
@@ -120,7 +128,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.doubles
             }
@@ -129,7 +137,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.doublesArgs(arguments: .testDefault)
             }
@@ -138,9 +146,11 @@ extension ObjectDoubleRenderTests {
     }
 }
 
+// MARK: - Tests to ensure aliases render as expected on sub-selections of Double and [Double]
+
 extension ObjectDoubleRenderTests {
     func testSingleAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.double(alias: "alias")
             }
@@ -149,7 +159,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.doubleArgs(alias: "alias", arguments: .testDefault)
             }
@@ -158,7 +168,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testArrayAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.doubles(alias: "alias")
             }
@@ -167,7 +177,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.doublesArgs(alias: "alias", arguments: .testDefault)
             }
@@ -176,9 +186,11 @@ extension ObjectDoubleRenderTests {
     }
 }
 
+// MARK: - Tests to ensure Double and [Double] can be selected on a sub-selection of Object
+
 extension ObjectDoubleRenderTests {
     func testMultipleSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.double
                 $0.double
@@ -188,7 +200,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testMultipleSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.doubleArgs(arguments: .testDefault)
                 $0.doubleArgs(arguments: .testDefault)
@@ -198,7 +210,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testMultipleArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.doubles
                 $0.doubles
@@ -208,7 +220,7 @@ extension ObjectDoubleRenderTests {
     }
 
     func testMultipleArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.doublesArgs(arguments: .testDefault)
                 $0.doublesArgs(arguments: .testDefault)
@@ -218,42 +230,44 @@ extension ObjectDoubleRenderTests {
     }
 }
 
+// MARK: - Tests to ensure fragments on Query selecting Double and [Double] can be used at the top level of an operation
+
 extension ObjectDoubleRenderTests {
     func testSingleOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.double
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{double}")
     }
 
     func testSingleArgsOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.doubleArgs(arguments: .testDefault)
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{doubleArgs\(testArgs)}")
     }
 
     func testArrayOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.doubles
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{doubles}")
     }
 
     func testArrayArgsOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.doublesArgs(arguments: .testDefault)
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{doublesArgs\(testArgs)}")

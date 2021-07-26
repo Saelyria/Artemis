@@ -7,28 +7,28 @@ import XCTest
  */
 final class I2StringRenderTests: XCTestCase {
     func testSingleRender() {
-        let query: _Operation<Schema.Query, String> = .query {
+        let query: _Operation<Query, String> = .query {
             $0.i2_string
         }
         XCTAssertEqual(query.render(), "{i2_string}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Schema.Query, String> = .query {
+        let query: _Operation<Query, String> = .query {
             $0.i2_stringArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{i2_stringArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Schema.Query, [String]> = .query {
+        let query: _Operation<Query, [String]> = .query {
             $0.i2_strings
         }
         XCTAssertEqual(query.render(), "{i2_strings}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Schema.Query, [String]> = .query {
+        let query: _Operation<Query, [String]> = .query {
             $0.i2_stringsArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{i2_stringsArgs\(testArgs)}")
@@ -37,28 +37,28 @@ final class I2StringRenderTests: XCTestCase {
 
 extension I2StringRenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Schema.Query, String> = .query {
+        let query: _Operation<Query, String> = .query {
             $0.i2_string(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:i2_string}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Schema.Query, String> = .query {
+        let query: _Operation<Query, String> = .query {
             $0.i2_stringArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:i2_stringArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Schema.Query, [String]> = .query {
+        let query: _Operation<Query, [String]> = .query {
             $0.i2_strings(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:i2_strings}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Schema.Query, [String]> = .query {
+        let query: _Operation<Query, [String]> = .query {
             $0.i2_stringsArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:i2_stringsArgs\(testArgs)}")
@@ -67,7 +67,7 @@ extension I2StringRenderTests {
 
 extension I2StringRenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Schema.Query, (String, String)> = .query {
+        let query: _Operation<Query, (String, String)> = .query {
             $0.i2_string
             $0.i2_string
         }
@@ -75,7 +75,7 @@ extension I2StringRenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Schema.Query, (String, String)> = .query {
+        let query: _Operation<Query, (String, String)> = .query {
             $0.i2_stringArgs(arguments: .testDefault)
             $0.i2_stringArgs(arguments: .testDefault)
         }
@@ -83,7 +83,7 @@ extension I2StringRenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Schema.Query, ([String], [String])> = .query {
+        let query: _Operation<Query, ([String], [String])> = .query {
             $0.i2_strings
             $0.i2_strings
         }
@@ -91,7 +91,7 @@ extension I2StringRenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Schema.Query, ([String], [String])> = .query {
+        let query: _Operation<Query, ([String], [String])> = .query {
             $0.i2_stringsArgs(arguments: .testDefault)
             $0.i2_stringsArgs(arguments: .testDefault)
         }
@@ -103,7 +103,7 @@ extension I2StringRenderTests {
 
 extension I2StringRenderTests {
     func testSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_string
             }
@@ -112,7 +112,7 @@ extension I2StringRenderTests {
     }
 
     func testSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_stringsArgs(arguments: .testDefault)
             }
@@ -121,7 +121,7 @@ extension I2StringRenderTests {
     }
 
     func testArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_strings
             }
@@ -130,7 +130,7 @@ extension I2StringRenderTests {
     }
 
     func testArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_stringsArgs(arguments: .testDefault)
             }
@@ -141,7 +141,7 @@ extension I2StringRenderTests {
 
 extension I2StringRenderTests {
     func testSingleAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_string(alias: "alias")
             }
@@ -150,7 +150,7 @@ extension I2StringRenderTests {
     }
 
     func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_stringArgs(alias: "alias", arguments: .testDefault)
             }
@@ -159,7 +159,7 @@ extension I2StringRenderTests {
     }
 
     func testArrayAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_strings(alias: "alias")
             }
@@ -168,7 +168,7 @@ extension I2StringRenderTests {
     }
 
     func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_stringsArgs(alias: "alias", arguments: .testDefault)
             }
@@ -179,7 +179,7 @@ extension I2StringRenderTests {
 
 extension I2StringRenderTests {
     func testMultipleSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_string
                 $0.i2_string
@@ -189,7 +189,7 @@ extension I2StringRenderTests {
     }
 
     func testMultipleSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_stringArgs(arguments: .testDefault)
                 $0.i2_stringArgs(arguments: .testDefault)
@@ -199,7 +199,7 @@ extension I2StringRenderTests {
     }
 
     func testMultipleArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_strings
                 $0.i2_strings
@@ -209,12 +209,54 @@ extension I2StringRenderTests {
     }
 
     func testMultipleArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_stringsArgs(arguments: .testDefault)
                 $0.i2_stringsArgs(arguments: .testDefault)
             }
         }
         XCTAssertEqual(query.render(), "{object{i2_stringsArgs\(testArgs),i2_stringsArgs\(testArgs)}}")
+    }
+}
+
+extension I2StringRenderTests {
+    func testSingleOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_string
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_string}")
+    }
+
+    func testSingleArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_stringArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_stringArgs\(testArgs)}")
+    }
+
+    func testArrayOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_strings
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_strings}")
+    }
+
+    func testArrayArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_stringsArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_stringsArgs\(testArgs)}")
     }
 }

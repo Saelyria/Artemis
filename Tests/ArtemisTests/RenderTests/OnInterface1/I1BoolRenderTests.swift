@@ -2,33 +2,33 @@ import XCTest
 @testable import Artemis
 
 /**
- Test for selecting bools on a query where the field is declared on the first interface, ensuring they render the
+ Test for selecting bools on a query where the field is declared on the second interface, ensuring they render the
  expected query string.
  */
 final class I1BoolRenderTests: XCTestCase {
     func testSingleRender() {
-        let query: _Operation<Schema.Query, Bool> = .query {
+        let query: _Operation<Query, Bool> = .query {
             $0.i1_bool
         }
         XCTAssertEqual(query.render(), "{i1_bool}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Schema.Query, Bool> = .query {
+        let query: _Operation<Query, Bool> = .query {
             $0.i1_boolArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{i1_boolArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Schema.Query, [Bool]> = .query {
+        let query: _Operation<Query, [Bool]> = .query {
             $0.i1_bools
         }
         XCTAssertEqual(query.render(), "{i1_bools}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Schema.Query, [Bool]> = .query {
+        let query: _Operation<Query, [Bool]> = .query {
             $0.i1_boolsArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{i1_boolsArgs\(testArgs)}")
@@ -37,28 +37,28 @@ final class I1BoolRenderTests: XCTestCase {
 
 extension I1BoolRenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Schema.Query, Bool> = .query {
+        let query: _Operation<Query, Bool> = .query {
             $0.i1_bool(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:i1_bool}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Schema.Query, Bool> = .query {
+        let query: _Operation<Query, Bool> = .query {
             $0.i1_boolArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:i1_boolArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Schema.Query, [Bool]> = .query {
+        let query: _Operation<Query, [Bool]> = .query {
             $0.i1_bools(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:i1_bools}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Schema.Query, [Bool]> = .query {
+        let query: _Operation<Query, [Bool]> = .query {
             $0.i1_boolsArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:i1_boolsArgs\(testArgs)}")
@@ -67,7 +67,7 @@ extension I1BoolRenderTests {
 
 extension I1BoolRenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Schema.Query, (Bool, Bool)> = .query {
+        let query: _Operation<Query, (Bool, Bool)> = .query {
             $0.i1_bool
             $0.i1_bool
         }
@@ -75,7 +75,7 @@ extension I1BoolRenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Schema.Query, (Bool, Bool)> = .query {
+        let query: _Operation<Query, (Bool, Bool)> = .query {
             $0.i1_boolArgs(arguments: .testDefault)
             $0.i1_boolArgs(arguments: .testDefault)
         }
@@ -83,7 +83,7 @@ extension I1BoolRenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Schema.Query, ([Bool], [Bool])> = .query {
+        let query: _Operation<Query, ([Bool], [Bool])> = .query {
             $0.i1_bools
             $0.i1_bools
         }
@@ -91,7 +91,7 @@ extension I1BoolRenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Schema.Query, ([Bool], [Bool])> = .query {
+        let query: _Operation<Query, ([Bool], [Bool])> = .query {
             $0.i1_boolsArgs(arguments: .testDefault)
             $0.i1_boolsArgs(arguments: .testDefault)
         }
@@ -103,7 +103,7 @@ extension I1BoolRenderTests {
 
 extension I1BoolRenderTests {
     func testSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_bool
             }
@@ -112,7 +112,7 @@ extension I1BoolRenderTests {
     }
 
     func testSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_boolsArgs(arguments: .testDefault)
             }
@@ -121,7 +121,7 @@ extension I1BoolRenderTests {
     }
 
     func testArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_bools
             }
@@ -130,7 +130,7 @@ extension I1BoolRenderTests {
     }
 
     func testArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_boolsArgs(arguments: .testDefault)
             }
@@ -141,7 +141,7 @@ extension I1BoolRenderTests {
 
 extension I1BoolRenderTests {
     func testSingleAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_bool(alias: "alias")
             }
@@ -150,7 +150,7 @@ extension I1BoolRenderTests {
     }
 
     func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_boolArgs(alias: "alias", arguments: .testDefault)
             }
@@ -159,7 +159,7 @@ extension I1BoolRenderTests {
     }
 
     func testArrayAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_bools(alias: "alias")
             }
@@ -168,7 +168,7 @@ extension I1BoolRenderTests {
     }
 
     func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_boolsArgs(alias: "alias", arguments: .testDefault)
             }
@@ -179,7 +179,7 @@ extension I1BoolRenderTests {
 
 extension I1BoolRenderTests {
     func testMultipleSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_bool
                 $0.i1_bool
@@ -189,7 +189,7 @@ extension I1BoolRenderTests {
     }
 
     func testMultipleSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_boolArgs(arguments: .testDefault)
                 $0.i1_boolArgs(arguments: .testDefault)
@@ -199,7 +199,7 @@ extension I1BoolRenderTests {
     }
 
     func testMultipleArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_bools
                 $0.i1_bools
@@ -209,12 +209,54 @@ extension I1BoolRenderTests {
     }
 
     func testMultipleArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i1_boolsArgs(arguments: .testDefault)
                 $0.i1_boolsArgs(arguments: .testDefault)
             }
         }
         XCTAssertEqual(query.render(), "{object{i1_boolsArgs\(testArgs),i1_boolsArgs\(testArgs)}}")
+    }
+}
+
+extension I1BoolRenderTests {
+    func testSingleOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i1_bool
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_bool}")
+    }
+
+    func testSingleArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i1_boolArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_boolArgs\(testArgs)}")
+    }
+
+    func testArrayOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i1_bools
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_bools}")
+    }
+
+    func testArrayArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i1_boolsArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_boolsArgs\(testArgs)}")
     }
 }

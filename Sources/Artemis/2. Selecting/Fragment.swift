@@ -3,7 +3,7 @@ import Foundation
 /**
 An object representing a GraphQL 'fragment' that can be added to a sub-selection.
 */
-public struct Fragment<T: Object> {
+public struct Fragment<T: Object> where T.SubSchema == T {
     /// The name given to this fragment to identify it.
 	public let name: String
 	let rendered_SelectionSet: String

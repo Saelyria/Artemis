@@ -4,69 +4,77 @@ import XCTest
 /**
  Test for selecting enums on a query, ensuring they render the expected query string.
  */
-final class ObjectEnumRenderTests: XCTestCase {
+final class ObjectTestEnumRenderTests: XCTestCase { }
+
+// MARK: - Tests to ensure single selections of TestEnum and [TestEnum] render as expected
+
+extension ObjectTestEnumRenderTests {
     func testSingleRender() {
-        let query: _Operation<Schema.Query, Schema.TestEnum.Result> = .query {
+        let query: _Operation<Query, TestEnum.Result> = .query {
             $0.enum
         }
         XCTAssertEqual(query.render(), "{enum}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Schema.Query, Schema.TestEnum.Result> = .query {
+        let query: _Operation<Query, TestEnum.Result> = .query {
             $0.enumArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{enumArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Schema.Query, [Schema.TestEnum.Result]> = .query {
+        let query: _Operation<Query, [TestEnum.Result]> = .query {
             $0.enums
         }
         XCTAssertEqual(query.render(), "{enums}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Schema.Query, [Schema.TestEnum.Result]> = .query {
+        let query: _Operation<Query, [TestEnum.Result]> = .query {
             $0.enumsArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{enumsArgs\(testArgs)}")
     }
 }
 
-extension ObjectEnumRenderTests {
+// MARK: - Tests to ensure single selections of TestEnum and [TestEnum] with aliases render as expected
+
+extension ObjectTestEnumRenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Schema.Query, Schema.TestEnum.Result> = .query {
+        let query: _Operation<Query, TestEnum.Result> = .query {
             $0.enum(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:enum}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Schema.Query, Schema.TestEnum.Result> = .query {
+        let query: _Operation<Query, TestEnum.Result> = .query {
             $0.enumArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:enumArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Schema.Query, [Schema.TestEnum.Result]> = .query {
+        let query: _Operation<Query, [TestEnum.Result]> = .query {
             $0.enums(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:enums}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Schema.Query, [Schema.TestEnum.Result]> = .query {
+        let query: _Operation<Query, [TestEnum.Result]> = .query {
             $0.enumsArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:enumsArgs\(testArgs)}")
     }
 }
 
-extension ObjectEnumRenderTests {
+// MARK: - Tests to ensure multiple sibling selections of TestEnum and [TestEnum] render as expected
+
+extension ObjectTestEnumRenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Schema.Query, (Schema.TestEnum.Result, Schema.TestEnum.Result)> = .query {
+        let query: _Operation<Query, (TestEnum.Result, TestEnum.Result)> = .query {
             $0.enum
             $0.enum
         }
@@ -74,7 +82,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Schema.Query, (Schema.TestEnum.Result, Schema.TestEnum.Result)> = .query {
+        let query: _Operation<Query, (TestEnum.Result, TestEnum.Result)> = .query {
             $0.enumArgs(arguments: .testDefault)
             $0.enumArgs(arguments: .testDefault)
         }
@@ -82,7 +90,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Schema.Query, ([Schema.TestEnum.Result], [Schema.TestEnum.Result])> = .query {
+        let query: _Operation<Query, ([TestEnum.Result], [TestEnum.Result])> = .query {
             $0.enums
             $0.enums
         }
@@ -90,7 +98,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Schema.Query, ([Schema.TestEnum.Result], [Schema.TestEnum.Result])> = .query {
+        let query: _Operation<Query, ([TestEnum.Result], [TestEnum.Result])> = .query {
             $0.enumsArgs(arguments: .testDefault)
             $0.enumsArgs(arguments: .testDefault)
         }
@@ -98,11 +106,11 @@ extension ObjectEnumRenderTests {
     }
 }
 
-// MARK: -
+// MARK: - Tests to ensure selections render as expected on selections of TestEnum and [TestEnum]
 
-extension ObjectEnumRenderTests {
+extension ObjectTestEnumRenderTests {
     func testSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enum
             }
@@ -111,7 +119,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enumsArgs(arguments: .testDefault)
             }
@@ -120,7 +128,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enums
             }
@@ -129,7 +137,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enumsArgs(arguments: .testDefault)
             }
@@ -138,9 +146,11 @@ extension ObjectEnumRenderTests {
     }
 }
 
-extension ObjectEnumRenderTests {
+// MARK: - Tests to ensure aliases render as expected on sub-selections of TestEnum and [TestEnum]
+
+extension ObjectTestEnumRenderTests {
     func testSingleAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enum(alias: "alias")
             }
@@ -149,7 +159,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enumArgs(alias: "alias", arguments: .testDefault)
             }
@@ -158,7 +168,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testArrayAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enums(alias: "alias")
             }
@@ -167,7 +177,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enumsArgs(alias: "alias", arguments: .testDefault)
             }
@@ -176,9 +186,11 @@ extension ObjectEnumRenderTests {
     }
 }
 
-extension ObjectEnumRenderTests {
+// MARK: - Tests to ensure TestEnum and [TestEnum] can be selected on a sub-selection of Object
+
+extension ObjectTestEnumRenderTests {
     func testMultipleSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enum
                 $0.enum
@@ -188,7 +200,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testMultipleSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enumArgs(arguments: .testDefault)
                 $0.enumArgs(arguments: .testDefault)
@@ -198,7 +210,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testMultipleArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enums
                 $0.enums
@@ -208,7 +220,7 @@ extension ObjectEnumRenderTests {
     }
 
     func testMultipleArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.enumsArgs(arguments: .testDefault)
                 $0.enumsArgs(arguments: .testDefault)
@@ -218,42 +230,44 @@ extension ObjectEnumRenderTests {
     }
 }
 
-extension ObjectEnumRenderTests {
+// MARK: - Tests to ensure fragments on Query selecting TestEnum and [TestEnum] can be used at the top level of an operation
+
+extension ObjectTestEnumRenderTests {
     func testSingleOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.enum
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{enum}")
     }
 
     func testSingleArgsOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.enumArgs(arguments: .testDefault)
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{enumArgs\(testArgs)}")
     }
 
     func testArrayOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.enums
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{enums}")
     }
 
     func testArrayArgsOnFragmentRender() {
-        let fragment = Fragment("fragName", on: Schema.Query.self) {
+        let fragment = Fragment("fragName", on: Query.self) {
             $0.enumsArgs(arguments: .testDefault)
         }
-        let query: _Operation<Schema.Query, _SelectionSet<Never>.Result> = .query {
+        let query: _Operation<Query, Never> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{enumsArgs\(testArgs)}")

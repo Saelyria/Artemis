@@ -7,28 +7,28 @@ import XCTest
  */
 final class I2DoubleRenderTests: XCTestCase {
     func testSingleRender() {
-        let query: _Operation<Schema.Query, Double> = .query {
+        let query: _Operation<Query, Double> = .query {
             $0.i2_double
         }
         XCTAssertEqual(query.render(), "{i2_double}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Schema.Query, Double> = .query {
+        let query: _Operation<Query, Double> = .query {
             $0.i2_doubleArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{i2_doubleArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Schema.Query, [Double]> = .query {
+        let query: _Operation<Query, [Double]> = .query {
             $0.i2_doubles
         }
         XCTAssertEqual(query.render(), "{i2_doubles}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Schema.Query, [Double]> = .query {
+        let query: _Operation<Query, [Double]> = .query {
             $0.i2_doublesArgs(arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{i2_doublesArgs\(testArgs)}")
@@ -37,28 +37,28 @@ final class I2DoubleRenderTests: XCTestCase {
 
 extension I2DoubleRenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Schema.Query, Double> = .query {
+        let query: _Operation<Query, Double> = .query {
             $0.i2_double(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:i2_double}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Schema.Query, Double> = .query {
+        let query: _Operation<Query, Double> = .query {
             $0.i2_doubleArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:i2_doubleArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Schema.Query, [Double]> = .query {
+        let query: _Operation<Query, [Double]> = .query {
             $0.i2_doubles(alias: "alias")
         }
         XCTAssertEqual(query.render(), "{alias:i2_doubles}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Schema.Query, [Double]> = .query {
+        let query: _Operation<Query, [Double]> = .query {
             $0.i2_doublesArgs(alias: "alias", arguments: .testDefault)
         }
         XCTAssertEqual(query.render(), "{alias:i2_doublesArgs\(testArgs)}")
@@ -67,7 +67,7 @@ extension I2DoubleRenderTests {
 
 extension I2DoubleRenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Schema.Query, (Double, Double)> = .query {
+        let query: _Operation<Query, (Double, Double)> = .query {
             $0.i2_double
             $0.i2_double
         }
@@ -75,7 +75,7 @@ extension I2DoubleRenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Schema.Query, (Double, Double)> = .query {
+        let query: _Operation<Query, (Double, Double)> = .query {
             $0.i2_doubleArgs(arguments: .testDefault)
             $0.i2_doubleArgs(arguments: .testDefault)
         }
@@ -83,7 +83,7 @@ extension I2DoubleRenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Schema.Query, ([Double], [Double])> = .query {
+        let query: _Operation<Query, ([Double], [Double])> = .query {
             $0.i2_doubles
             $0.i2_doubles
         }
@@ -91,7 +91,7 @@ extension I2DoubleRenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Schema.Query, ([Double], [Double])> = .query {
+        let query: _Operation<Query, ([Double], [Double])> = .query {
             $0.i2_doublesArgs(arguments: .testDefault)
             $0.i2_doublesArgs(arguments: .testDefault)
         }
@@ -103,7 +103,7 @@ extension I2DoubleRenderTests {
 
 extension I2DoubleRenderTests {
     func testSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_double
             }
@@ -112,7 +112,7 @@ extension I2DoubleRenderTests {
     }
 
     func testSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_doublesArgs(arguments: .testDefault)
             }
@@ -121,7 +121,7 @@ extension I2DoubleRenderTests {
     }
 
     func testArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_doubles
             }
@@ -130,7 +130,7 @@ extension I2DoubleRenderTests {
     }
 
     func testArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_doublesArgs(arguments: .testDefault)
             }
@@ -141,7 +141,7 @@ extension I2DoubleRenderTests {
 
 extension I2DoubleRenderTests {
     func testSingleAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_double(alias: "alias")
             }
@@ -150,7 +150,7 @@ extension I2DoubleRenderTests {
     }
 
     func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_doubleArgs(alias: "alias", arguments: .testDefault)
             }
@@ -159,7 +159,7 @@ extension I2DoubleRenderTests {
     }
 
     func testArrayAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_doubles(alias: "alias")
             }
@@ -168,7 +168,7 @@ extension I2DoubleRenderTests {
     }
 
     func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_doublesArgs(alias: "alias", arguments: .testDefault)
             }
@@ -179,7 +179,7 @@ extension I2DoubleRenderTests {
 
 extension I2DoubleRenderTests {
     func testMultipleSingleOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_double
                 $0.i2_double
@@ -189,7 +189,7 @@ extension I2DoubleRenderTests {
     }
 
     func testMultipleSingleArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_doubleArgs(arguments: .testDefault)
                 $0.i2_doubleArgs(arguments: .testDefault)
@@ -199,7 +199,7 @@ extension I2DoubleRenderTests {
     }
 
     func testMultipleArrayOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_doubles
                 $0.i2_doubles
@@ -209,12 +209,54 @@ extension I2DoubleRenderTests {
     }
 
     func testMultipleArrayArgsOnObjectRender() {
-        let query: _Operation<Schema.Query, Partial<Schema.TestObject>> = .query {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.object {
                 $0.i2_doublesArgs(arguments: .testDefault)
                 $0.i2_doublesArgs(arguments: .testDefault)
             }
         }
         XCTAssertEqual(query.render(), "{object{i2_doublesArgs\(testArgs),i2_doublesArgs\(testArgs)}}")
+    }
+}
+
+extension I2DoubleRenderTests {
+    func testSingleOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_double
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_double}")
+    }
+
+    func testSingleArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_doubleArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_doubleArgs\(testArgs)}")
+    }
+
+    func testArrayOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_doubles
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_doubles}")
+    }
+
+    func testArrayArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.i2_doublesArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i2_doublesArgs\(testArgs)}")
     }
 }
