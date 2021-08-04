@@ -17,7 +17,7 @@ public class _Selection<T: Object, Result>: _SelectionProtocol {
         case field(
             key: String,
             alias: String?,
-            renderedArguments: String,
+            arguments: [Argument],
             renderedSelectionSet: String?,
             createResult: (Any) throws -> Result
         )
@@ -46,7 +46,6 @@ public class _Selection<T: Object, Result>: _SelectionProtocol {
 		return frags
 	}
     public let error: GraphQLError?
-	private var renderedArguments: [String] = []
 	
 	internal init(fieldType: FieldType, items: [_SelectionBase], error: GraphQLError? = nil) {
 		self.fieldType = fieldType
@@ -61,9 +60,12 @@ extension _Selection {
 	*/
     public func render() -> String {
 		switch self.fieldType {
-		case .field(let key, let alias, let renderedArguments, let renderedSelectionSet, _):
+		case .field(let key, let alias, let arguments, let renderedSelectionSet, _):
 			let name: String = (alias == nil) ? key : "\(alias!):\(key)"
 			let _SelectionSet = (renderedSelectionSet == nil) ? "" : "{\(renderedSelectionSet!)}"
+            let renderedArgs = arguments.map {
+                
+            }
 			return "\(name)\(renderedArguments)\(_SelectionSet)"
 		case .fragment(let renderedInlineFragment, _):
 			return renderedInlineFragment

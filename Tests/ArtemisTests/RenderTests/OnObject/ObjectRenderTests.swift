@@ -286,7 +286,7 @@ extension ObjectRenderTests {
                 fragment
             }
         }
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{object{int}}")
+        XCTAssertEqual(query.render(), "{object{...fragName}},fragment fragName on TestObject{int}")
     }
 
     func testSingleArgsOnObjectFragmentRender() {
@@ -298,7 +298,7 @@ extension ObjectRenderTests {
                 fragment
             }
         }
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{objectArgs\(testArgs){int}}")
+        XCTAssertEqual(query.render(), "{objects{...fragName}},fragment fragName on TestObject{int}")
     }
 
     func testArrayOnObjectFragmentRender() {
@@ -310,7 +310,7 @@ extension ObjectRenderTests {
                 fragment
             }
         }
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{objects{int}}")
+        XCTAssertEqual(query.render(), "{objectArgs\(testArgs){...fragName}},fragment fragName on TestObject{int}")
     }
 
     func testArrayArgsOnObjectFragmentRender() {
@@ -322,6 +322,6 @@ extension ObjectRenderTests {
                 fragment
             }
         }
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{objectsArgs\(testArgs){int}}")
+        XCTAssertEqual(query.render(), "{objectsArgs\(testArgs){...fragName}},fragment fragName on TestObject{int}")
     }
 }

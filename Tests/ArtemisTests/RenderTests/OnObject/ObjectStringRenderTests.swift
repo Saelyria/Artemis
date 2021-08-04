@@ -5,7 +5,7 @@ import XCTest
  Test for selecting strings on a query, ensuring they render the expected query string.
  */
 final class ObjectStringRenderTests: XCTestCase, RenderTestCase {
-    typealias SelectionType = TestObject
+    typealias SelectionType = String
     typealias SelectionBase = TestObject
 }
 

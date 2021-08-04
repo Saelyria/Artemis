@@ -277,7 +277,7 @@ extension _Selector {
             let fieldType: _Selection<T, Value.Result>.FieldType = .field(
                 key: key,
                 alias: alias,
-                renderedArguments: (try? ArgumentEncoder().encode(arguments)) ?? "",
+                arguments: (try? ArgumentEncoder().encode(arguments)) ?? [],
                 renderedSelectionSet: nil,
                 createResult: { dict in
                     return try Value.createUnsafeResult(from: dict, key: key)
@@ -319,7 +319,7 @@ extension _Selector {
             let fieldType: _Selection<T, Value.Result>.FieldType = .field(
                 key: key,
                 alias: alias,
-                renderedArguments: (try? ArgumentEncoder().encode(arguments)) ?? "",
+                arguments: (try? ArgumentEncoder().encode(arguments)) ?? [],
                 renderedSelectionSet: selectedFields.render(),
                 createResult: { dict in
                     return try Value.createUnsafeResult(from: dict, key: key)
@@ -359,7 +359,7 @@ extension _Selector.AliasBuilderWrapper where Args == NoArguments {
         let fieldType: _Selection<T, Value.Result>.FieldType = .field(
             key: key,
             alias: alias,
-            renderedArguments: "",
+            arguments: [],
             renderedSelectionSet: nil,
             createResult: { dict in
                 return try Value.createUnsafeResult(from: dict, key: key)
@@ -389,7 +389,7 @@ extension _Selector._SelectionSetBuilderWrapper where Args == NoArguments {
         let fieldType: _Selection<T, Value.Result>.FieldType = .field(
             key: key,
             alias: alias,
-            renderedArguments: "",
+            arguments: [],
             renderedSelectionSet: selectedFields.render(),
             createResult: { dict in
                 return try Value.createUnsafeResult(from: dict, key: key)

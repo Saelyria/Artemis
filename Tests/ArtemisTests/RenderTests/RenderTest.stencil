@@ -1,0 +1,287 @@
+{% macro getAliasOf type aliasName %}{% typed type as Type %}
+{% for alias in types.typealiases %}
+{% if alias.aliasName == aliasName and alias.parentName == type.name %}
+{{alias.typeName}}
+{% endif %}
+{% endfor %}
+{% endmacro %}
+
+{% for type in types.all where type.implements.RenderTestCase %}
+{% set _selType %}{% call getAliasOf type "SelectionType" %}{% endset %}
+{% set selType %}{{_selType|removeNewlines}}{% endset %}
+{% set sel %}{{_selType|lowercase|removeNewlines}}{% endset %}
+{% set _o %} { {% endset %}
+{% set o %}{{_o|removeNewlines}}{% endset %}
+//import XCTest
+//@testable import Artemis
+
+
+// MARK: - Tests to ensure single selections of {{selType}} and [{{selType}}] render as expected
+
+extension {{type.name}} {
+    func testSingleRender() {
+        let query: _Operation<Query, {{selType}}> = .query {
+            $0.{{sel}}
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}}")
+    }
+
+    func testSingleArgsRender() {
+        let query: _Operation<Query, {{selType}}> = .query {
+            $0.{{sel}}Args(arguments: .testDefault)
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}Args\(testArgs)}")
+    }
+
+    func testArrayRender() {
+        let query: _Operation<Query, [{{selType}}]> = .query {
+            $0.{{sel}}s
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}}")
+    }
+
+    func testArrayArgsRender() {
+        let query: _Operation<Query, [{{selType}}]> = .query {
+            $0.{{sel}}sArgs(arguments: .testDefault)
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}sArgs\(testArgs)}")
+    }
+}
+
+// MARK: - Tests to ensure single selections of {{selType}} and [{{selType}}] with aliases render as expected
+
+extension {{type.name}} {
+    func testSingleAliasRender() {
+        let query: _Operation<Query, {{selType}}> = .query {
+            $0.{{sel}}(alias: "alias")
+        }
+        XCTAssertEqual(query.render(), "{alias:{{sel}}}")
+    }
+
+    func testSingleArgsAliasRender() {
+        let query: _Operation<Query, {{selType}}> = .query {
+            $0.{{sel}}Args(alias: "alias", arguments: .testDefault)
+        }
+        XCTAssertEqual(query.render(), "{alias:{{sel}}Args\(testArgs)}")
+    }
+
+    func testArrayAliasRender() {
+        let query: _Operation<Query, [{{selType}}]> = .query {
+            $0.{{sel}}s(alias: "alias")
+        }
+        XCTAssertEqual(query.render(), "{alias:{{sel}}s}")
+    }
+
+    func testArrayArgsAliasRender() {
+        let query: _Operation<Query, [{{selType}}]> = .query {
+            $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault)
+        }
+        XCTAssertEqual(query.render(), "{alias:{{sel}}sArgs\(testArgs)}")
+    }
+}
+
+// MARK: - Tests to ensure multiple sibling selections of {{selType}} and [{{selType}}] render as expected
+
+extension {{type.name}} {
+    func testMultipleSingleRender() {
+        let query: _Operation<Query, ({{selType}}, {{selType}})> = .query {
+            $0.{{sel}}
+            $0.{{sel}}
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}},{{sel}}}")
+    }
+
+    func testMultipleSingleArgsRender() {
+        let query: _Operation<Query, ({{selType}}, {{selType}})> = .query {
+            $0.{{sel}}Args(arguments: .testDefault)
+            $0.{{sel}}Args(arguments: .testDefault)
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}Args\(testArgs),{{sel}}Args\(testArgs)}")
+    }
+
+    func testMultipleArrayRender() {
+        let query: _Operation<Query, ([{{selType}}], [{{selType}}])> = .query {
+            $0.{{sel}}
+            $0.{{sel}}
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}},{{sel}}}")
+    }
+
+    func testMultipleArrayArgsRender() {
+        let query: _Operation<Query, ([{{selType}}], [{{selType}}])> = .query {
+            $0.{{sel}}sArgs(arguments: .testDefault)
+            $0.{{sel}}sArgs(arguments: .testDefault)
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}sArgs\(testArgs),{{sel}}sArgs\(testArgs)}")
+    }
+}
+
+// MARK: - Tests to ensure selections render as expected on selections of {{selType}} and [{{selType}}]
+
+extension {{type.name}} {
+    func testSingleOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}}}")
+    }
+
+    func testSingleArgsOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}Args(arguments: .testDefault)
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}Args\(testArgs)}}")
+    }
+
+    func testArrayOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}s
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}s}}")
+    }
+
+    func testArrayArgsOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}sArgs(arguments: .testDefault)
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}sArgs\(testArgs)}}")
+    }
+}
+
+// MARK: - Tests to ensure aliases render as expected on sub-selections of {{selType}} and [{{selType}}]
+
+extension {{type.name}} {
+    func testSingleAliasOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}(alias: "alias")
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{alias:{{sel}}}}")
+    }
+
+    func testSingleArgsAliasOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}Args(alias: "alias", arguments: .testDefault)
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{alias:{{sel}}Args\(testArgs)}}")
+    }
+
+    func testArrayAliasOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}s(alias: "alias")
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{alias:{{sel}}s}}")
+    }
+
+    func testArrayArgsAliasOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault)
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{alias:{{sel}}sArgs\(testArgs)}}")
+    }
+}
+
+// MARK: - Tests to ensure {{selType}} and [{{selType}}] can be selected on a sub-selection of Object
+
+extension {{type.name}} {
+    func testMultipleSingleOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}
+                $0.{{sel}}
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{{o}}{{sel}},{{sel}}}}")
+    }
+
+    func testMultipleSingleArgsOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}Args(arguments: .testDefault)
+                $0.{{sel}}Args(arguments: .testDefault)
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}Args\(testArgs),{{sel}}Args\(testArgs)}}")
+    }
+
+    func testMultipleArrayOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}s
+                $0.{{sel}}s
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}s,{{sel}}s}}")
+    }
+
+    func testMultipleArrayArgsOnObjectRender() {
+        let query: _Operation<Query, Partial<TestObject>> = .query {
+            $0.object {
+                $0.{{sel}}sArgs(arguments: .testDefault)
+                $0.{{sel}}sArgs(arguments: .testDefault)
+            }
+        }
+        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}sArgs\(testArgs),{{sel}}sArgs\(testArgs)}}")
+    }
+}
+
+// MARK: - Tests to ensure fragments on Query selecting {{selType}} and [{{selType}}] can be used at the top level of an operation
+
+extension {{type.name}} {
+    func testSingleOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.{{sel}}
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}}")
+    }
+
+    func testSingleArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.{{sel}}Args(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}Args\(testArgs)}")
+    }
+
+    func testArrayOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.{{sel}}s
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}s}")
+    }
+
+    func testArrayArgsOnFragmentRender() {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.{{sel}}sArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, Never> = .query {
+            fragment
+        }
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}sArgs\(testArgs)}")
+    }
+}
+
+{% endfor %}

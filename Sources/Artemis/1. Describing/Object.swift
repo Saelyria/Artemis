@@ -75,8 +75,11 @@ extension Enum {
     }
 }
 
-internal struct EncodedEnum: Encodable {
+internal struct EncodedEnum: _SelectionInput, Encodable {
     var rawValue: String
+    func render() -> String {
+        return rawValue
+    }
 }
 
 /**

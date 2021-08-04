@@ -7,17 +7,32 @@ class ArgumentEncoder {
         guard let (_, parsedValue) = encoder.data.values.first(where: { key, _ in key == "root" }) else { return "" }
         return parsedValue.rendered(isRoot: true)
     }
+    
+    func encode<T: Encodable>(_ value: T) throws -> [Argument] {
+        let encoder = ArgumentEncoding(data: .init(), codingPath: [])
+        try value.encode(to: encoder)
+        guard let (_, parsedValue) = encoder.data.values.first(where: { key, _ in key == "root" }) else { return [] }
+        switch parsedValue {
+        case .value, .array: return []
+        case .object(let object):
+            let args: [Argument] = object
+                .map { $0 as? (String, DataType) }
+                .compactMap { $0 }
+                .map { Argument(name: $0.0, value: $0.1.rendered(isRoot: false)) }
+            return args
+        }
+    }
 }
 
 private enum DataType {
-    case value(String)
+    case value(_SelectionInput)
     case array(NSMutableArray)
     case object(NSMutableArray)
 
     func rendered(isRoot: Bool) -> String {
         switch self {
         case .value(let value):
-            return isRoot ? "(\(value))" : value
+            return isRoot ? "(\(value.render())" : value.render()
         case .array(let array):
             let values = array
                 .map { $0 as? DataType }
@@ -77,19 +92,19 @@ private struct ArgumentKeyedEncoding<Key: CodingKey>: KeyedEncodingContainerProt
         dict.add((key.stringValue, DataType.value("nil")))
     }
     mutating func encode(_ value: Bool, forKey key: Key) throws {
-        dict.add((key.stringValue, DataType.value(value.description)))
+        dict.add((key.stringValue, DataType.value(value)))
     }
     mutating func encode(_ value: String, forKey key: Key) throws {
-        dict.add((key.stringValue, DataType.value("\"\(value)\"")))
+        dict.add((key.stringValue, DataType.value(value)))
     }
     mutating func encode(_ value: Double, forKey key: Key) throws {
-        dict.add((key.stringValue, DataType.value(value.description)))
+        dict.add((key.stringValue, DataType.value(value)))
     }
     mutating func encode(_ value: Float, forKey key: Key) throws {
-        dict.add((key.stringValue, DataType.value(value.description)))
+        dict.add((key.stringValue, DataType.value(value)))
     }
     mutating func encode(_ value: Int, forKey key: Key) throws {
-        dict.add((key.stringValue, DataType.value(value.description)))
+        dict.add((key.stringValue, DataType.value(value)))
     }
     mutating func encode(_ value: Int8, forKey key: Key) throws { }
     mutating func encode(_ value: Int16, forKey key: Key) throws { }
@@ -146,19 +161,19 @@ private struct ArgumentUnkeyedEncoding: UnkeyedEncodingContainer {
         array.add(DataType.value("nil"))
     }
     mutating func encode(_ value: Bool) throws {
-        array.add(DataType.value(value.description))
+        array.add(DataType.value(value))
     }
     mutating func encode(_ value: String) throws {
-        array.add(DataType.value("\"\(value)\""))
+        array.add(DataType.value(value))
     }
     mutating func encode(_ value: Double) throws {
-        array.add(DataType.value(value.description))
+        array.add(DataType.value(value))
     }
     mutating func encode(_ value: Float) throws {
-        array.add(DataType.value(value.description))
+        array.add(DataType.value(value))
     }
     mutating func encode(_ value: Int) throws {
-        array.add(DataType.value(value.description))
+        array.add(DataType.value(value))
     }
     mutating func encode(_ value: Int8) throws { }
     mutating func encode(_ value: Int16) throws { }
@@ -201,19 +216,19 @@ extension ArgumentEncoding: SingleValueEncodingContainer {
         data.add(.value("nil"), codingPath: codingPath)
     }
     mutating func encode(_ value: Bool) throws {
-        data.add(.value(value.description), codingPath: codingPath)
+        data.add(.value(value), codingPath: codingPath)
     }
     mutating func encode(_ value: String) throws {
-        data.add(.value("\"\(value)\""), codingPath: codingPath)
+        data.add(.value(value), codingPath: codingPath)
     }
     mutating func encode(_ value: Double) throws {
-        data.add(.value(value.description), codingPath: codingPath)
+        data.add(.value(value), codingPath: codingPath)
     }
     mutating func encode(_ value: Float) throws {
-        data.add(.value(value.description), codingPath: codingPath)
+        data.add(.value(value), codingPath: codingPath)
     }
     mutating func encode(_ value: Int) throws {
-        data.add(.value(value.description), codingPath: codingPath)
+        data.add(.value(value), codingPath: codingPath)
     }
     mutating func encode(_ value: Int8) throws { }
     mutating func encode(_ value: Int16) throws { }
@@ -228,7 +243,7 @@ extension ArgumentEncoding: SingleValueEncodingContainer {
     mutating func encode<T: Encodable>(_ value: T) throws {
         // Enums are sent through with the `EncodedEnum` wrapper instead of their String value so that "" isn't added
         if let encodedEnum = value as? EncodedEnum {
-            data.add(.value(encodedEnum.rawValue), codingPath: codingPath)
+            data.add(.value(encodedEnum), codingPath: codingPath)
             return
         }
         let encoder = ArgumentEncoding(data: data, codingPath: codingPath)

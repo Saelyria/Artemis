@@ -91,3 +91,9 @@ A type that can be used with a `Field` instance to indicate that the field takes
 public struct NoArguments: ArgumentsList {
     public func encode(to encoder: Encoder) throws { }
 }
+
+internal struct Argument {
+    var occurence: Int = 0
+    var name: String
+    var value: String
+}
