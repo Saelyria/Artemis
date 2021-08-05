@@ -29,11 +29,11 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests/ArtemisTests/Smoke.xctestplan"
+            reference = "container:Tests/Smoke.xctestplan"
             default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Tests/ArtemisTests/Full.xctestplan">
+            reference = "container:Tests/Full.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>

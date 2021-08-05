@@ -9,15 +9,15 @@ final class Query: Object {
         TestInterface5.self
     )
 
-    @Field("object") var object: TestObject
-    @Field("objectArgs") var objectArgs: (TestObject, TestArguments.Type)
-    @Field("objects") var objects: [TestObject]
-    @Field("objectsArgs") var objectsArgs: ([TestObject], TestArguments.Type)
+    @Field("testObject") var testObject: TestObject
+    @Field("testObjectArgs") var testObjectArgs: (TestObject, TestArguments.Type)
+    @Field("testObjects") var testObjects: [TestObject]
+    @Field("testObjectsArgs") var testObjectsArgs: ([TestObject], TestArguments.Type)
 
-    @Field("enum") var `enum`: TestEnum
-    @Field("enumArgs") var enumArgs: (TestEnum, TestArguments.Type)
-    @Field("enums") var enums: [TestEnum]
-    @Field("enumsArgs") var enumsArgs: ([TestEnum], TestArguments.Type)
+    @Field("testEnum") var testEnum: TestEnum
+    @Field("testEnumArgs") var testEnumArgs: (TestEnum, TestArguments.Type)
+    @Field("testEnums") var testEnums: [TestEnum]
+    @Field("testEnumsArgs") var testEnumsArgs: ([TestEnum], TestArguments.Type)
 
     @Field("int") var int: Int
     @Field("intArgs") var intArgs: (Int, TestArguments.Type)
@@ -54,15 +54,15 @@ final class TestObject: Object {
         TestInterface5.self
     )
 
-    @Field("object") var object: TestObject
-    @Field("objectArgs") var objectArgs: (TestObject, TestArguments.Type)
-    @Field("objects") var objects: [TestObject]
-    @Field("objectsArgs") var objectsArgs: ([TestObject], TestArguments.Type)
+    @Field("testObject") var testObject: TestObject
+    @Field("testObjectArgs") var testObjectArgs: (TestObject, TestArguments.Type)
+    @Field("testObjects") var testObjects: [TestObject]
+    @Field("testObjectsArgs") var testObjectsArgs: ([TestObject], TestArguments.Type)
 
-    @Field("enum") var `enum`: TestEnum
-    @Field("enumArgs") var enumArgs: (TestEnum, TestArguments.Type)
-    @Field("enums") var enums: [TestEnum]
-    @Field("enumsArgs") var enumsArgs: ([TestEnum], TestArguments.Type)
+    @Field("testEnum") var testEnum: TestEnum
+    @Field("testEnumArgs") var testEnumArgs: (TestEnum, TestArguments.Type)
+    @Field("testEnums") var testEnums: [TestEnum]
+    @Field("testEnumsArgs") var testEnumsArgs: ([TestEnum], TestArguments.Type)
 
     @Field("int") var int: Int
     @Field("intArgs") var intArgs: (Int, TestArguments.Type)
@@ -163,15 +163,15 @@ struct TestArguments: ArgumentsList {
 }
 
 final class TestInterface1: Interface {
-    @Field("i1_object") var i1_object: TestObject
-    @Field("i1_objectArgs") var i1_objectArgs: (TestObject, TestArguments.Type)
-    @Field("i1_objects") var i1_objects: [TestObject]
-    @Field("i1_objectsArgs") var i1_objectsArgs: ([TestObject], TestArguments.Type)
+    @Field("i1_testObject") var i1_testObject: TestObject
+    @Field("i1_testObjectArgs") var i1_testObjectArgs: (TestObject, TestArguments.Type)
+    @Field("i1_testObjects") var i1_testObjects: [TestObject]
+    @Field("i1_testObjectsArgs") var i1_testObjectsArgs: ([TestObject], TestArguments.Type)
 
-    @Field("i1_enum") var i1_enum: TestEnum
-    @Field("i1_enumArgs") var i1_enumArgs: (TestEnum, TestArguments.Type)
-    @Field("i1_enums") var i1_enums: [TestEnum]
-    @Field("i1_enumsArgs") var i1_enumsArgs: ([TestEnum], TestArguments.Type)
+    @Field("i1_testEnum") var i1_testEnum: TestEnum
+    @Field("i1_testEnumArgs") var i1_testEnumArgs: (TestEnum, TestArguments.Type)
+    @Field("i1_testEnums") var i1_testEnums: [TestEnum]
+    @Field("i1_testEnumsArgs") var i1_testEnumsArgs: ([TestEnum], TestArguments.Type)
 
     @Field("i1_int") var i1_int: Int
     @Field("i1_intArgs") var i1_intArgs: (Int, TestArguments.Type)
@@ -200,15 +200,15 @@ final class TestInterface1: Interface {
 }
 
 final class TestInterface2: Interface {
-    @Field("i2_object") var i2_object: TestObject
-    @Field("i2_objectArgs") var i2_objectArgs: (TestObject, TestArguments.Type)
-    @Field("i2_objects") var i2_objects: [TestObject]
-    @Field("i2_objectsArgs") var i2_objectsArgs: ([TestObject], TestArguments.Type)
+    @Field("i2_testObject") var i2_testObject: TestObject
+    @Field("i2_testObjectArgs") var i2_testObjectArgs: (TestObject, TestArguments.Type)
+    @Field("i2_testObjects") var i2_testObjects: [TestObject]
+    @Field("i2_testObjectsArgs") var i2_testObjectsArgs: ([TestObject], TestArguments.Type)
 
-    @Field("i2_enum") var i2_enum: TestEnum
-    @Field("i2_enumArgs") var i2_enumArgs: (TestEnum, TestArguments.Type)
-    @Field("i2_enums") var i2_enums: [TestEnum]
-    @Field("i2_enumsArgs") var i2_enumsArgs: ([TestEnum], TestArguments.Type)
+    @Field("i2_testEnum") var i2_testEnum: TestEnum
+    @Field("i2_testEnumArgs") var i2_testEnumArgs: (TestEnum, TestArguments.Type)
+    @Field("i2_testEnums") var i2_testEnums: [TestEnum]
+    @Field("i2_testEnumsArgs") var i2_testEnumsArgs: ([TestEnum], TestArguments.Type)
 
     @Field("i2_int") var i2_int: Int
     @Field("i2_intArgs") var i2_intArgs: (Int, TestArguments.Type)
@@ -237,15 +237,15 @@ final class TestInterface2: Interface {
 }
 
 final class TestInterface3: Interface {
-    @Field("i3_object") var i3_object: TestObject
-    @Field("i3_objectArgs") var i3_objectArgs: (TestObject, TestArguments.Type)
-    @Field("i3_objects") var i3_objects: [TestObject]
-    @Field("i3_objectsArgs") var i3_objectsArgs: ([TestObject], TestArguments.Type)
+    @Field("i3_testObject") var i3_testObject: TestObject
+    @Field("i3_testObjectArgs") var i3_testObjectArgs: (TestObject, TestArguments.Type)
+    @Field("i3_testObjects") var i3_testObjects: [TestObject]
+    @Field("i3_testObjectsArgs") var i3_testObjectsArgs: ([TestObject], TestArguments.Type)
 
-    @Field("i3_enum") var i3_enum: TestEnum
-    @Field("i3_enumArgs") var i3_enumArgs: (TestEnum, TestArguments.Type)
-    @Field("i3_enums") var i3_enums: [TestEnum]
-    @Field("i3_enumsArgs") var i3_enumsArgs: ([TestEnum], TestArguments.Type)
+    @Field("i3_testEnum") var i3_testEnum: TestEnum
+    @Field("i3_testEnumArgs") var i3_testEnumArgs: (TestEnum, TestArguments.Type)
+    @Field("i3_testEnums") var i3_testEnums: [TestEnum]
+    @Field("i3_testEnumsArgs") var i3_testEnumsArgs: ([TestEnum], TestArguments.Type)
 
     @Field("i3_int") var i3_int: Int
     @Field("i3_intArgs") var i3_intArgs: (Int, TestArguments.Type)
@@ -274,15 +274,15 @@ final class TestInterface3: Interface {
 }
 
 final class TestInterface4: Interface {
-    @Field("i4_object") var i4_object: TestObject
-    @Field("i4_objectArgs") var i4_objectArgs: (TestObject, TestArguments.Type)
-    @Field("i4_objects") var i4_objects: [TestObject]
-    @Field("i4_objectsArgs") var i4_objectsArgs: ([TestObject], TestArguments.Type)
+    @Field("i4_testObject") var i4_testObject: TestObject
+    @Field("i4_testObjectArgs") var i4_testObjectArgs: (TestObject, TestArguments.Type)
+    @Field("i4_testObjects") var i4_testObjects: [TestObject]
+    @Field("i4_testObjectsArgs") var i4_testObjectsArgs: ([TestObject], TestArguments.Type)
 
-    @Field("i4_enum") var i4_enum: TestEnum
-    @Field("i4_enumArgs") var i4_enumArgs: (TestEnum, TestArguments.Type)
-    @Field("i4_enums") var i4_enums: [TestEnum]
-    @Field("i4_enumsArgs") var i4_enumsArgs: ([TestEnum], TestArguments.Type)
+    @Field("i4_testEnum") var i4_testEnum: TestEnum
+    @Field("i4_testEnumArgs") var i4_testEnumArgs: (TestEnum, TestArguments.Type)
+    @Field("i4_testEnums") var i4_testEnums: [TestEnum]
+    @Field("i4_testEnumsArgs") var i4_testEnumsArgs: ([TestEnum], TestArguments.Type)
 
     @Field("i4_int") var i4_int: Int
     @Field("i4_intArgs") var i4_intArgs: (Int, TestArguments.Type)
@@ -311,15 +311,15 @@ final class TestInterface4: Interface {
 }
 
 final class TestInterface5: Interface {
-    @Field("i5_object") var i5_object: TestObject
-    @Field("i5_objectArgs") var i5_objectArgs: (TestObject, TestArguments.Type)
-    @Field("i5_objects") var i5_objects: [TestObject]
-    @Field("i5_objectsArgs") var i5_objectsArgs: ([TestObject], TestArguments.Type)
+    @Field("i5_testObject") var i5_testObject: TestObject
+    @Field("i5_testObjectArgs") var i5_testObjectArgs: (TestObject, TestArguments.Type)
+    @Field("i5_testObjects") var i5_testObjects: [TestObject]
+    @Field("i5_testObjectsArgs") var i5_testObjectsArgs: ([TestObject], TestArguments.Type)
 
-    @Field("i5_enum") var i5_enum: TestEnum
-    @Field("i5_enumArgs") var i5_enumArgs: (TestEnum, TestArguments.Type)
-    @Field("i5_enums") var i5_enums: [TestEnum]
-    @Field("i5_enumsArgs") var i5_enumsArgs: ([TestEnum], TestArguments.Type)
+    @Field("i5_testEnum") var i5_testEnum: TestEnum
+    @Field("i5_testEnumArgs") var i5_testEnumArgs: (TestEnum, TestArguments.Type)
+    @Field("i5_testEnums") var i5_testEnums: [TestEnum]
+    @Field("i5_testEnumsArgs") var i5_testEnumsArgs: ([TestEnum], TestArguments.Type)
 
     @Field("i5_int") var i5_int: Int
     @Field("i5_intArgs") var i5_intArgs: (Int, TestArguments.Type)

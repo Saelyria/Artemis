@@ -63,10 +63,12 @@ extension _Selection {
 		case .field(let key, let alias, let arguments, let renderedSelectionSet, _):
 			let name: String = (alias == nil) ? key : "\(alias!):\(key)"
 			let _SelectionSet = (renderedSelectionSet == nil) ? "" : "{\(renderedSelectionSet!)}"
-            let renderedArgs = arguments.map {
-                
-            }
-			return "\(name)\(renderedArguments)\(_SelectionSet)"
+            var renderedArgs = arguments.map {
+                "\($0.name):\($0.value)"
+            }.joined(separator: ",")
+            renderedArgs = renderedArgs.isEmpty ? renderedArgs : "(\(renderedArgs))"
+
+			return "\(name)\(renderedArgs)\(_SelectionSet)"
 		case .fragment(let renderedInlineFragment, _):
 			return renderedInlineFragment
 		}

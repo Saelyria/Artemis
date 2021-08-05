@@ -7,44 +7,72 @@
 {% endmacro %}
 
 {% for type in types.all where type.implements.RenderTestCase %}
+
+{# The aliased type that this test is selecting (e.g. Int, String) #}
 {% set _selType %}{% call getAliasOf type "SelectionType" %}{% endset %}
 {% set selType %}{{_selType|removeNewlines}}{% endset %}
-{% set sel %}{{_selType|lowercase|removeNewlines}}{% endset %}
+
+{# The aliased type that this test is selecting on (e.g. TestObject, TestInterface1) #}
+{% set _selBase %}{% call getAliasOf type "SelectionBase" %}{% endset %}
+{% set selBase %}{{_selBase|removeNewlines}}{% endset %}
+
+{% set selTypeRes %}{{selType}}.Result{% endset %}
+
+{# The property name that is used on the selection. If the property is on an interface, prepend an "iX_" #}
+{% set _sel %}
+{% if selBase|contains: "TestInterface" %}
+i{{selBase|replace: "TestInterface", ""}}_{{_selType|removeNewlines|lowerFirstLetter}}
+{% else %}
+{{_selType|removeNewlines|lowerFirstLetter}}
+{% endif %}
+{% endset %}
+{% set sel %}{{_sel|removeNewlines}}{% endset %}
+
+{% set _selTrail %}
+{% if selType == "TestObject" %}
+ { $0.int }
+{% endif %}
+{% endset %}
+{% set selTrail %} {{_selTrail|removeNewlines: "leading"}}{% endset %}
+{% set renderSelTrail %}{{selTrail||replace: "$0.", ""|removeNewlines}}{% endset %}
+
+{# An opening curly brace before a variable messes with Stencil - so, store it as a variable #}
 {% set _o %} { {% endset %}
 {% set o %}{{_o|removeNewlines}}{% endset %}
-//import XCTest
-//@testable import Artemis
+// sourcery:file:RenderTests/{{selBase}}/{{type.name}}.swift
 
+import XCTest
+@testable import Artemis
 
 // MARK: - Tests to ensure single selections of {{selType}} and [{{selType}}] render as expected
 
 extension {{type.name}} {
     func testSingleRender() {
-        let query: _Operation<Query, {{selType}}> = .query {
-            $0.{{sel}}
+        let query: _Operation<Query, {{selTypeRes}}> = .query {
+            $0.{{sel}}{{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{{o}}{{sel}}}")
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}{{renderSelTrail}}}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, {{selType}}> = .query {
-            $0.{{sel}}Args(arguments: .testDefault)
+        let query: _Operation<Query, {{selTypeRes}}> = .query {
+            $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{{o}}{{sel}}Args\(testArgs)}")
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}Args\(testArgs){{renderSelTrail}}}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [{{selType}}]> = .query {
-            $0.{{sel}}s
+        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+            $0.{{sel}}s{{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{{o}}{{sel}}}")
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}s{{renderSelTrail}}}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [{{selType}}]> = .query {
-            $0.{{sel}}sArgs(arguments: .testDefault)
+        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+            $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{{o}}{{sel}}sArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}sArgs\(testArgs){{renderSelTrail}}}")
     }
 }
 
@@ -52,31 +80,31 @@ extension {{type.name}} {
 
 extension {{type.name}} {
     func testSingleAliasRender() {
-        let query: _Operation<Query, {{selType}}> = .query {
-            $0.{{sel}}(alias: "alias")
+        let query: _Operation<Query, {{selTypeRes}}> = .query {
+            $0.{{sel}}(alias: "alias"){{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{alias:{{sel}}}")
+        XCTAssertEqual(query.render(), "{alias:{{sel}}{{renderSelTrail}}}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, {{selType}}> = .query {
-            $0.{{sel}}Args(alias: "alias", arguments: .testDefault)
+        let query: _Operation<Query, {{selTypeRes}}> = .query {
+            $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{alias:{{sel}}Args\(testArgs)}")
+        XCTAssertEqual(query.render(), "{alias:{{sel}}Args\(testArgs){{renderSelTrail}}}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [{{selType}}]> = .query {
-            $0.{{sel}}s(alias: "alias")
+        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+            $0.{{sel}}s(alias: "alias"){{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{alias:{{sel}}s}")
+        XCTAssertEqual(query.render(), "{alias:{{sel}}s{{renderSelTrail}}}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [{{selType}}]> = .query {
-            $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault)
+        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+            $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{alias:{{sel}}sArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{alias:{{sel}}sArgs\(testArgs){{renderSelTrail}}}")
     }
 }
 
@@ -84,35 +112,35 @@ extension {{type.name}} {
 
 extension {{type.name}} {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, ({{selType}}, {{selType}})> = .query {
-            $0.{{sel}}
-            $0.{{sel}}
+        let query: _Operation<Query, ({{selTypeRes}}, {{selTypeRes}})> = .query {
+            $0.{{sel}}{{selTrail}}
+            $0.{{sel}}{{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{{o}}{{sel}},{{sel}}}")
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}{{renderSelTrail}},{{sel}}{{renderSelTrail}}}")
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, ({{selType}}, {{selType}})> = .query {
-            $0.{{sel}}Args(arguments: .testDefault)
-            $0.{{sel}}Args(arguments: .testDefault)
+        let query: _Operation<Query, ({{selTypeRes}}, {{selTypeRes}})> = .query {
+            $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
+            $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{{o}}{{sel}}Args\(testArgs),{{sel}}Args\(testArgs)}")
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}Args\(testArgs){{renderSelTrail}},{{sel}}Args\(testArgs){{renderSelTrail}}}")
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([{{selType}}], [{{selType}}])> = .query {
-            $0.{{sel}}
-            $0.{{sel}}
+        let query: _Operation<Query, ([{{selTypeRes}}], [{{selTypeRes}}])> = .query {
+            $0.{{sel}}s{{selTrail}}
+            $0.{{sel}}s{{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{{o}}{{sel}},{{sel}}}")
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}s{{renderSelTrail}},{{sel}}s{{renderSelTrail}}}")
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([{{selType}}], [{{selType}}])> = .query {
-            $0.{{sel}}sArgs(arguments: .testDefault)
-            $0.{{sel}}sArgs(arguments: .testDefault)
+        let query: _Operation<Query, ([{{selTypeRes}}], [{{selTypeRes}}])> = .query {
+            $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
+            $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
         }
-        XCTAssertEqual(query.render(), "{{o}}{{sel}}sArgs\(testArgs),{{sel}}sArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}sArgs\(testArgs){{renderSelTrail}},{{sel}}sArgs\(testArgs){{renderSelTrail}}}")
     }
 }
 
@@ -121,38 +149,38 @@ extension {{type.name}} {
 extension {{type.name}} {
     func testSingleOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}
+            $0.testObject {
+                $0.{{sel}}{{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}}}")
+        XCTAssertEqual(query.render(), "{testObject{{o}}{{sel}}{{renderSelTrail}}}}")
     }
 
     func testSingleArgsOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}Args(arguments: .testDefault)
+            $0.testObject {
+                $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}Args\(testArgs)}}")
+        XCTAssertEqual(query.render(), "{testObject{{o}}{{sel}}Args\(testArgs){{renderSelTrail}}}}")
     }
 
     func testArrayOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}s
+            $0.testObject {
+                $0.{{sel}}s{{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}s}}")
+        XCTAssertEqual(query.render(), "{testObject{{o}}{{sel}}s{{renderSelTrail}}}}")
     }
 
     func testArrayArgsOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}sArgs(arguments: .testDefault)
+            $0.testObject {
+                $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}sArgs\(testArgs)}}")
+        XCTAssertEqual(query.render(), "{testObject{{o}}{{sel}}sArgs\(testArgs){{renderSelTrail}}}}")
     }
 }
 
@@ -161,38 +189,38 @@ extension {{type.name}} {
 extension {{type.name}} {
     func testSingleAliasOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}(alias: "alias")
+            $0.testObject {
+                $0.{{sel}}(alias: "alias"){{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{alias:{{sel}}}}")
+        XCTAssertEqual(query.render(), "{testObject{alias:{{sel}}{{renderSelTrail}}}}")
     }
 
     func testSingleArgsAliasOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}Args(alias: "alias", arguments: .testDefault)
+            $0.testObject {
+                $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{alias:{{sel}}Args\(testArgs)}}")
+        XCTAssertEqual(query.render(), "{testObject{alias:{{sel}}Args\(testArgs){{renderSelTrail}}}}")
     }
 
     func testArrayAliasOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}s(alias: "alias")
+            $0.testObject {
+                $0.{{sel}}s(alias: "alias"){{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{alias:{{sel}}s}}")
+        XCTAssertEqual(query.render(), "{testObject{alias:{{sel}}s{{renderSelTrail}}}}")
     }
 
     func testArrayArgsAliasOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault)
+            $0.testObject {
+                $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{alias:{{sel}}sArgs\(testArgs)}}")
+        XCTAssertEqual(query.render(), "{testObject{alias:{{sel}}sArgs\(testArgs){{renderSelTrail}}}}")
     }
 }
 
@@ -201,42 +229,42 @@ extension {{type.name}} {
 extension {{type.name}} {
     func testMultipleSingleOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}
-                $0.{{sel}}
+            $0.testObject {
+                $0.{{sel}}{{selTrail}}
+                $0.{{sel}}{{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{{o}}{{sel}},{{sel}}}}")
+        XCTAssertEqual(query.render(), "{testObject{{o}}{{sel}}{{renderSelTrail}},{{sel}}{{renderSelTrail}}}}")
     }
 
     func testMultipleSingleArgsOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}Args(arguments: .testDefault)
-                $0.{{sel}}Args(arguments: .testDefault)
+            $0.testObject {
+                $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
+                $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}Args\(testArgs),{{sel}}Args\(testArgs)}}")
+        XCTAssertEqual(query.render(), "{testObject{{o}}{{sel}}Args\(testArgs){{renderSelTrail}},{{sel}}Args\(testArgs){{renderSelTrail}}}}")
     }
 
     func testMultipleArrayOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}s
-                $0.{{sel}}s
+            $0.testObject {
+                $0.{{sel}}s{{selTrail}}
+                $0.{{sel}}s{{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}s,{{sel}}s}}")
+        XCTAssertEqual(query.render(), "{testObject{{o}}{{sel}}s{{renderSelTrail}},{{sel}}s{{renderSelTrail}}}}")
     }
 
     func testMultipleArrayArgsOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.object {
-                $0.{{sel}}sArgs(arguments: .testDefault)
-                $0.{{sel}}sArgs(arguments: .testDefault)
+            $0.testObject {
+                $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
+                $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
             }
         }
-        XCTAssertEqual(query.render(), "{object{{o}}{{sel}}sArgs\(testArgs),{{sel}}sArgs\(testArgs)}}")
+        XCTAssertEqual(query.render(), "{testObject{{o}}{{sel}}sArgs\(testArgs){{renderSelTrail}},{{sel}}sArgs\(testArgs){{renderSelTrail}}}}")
     }
 }
 
@@ -245,43 +273,99 @@ extension {{type.name}} {
 extension {{type.name}} {
     func testSingleOnFragmentRender() {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}
+            $0.{{sel}}{{selTrail}}
         }
         let query: _Operation<Query, Never> = .query {
             fragment
         }
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}}")
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}{{renderSelTrail}}}")
     }
 
     func testSingleArgsOnFragmentRender() {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}Args(arguments: .testDefault)
+            $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
         }
         let query: _Operation<Query, Never> = .query {
             fragment
         }
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}Args\(testArgs)}")
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}Args\(testArgs){{renderSelTrail}}}")
     }
 
     func testArrayOnFragmentRender() {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}s
+            $0.{{sel}}s{{selTrail}}
         }
         let query: _Operation<Query, Never> = .query {
             fragment
         }
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}s}")
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}s{{renderSelTrail}}}")
     }
 
     func testArrayArgsOnFragmentRender() {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}sArgs(arguments: .testDefault)
+            $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
         }
         let query: _Operation<Query, Never> = .query {
             fragment
         }
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}sArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}sArgs\(testArgs){{renderSelTrail}}}")
     }
 }
+
+{% if selType == "TestObject" %}
+// MARK: - Tests to ensure fragments on {{selType}} can be used on selections of {{selType}} or [{{selType}}]
+
+extension {{type.name}} {
+    func testSingleOnObjectFragmentRender() {
+        let fragment = Fragment("fragName", on: {{selType}}.self) {
+            $0.int
+        }
+        let query: _Operation<Query, {{selTypeRes}}> = .query {
+            $0.{{sel}} {
+                fragment
+            }
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}{...fragName}},fragment fragName on {{selType}}{int}")
+    }
+
+    func testSingleArgsOnObjectFragmentRender() {
+        let fragment = Fragment("fragName", on: {{selType}}.self) {
+            $0.int
+        }
+        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+            $0.{{sel}}s {
+                fragment
+            }
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}s{...fragName}},fragment fragName on {{selType}}{int}")
+    }
+
+    func testArrayOnObjectFragmentRender() {
+        let fragment = Fragment("fragName", on: {{selType}}.self) {
+            $0.int
+        }
+        let query: _Operation<Query, {{selTypeRes}}> = .query {
+            $0.{{sel}}Args(arguments: .testDefault) {
+                fragment
+            }
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}Args\(testArgs){...fragName}},fragment fragName on {{selType}}{int}")
+    }
+
+    func testArrayArgsOnObjectFragmentRender() {
+        let fragment = Fragment("fragName", on: {{selType}}.self) {
+            $0.int
+        }
+        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+            $0.{{sel}}sArgs(arguments: .testDefault) {
+                fragment
+            }
+        }
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}sArgs\(testArgs){...fragName}},fragment fragName on {{selType}}{int}")
+    }
+}
+{% endif %}
+
+// sourcery:end
 
 {% endfor %}

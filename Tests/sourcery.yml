@@ -1,0 +1,5 @@
+sources:
+    - ArtemisTests/RenderTests/RenderTestCases.swift
+templates:
+    - ArtemisTests/RenderTests/RenderTest.stencil
+output: ArtemisTests
