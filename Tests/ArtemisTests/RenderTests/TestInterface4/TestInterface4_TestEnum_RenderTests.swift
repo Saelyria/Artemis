@@ -195,7 +195,7 @@ extension TestInterface4_TestEnum_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i4_testEnum 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i4_testEnum}")
@@ -205,7 +205,7 @@ extension TestInterface4_TestEnum_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i4_testEnumArgs(arguments: .testDefault) 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i4_testEnumArgs\(testArgs)}")
@@ -215,7 +215,7 @@ extension TestInterface4_TestEnum_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i4_testEnums 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i4_testEnums}")
@@ -225,7 +225,7 @@ extension TestInterface4_TestEnum_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i4_testEnumsArgs(arguments: .testDefault) 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i4_testEnumsArgs\(testArgs)}")

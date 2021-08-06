@@ -195,7 +195,7 @@ extension TestInterface3_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_testObject { $0.int }
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i3_testObject{int}}")
@@ -205,7 +205,7 @@ extension TestInterface3_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_testObjectArgs(arguments: .testDefault) { $0.int }
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i3_testObjectArgs\(testArgs){int}}")
@@ -215,7 +215,7 @@ extension TestInterface3_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_testObjects { $0.int }
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i3_testObjects{int}}")
@@ -225,7 +225,7 @@ extension TestInterface3_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_testObjectsArgs(arguments: .testDefault) { $0.int }
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i3_testObjectsArgs\(testArgs){int}}")

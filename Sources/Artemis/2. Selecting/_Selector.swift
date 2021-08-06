@@ -274,16 +274,16 @@ extension _Selector {
             guard let key = T.key(forPath: keyPath) else {
                 fatalError("No key set - is this value wrapped in a @Field property wrapper?")
             }
-            let fieldType: _Selection<T, Value.Result>.FieldType = .field(
+            return _Selection(
                 key: key,
                 alias: alias,
                 arguments: (try? ArgumentEncoder().encode(arguments)) ?? [],
                 renderedSelectionSet: nil,
-                createResult: { dict in
-                    return try Value.createUnsafeResult(from: dict, key: key)
-                }
+                createResult: { try Value.createUnsafeResult(from: $0, key: alias ?? key) },
+                items: [],
+                renderedFragmentDeclarations: [],
+                error: nil
             )
-            return _Selection(fieldType: fieldType, items: [])
         }
     }
 
@@ -316,16 +316,16 @@ extension _Selector {
             guard let key = T.key(forPath: keyPath) else {
                 fatalError("No key set - is this value wrapped in a @Field property wrapper?")
             }
-            let fieldType: _Selection<T, Value.Result>.FieldType = .field(
+            return _Selection(
                 key: key,
                 alias: alias,
                 arguments: (try? ArgumentEncoder().encode(arguments)) ?? [],
                 renderedSelectionSet: selectedFields.render(),
-                createResult: { dict in
-                    return try Value.createUnsafeResult(from: dict, key: key)
-                }
+                createResult: { try Value.createUnsafeResult(from: $0, key: alias ?? key) },
+                items: selectedFields.items,
+                renderedFragmentDeclarations: [],
+                error: nil
             )
-            return _Selection(fieldType: fieldType, items: selectedFields.items)
         }
 
         /**
@@ -356,16 +356,16 @@ extension _Selector.AliasBuilderWrapper where Args == NoArguments {
         guard let key = T.key(forPath: keyPath) else {
             fatalError("No key set - is this value wrapped in a @Field property wrapper?")
         }
-        let fieldType: _Selection<T, Value.Result>.FieldType = .field(
+        return _Selection(
             key: key,
             alias: alias,
             arguments: [],
             renderedSelectionSet: nil,
-            createResult: { dict in
-                return try Value.createUnsafeResult(from: dict, key: key)
-            }
+            createResult: { try Value.createUnsafeResult(from: $0, key: alias ?? key) },
+            items: [],
+            renderedFragmentDeclarations: [],
+            error: nil
         )
-        return _Selection(fieldType: fieldType, items: [])
     }
 }
 
@@ -386,16 +386,16 @@ extension _Selector._SelectionSetBuilderWrapper where Args == NoArguments {
         guard let key = T.key(forPath: keyPath) else {
             fatalError("No key set - is this value wrapped in a @Field property wrapper?")
         }
-        let fieldType: _Selection<T, Value.Result>.FieldType = .field(
+        return _Selection(
             key: key,
             alias: alias,
             arguments: [],
             renderedSelectionSet: selectedFields.render(),
-            createResult: { dict in
-                return try Value.createUnsafeResult(from: dict, key: key)
-            }
+            createResult: { try Value.createUnsafeResult(from: $0, key: alias ?? key) },
+            items: selectedFields.items,
+            renderedFragmentDeclarations: [],
+            error: nil
         )
-        return _Selection(fieldType: fieldType, items: selectedFields.items)
     }
 
     /**

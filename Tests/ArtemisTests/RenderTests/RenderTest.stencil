@@ -233,7 +233,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}{{selTrail}}
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}{{renderSelTrail}}}")
@@ -243,7 +243,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}Args\(testArgs){{renderSelTrail}}}")
@@ -253,7 +253,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}s{{selTrail}}
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}s{{renderSelTrail}}}")
@@ -263,7 +263,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}sArgs\(testArgs){{renderSelTrail}}}")

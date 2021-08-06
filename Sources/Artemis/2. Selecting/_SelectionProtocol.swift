@@ -56,6 +56,7 @@ public protocol _SelectionBase {
 */
 public struct _SelectionSet<Result>: _SelectionProtocol {
     public var items: [_SelectionBase]
+    var rendered: String
 	var resultBuilder: ([String: Any]) throws -> Result
 	
 	public func createResult(from: [String : Any]) throws -> Result {
@@ -71,6 +72,6 @@ public struct _SelectionSet<Result>: _SelectionProtocol {
     }
 
     public func render() -> String {
-        return "\(self.items.map { "\($0.render())" }.joined(separator: ","))"
+        return rendered
     }
 }

@@ -195,7 +195,7 @@ extension TestInterface1_Double_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i1_double 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_double}")
@@ -205,7 +205,7 @@ extension TestInterface1_Double_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i1_doubleArgs(arguments: .testDefault) 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_doubleArgs\(testArgs)}")
@@ -215,7 +215,7 @@ extension TestInterface1_Double_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i1_doubles 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_doubles}")
@@ -225,7 +225,7 @@ extension TestInterface1_Double_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i1_doublesArgs(arguments: .testDefault) 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i1_doublesArgs\(testArgs)}")

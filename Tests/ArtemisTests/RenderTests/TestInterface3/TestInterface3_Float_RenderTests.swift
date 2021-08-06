@@ -195,7 +195,7 @@ extension TestInterface3_Float_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_float 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i3_float}")
@@ -205,7 +205,7 @@ extension TestInterface3_Float_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_floatArgs(arguments: .testDefault) 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i3_floatArgs\(testArgs)}")
@@ -215,7 +215,7 @@ extension TestInterface3_Float_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_floats 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i3_floats}")
@@ -225,7 +225,7 @@ extension TestInterface3_Float_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_floatsArgs(arguments: .testDefault) 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i3_floatsArgs\(testArgs)}")

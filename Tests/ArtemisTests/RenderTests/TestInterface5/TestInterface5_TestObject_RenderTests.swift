@@ -195,7 +195,7 @@ extension TestInterface5_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i5_testObject { $0.int }
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i5_testObject{int}}")
@@ -205,7 +205,7 @@ extension TestInterface5_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i5_testObjectArgs(arguments: .testDefault) { $0.int }
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i5_testObjectArgs\(testArgs){int}}")
@@ -215,7 +215,7 @@ extension TestInterface5_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i5_testObjects { $0.int }
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i5_testObjects{int}}")
@@ -225,7 +225,7 @@ extension TestInterface5_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i5_testObjectsArgs(arguments: .testDefault) { $0.int }
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i5_testObjectsArgs\(testArgs){int}}")

@@ -15,7 +15,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res = try query.createResult(from: response)
-
         XCTAssertEqual(res, "value")
     }
 
@@ -32,7 +31,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res = try query.createResult(from: response)
-
         XCTAssertEqual(res, "value")
     }
 
@@ -49,7 +47,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res = try query.createResult(from: response)
-
         XCTAssertEqual(res.count, 2)
         XCTAssertEqual(res[0], "value1")
         XCTAssertEqual(res[1], "value2")
@@ -68,7 +65,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res = try query.createResult(from: response)
-
         XCTAssertEqual(res.count, 2)
         XCTAssertEqual(res[0], "value1")
         XCTAssertEqual(res[1], "value2")
@@ -89,7 +85,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res = try query.createResult(from: response)
-
         XCTAssertEqual(res, "value")
     }
 
@@ -106,7 +101,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res = try query.createResult(from: response)
-
         XCTAssertEqual(res, "value")
     }
 
@@ -123,7 +117,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res = try query.createResult(from: response)
-
         XCTAssertEqual(res.count, 2)
         XCTAssertEqual(res[0], "value1")
         XCTAssertEqual(res[1], "value2")
@@ -142,7 +135,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res = try query.createResult(from: response)
-
         XCTAssertEqual(res.count, 2)
         XCTAssertEqual(res[0], "value1")
         XCTAssertEqual(res[1], "value2")
@@ -167,7 +159,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res: Partial<TestObject> = try query.createResult(from: response)
-
         XCTAssertEqual(res.values.count, 1)
         XCTAssertEqual(res.string, "value")
     }
@@ -189,7 +180,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res: Partial<TestObject> = try query.createResult(from: response)
-
         XCTAssertEqual(res.values.count, 1)
         XCTAssertEqual(res.stringArgs, "value")
     }
@@ -211,7 +201,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res: Partial<TestObject> = try query.createResult(from: response)
-
         XCTAssertEqual(res.values.count, 1)
         XCTAssertEqual(res.strings?.count, 2)
         XCTAssertEqual(res.strings?[0], "value1")
@@ -235,7 +224,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res: Partial<TestObject> = try query.createResult(from: response)
-
         XCTAssertEqual(res.values.count, 1)
         XCTAssertEqual(res.stringsArgs?.count, 2)
         XCTAssertEqual(res.stringsArgs?[0], "value1")
@@ -261,7 +249,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res: Partial<TestObject> = try query.createResult(from: response)
-
         XCTAssertEqual(res.values.count, 1)
         let aliased = res.get(\.string, alias: "alias")
         XCTAssertEqual(aliased, "value")
@@ -284,7 +271,6 @@ extension String_ParseTests {
         """.utf8)
 
         let res: Partial<TestObject> = try query.createResult(from: response)
-
         XCTAssertEqual(res.values.count, 1)
         let aliased = res.get(\.stringArgs, alias: "alias")
         XCTAssertEqual(aliased, "value")
@@ -340,5 +326,89 @@ extension String_ParseTests {
         XCTAssertEqual(aliased?[0], "value1")
         XCTAssertEqual(aliased?[1], "value2")
         XCTAssertNil(res.stringsArgs)
+    }
+}
+
+// MARK: - Tests to ensure fragments on Query selecting String and [String] can be used to pull values out of a result
+
+extension String_ParseTests {
+    func testSingleOnFragmentParse() throws {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.string
+        }
+        let query: _Operation<Query, SelectionType.Result> = .query {
+            fragment
+        }
+        let response = Data("""
+        {
+            "data": {
+                "string": "value"
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res, "value")
+    }
+
+    func testSingleArgsOnFragmentParse() throws {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.stringArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, SelectionType.Result> = .query {
+            fragment
+        }
+        let response = Data("""
+        {
+            "data": {
+                "stringArgs": "value"
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res, "value")
+    }
+
+    func testArrayOnFragmentParse() throws {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.strings
+        }
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
+            fragment
+        }
+        let response = Data("""
+        {
+            "data": {
+                "strings": ["value1", "value2"]
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res.count, 2)
+        XCTAssertEqual(res[0], "value1")
+        XCTAssertEqual(res[1], "value2")
+    }
+
+    func testArrayArgsOnFragmentParse() throws {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.stringsArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
+            fragment
+        }
+        let response = Data("""
+        {
+            "data": {
+                "stringsArgs": ["value1", "value2"]
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res.count, 2)
+        XCTAssertEqual(res[0], "value1")
+        XCTAssertEqual(res[1], "value2")
     }
 }

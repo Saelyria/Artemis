@@ -195,7 +195,7 @@ extension TestObject_Float_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.float 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{float}")
@@ -205,7 +205,7 @@ extension TestObject_Float_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.floatArgs(arguments: .testDefault) 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{floatArgs\(testArgs)}")
@@ -215,7 +215,7 @@ extension TestObject_Float_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.floats 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{floats}")
@@ -225,7 +225,7 @@ extension TestObject_Float_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.floatsArgs(arguments: .testDefault) 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{floatsArgs\(testArgs)}")

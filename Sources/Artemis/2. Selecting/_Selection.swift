@@ -12,46 +12,36 @@ instance.
 - `F`: The specific `Field` type (i.e. property) that this 'add' object is selecting. For example, the `name` field on
 	the `User`, which could be a `Field<String, NoArguments>`.
 */
-public class _Selection<T: Object, Result>: _SelectionProtocol {	
-	enum FieldType {
-        case field(
-            key: String,
-            alias: String?,
-            arguments: [Argument],
-            renderedSelectionSet: String?,
-            createResult: (Any) throws -> Result
-        )
-		case fragment(
-            inline: String,
-            rendered: String
-        )
-	}
-	
-	let fieldType: FieldType
-	var key: String {
-		switch self.fieldType {
-		case .field(let key, let alias, _, _, _): return alias ?? key
-		case .fragment: return ""
-		}
-	}
-    public var items: [_SelectionBase] = []
-    public var renderedFragmentDeclarations: [String] {
-		var frags: [String] = []
-		switch self.fieldType {
-		case .fragment(_, let rendered):
-			frags = [rendered]
-		case .field: break
-		}
-		frags.append(contentsOf: self.items.flatMap { $0.renderedFragmentDeclarations })
-		return frags
-	}
-    public let error: GraphQLError?
-	
-	internal init(fieldType: FieldType, items: [_SelectionBase], error: GraphQLError? = nil) {
-		self.fieldType = fieldType
-		self.items = items
-		self.error = error
-	}
+public class _Selection<T: Object, Result>: _SelectionProtocol {
+    var key: String
+    var alias: String?
+    var arguments: [Argument]
+    var renderedSelectionSet: String?
+    var createResultClosure: (Any) throws -> Result
+    public var items: [_SelectionBase]
+    public var renderedFragmentDeclarations: [String]
+    public var error: GraphQLError?
+
+    internal init(
+        key: String,
+        alias: String?,
+        arguments: [Argument],
+        renderedSelectionSet: String?,
+        createResult: @escaping (Any) throws -> Result,
+        items: [_SelectionBase],
+        renderedFragmentDeclarations: [String],
+        error: GraphQLError?
+    ) {
+        self.key = key
+        self.alias = alias
+        self.arguments = arguments
+        self.renderedSelectionSet = renderedSelectionSet
+        self.createResultClosure = createResult
+        self.items = items
+        self.renderedFragmentDeclarations = renderedFragmentDeclarations
+        self.renderedFragmentDeclarations.append(contentsOf: items.flatMap { $0.renderedFragmentDeclarations })
+        self.error = error
+    }
 }
 
 extension _Selection {
@@ -59,19 +49,14 @@ extension _Selection {
 	Renders this added field and its sub-selected fields into a string that can be added to a document.
 	*/
     public func render() -> String {
-		switch self.fieldType {
-		case .field(let key, let alias, let arguments, let renderedSelectionSet, _):
-			let name: String = (alias == nil) ? key : "\(alias!):\(key)"
-			let _SelectionSet = (renderedSelectionSet == nil) ? "" : "{\(renderedSelectionSet!)}"
-            var renderedArgs = arguments.map {
-                "\($0.name):\($0.value)"
-            }.joined(separator: ",")
-            renderedArgs = renderedArgs.isEmpty ? renderedArgs : "(\(renderedArgs))"
+        let name: String = (alias == nil) ? key : "\(alias!):\(key)"
+        let _SelectionSet = (renderedSelectionSet == nil) ? "" : "{\(renderedSelectionSet!)}"
+        var renderedArgs = arguments.map {
+            "\($0.name):\($0.value)"
+        }.joined(separator: ",")
+        renderedArgs = renderedArgs.isEmpty ? renderedArgs : "(\(renderedArgs))"
 
-			return "\(name)\(renderedArgs)\(_SelectionSet)"
-		case .fragment(let renderedInlineFragment, _):
-			return renderedInlineFragment
-		}
+        return "\(name)\(renderedArgs)\(_SelectionSet)"
 	}
 	
 	/**
@@ -79,10 +64,6 @@ extension _Selection {
 	type) from the response JSON.
 	*/
     public func createResult(from dict: [String : Any]) throws -> Result {
-        switch self.fieldType {
-        case .field(_, _, _, _, let createResult):
-            return try createResult(dict[self.key] as Any)
-        case .fragment: throw GraphQLError.malformattedResponse(reason: "Shouldn't need to get result from a fragment")
-        }
+        try createResultClosure(dict[self.alias ?? self.key] as Any)
 	}
 }

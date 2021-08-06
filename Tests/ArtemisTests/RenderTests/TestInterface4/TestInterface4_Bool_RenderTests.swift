@@ -195,7 +195,7 @@ extension TestInterface4_Bool_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i4_bool 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i4_bool}")
@@ -205,7 +205,7 @@ extension TestInterface4_Bool_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i4_boolArgs(arguments: .testDefault) 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i4_boolArgs\(testArgs)}")
@@ -215,7 +215,7 @@ extension TestInterface4_Bool_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i4_bools 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i4_bools}")
@@ -225,7 +225,7 @@ extension TestInterface4_Bool_RenderTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i4_boolsArgs(arguments: .testDefault) 
         }
-        let query: _Operation<Query, Never> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
         }
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i4_boolsArgs\(testArgs)}")
