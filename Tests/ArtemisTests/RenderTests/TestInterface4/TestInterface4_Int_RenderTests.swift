@@ -144,46 +144,6 @@ extension TestInterface4_Int_RenderTests {
     }
 }
 
-// MARK: - Tests to ensure aliases render as expected on sub-selections of Int and [Int]
-
-extension TestInterface4_Int_RenderTests {
-    func testSingleAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i4_int(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i4_int}}")
-    }
-
-    func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i4_intArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i4_intArgs\(testArgs)}}")
-    }
-
-    func testArrayAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i4_ints(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i4_ints}}")
-    }
-
-    func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i4_intsArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i4_intsArgs\(testArgs)}}")
-    }
-}
-
 // MARK: - Tests to ensure Int and [Int] can be selected on a sub-selection of Object
 
 extension TestInterface4_Int_RenderTests {

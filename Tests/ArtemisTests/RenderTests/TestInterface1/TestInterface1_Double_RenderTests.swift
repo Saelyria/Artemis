@@ -144,46 +144,6 @@ extension TestInterface1_Double_RenderTests {
     }
 }
 
-// MARK: - Tests to ensure aliases render as expected on sub-selections of Double and [Double]
-
-extension TestInterface1_Double_RenderTests {
-    func testSingleAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i1_double(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i1_double}}")
-    }
-
-    func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i1_doubleArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i1_doubleArgs\(testArgs)}}")
-    }
-
-    func testArrayAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i1_doubles(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i1_doubles}}")
-    }
-
-    func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i1_doublesArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i1_doublesArgs\(testArgs)}}")
-    }
-}
-
 // MARK: - Tests to ensure Double and [Double] can be selected on a sub-selection of Object
 
 extension TestInterface1_Double_RenderTests {

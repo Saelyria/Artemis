@@ -144,46 +144,6 @@ extension TestInterface1_String_RenderTests {
     }
 }
 
-// MARK: - Tests to ensure aliases render as expected on sub-selections of String and [String]
-
-extension TestInterface1_String_RenderTests {
-    func testSingleAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i1_string(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i1_string}}")
-    }
-
-    func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i1_stringArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i1_stringArgs\(testArgs)}}")
-    }
-
-    func testArrayAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i1_strings(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i1_strings}}")
-    }
-
-    func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i1_stringsArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i1_stringsArgs\(testArgs)}}")
-    }
-}
-
 // MARK: - Tests to ensure String and [String] can be selected on a sub-selection of Object
 
 extension TestInterface1_String_RenderTests {

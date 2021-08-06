@@ -144,46 +144,6 @@ extension TestObject_Int_RenderTests {
     }
 }
 
-// MARK: - Tests to ensure aliases render as expected on sub-selections of Int and [Int]
-
-extension TestObject_Int_RenderTests {
-    func testSingleAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.int(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:int}}")
-    }
-
-    func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.intArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:intArgs\(testArgs)}}")
-    }
-
-    func testArrayAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.ints(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:ints}}")
-    }
-
-    func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.intsArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:intsArgs\(testArgs)}}")
-    }
-}
-
 // MARK: - Tests to ensure Int and [Int] can be selected on a sub-selection of Object
 
 extension TestObject_Int_RenderTests {

@@ -144,46 +144,6 @@ extension TestObject_Double_RenderTests {
     }
 }
 
-// MARK: - Tests to ensure aliases render as expected on sub-selections of Double and [Double]
-
-extension TestObject_Double_RenderTests {
-    func testSingleAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.double(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:double}}")
-    }
-
-    func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.doubleArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:doubleArgs\(testArgs)}}")
-    }
-
-    func testArrayAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.doubles(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:doubles}}")
-    }
-
-    func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.doublesArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:doublesArgs\(testArgs)}}")
-    }
-}
-
 // MARK: - Tests to ensure Double and [Double] can be selected on a sub-selection of Object
 
 extension TestObject_Double_RenderTests {

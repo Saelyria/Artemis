@@ -144,46 +144,6 @@ extension TestInterface5_Float_RenderTests {
     }
 }
 
-// MARK: - Tests to ensure aliases render as expected on sub-selections of Float and [Float]
-
-extension TestInterface5_Float_RenderTests {
-    func testSingleAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_float(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_float}}")
-    }
-
-    func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_floatArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_floatArgs\(testArgs)}}")
-    }
-
-    func testArrayAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_floats(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_floats}}")
-    }
-
-    func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_floatsArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_floatsArgs\(testArgs)}}")
-    }
-}
-
 // MARK: - Tests to ensure Float and [Float] can be selected on a sub-selection of Object
 
 extension TestInterface5_Float_RenderTests {

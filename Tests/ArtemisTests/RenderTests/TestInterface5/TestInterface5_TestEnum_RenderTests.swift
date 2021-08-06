@@ -144,46 +144,6 @@ extension TestInterface5_TestEnum_RenderTests {
     }
 }
 
-// MARK: - Tests to ensure aliases render as expected on sub-selections of TestEnum and [TestEnum]
-
-extension TestInterface5_TestEnum_RenderTests {
-    func testSingleAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testEnum(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testEnum}}")
-    }
-
-    func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testEnumArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testEnumArgs\(testArgs)}}")
-    }
-
-    func testArrayAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testEnums(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testEnums}}")
-    }
-
-    func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testEnumsArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testEnumsArgs\(testArgs)}}")
-    }
-}
-
 // MARK: - Tests to ensure TestEnum and [TestEnum] can be selected on a sub-selection of Object
 
 extension TestInterface5_TestEnum_RenderTests {

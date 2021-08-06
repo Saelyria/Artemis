@@ -144,46 +144,6 @@ extension TestInterface5_TestObject_RenderTests {
     }
 }
 
-// MARK: - Tests to ensure aliases render as expected on sub-selections of TestObject and [TestObject]
-
-extension TestInterface5_TestObject_RenderTests {
-    func testSingleAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testObject(alias: "alias") { $0.int }
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testObject{int}}}")
-    }
-
-    func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testObjectArgs(alias: "alias", arguments: .testDefault) { $0.int }
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testObjectArgs\(testArgs){int}}}")
-    }
-
-    func testArrayAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testObjects(alias: "alias") { $0.int }
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testObjects{int}}}")
-    }
-
-    func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testObjectsArgs(alias: "alias", arguments: .testDefault) { $0.int }
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testObjectsArgs\(testArgs){int}}}")
-    }
-}
-
 // MARK: - Tests to ensure TestObject and [TestObject] can be selected on a sub-selection of Object
 
 extension TestInterface5_TestObject_RenderTests {

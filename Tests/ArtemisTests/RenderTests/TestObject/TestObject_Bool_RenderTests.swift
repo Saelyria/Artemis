@@ -144,46 +144,6 @@ extension TestObject_Bool_RenderTests {
     }
 }
 
-// MARK: - Tests to ensure aliases render as expected on sub-selections of Bool and [Bool]
-
-extension TestObject_Bool_RenderTests {
-    func testSingleAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.bool(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:bool}}")
-    }
-
-    func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.boolArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:boolArgs\(testArgs)}}")
-    }
-
-    func testArrayAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.bools(alias: "alias") 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:bools}}")
-    }
-
-    func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.boolsArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:boolsArgs\(testArgs)}}")
-    }
-}
-
 // MARK: - Tests to ensure Bool and [Bool] can be selected on a sub-selection of Object
 
 extension TestObject_Bool_RenderTests {

@@ -184,46 +184,6 @@ extension {{type.name}} {
     }
 }
 
-// MARK: - Tests to ensure aliases render as expected on sub-selections of {{selType}} and [{{selType}}]
-
-extension {{type.name}} {
-    func testSingleAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.{{sel}}(alias: "alias"){{selTrail}}
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:{{sel}}{{renderSelTrail}}}}")
-    }
-
-    func testSingleArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:{{sel}}Args\(testArgs){{renderSelTrail}}}}")
-    }
-
-    func testArrayAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.{{sel}}s(alias: "alias"){{selTrail}}
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:{{sel}}s{{renderSelTrail}}}}")
-    }
-
-    func testArrayArgsAliasOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
-            }
-        }
-        XCTAssertEqual(query.render(), "{testObject{alias:{{sel}}sArgs\(testArgs){{renderSelTrail}}}}")
-    }
-}
-
 // MARK: - Tests to ensure {{selType}} and [{{selType}}] can be selected on a sub-selection of Object
 
 extension {{type.name}} {
