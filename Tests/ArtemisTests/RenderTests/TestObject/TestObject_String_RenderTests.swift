@@ -8,28 +8,28 @@ import XCTest
 
 extension TestObject_String_RenderTests {
     func testSingleRender() {
-        let query: _Operation<Query, String.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.string 
         }
         XCTAssertEqual(query.render(), "{string}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, String.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.stringArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{stringArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [String.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.strings 
         }
         XCTAssertEqual(query.render(), "{strings}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [String.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.stringsArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{stringsArgs\(testArgs)}")
@@ -40,28 +40,28 @@ extension TestObject_String_RenderTests {
 
 extension TestObject_String_RenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, String.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.string(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:string}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, String.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.stringArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:stringArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [String.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.strings(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:strings}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [String.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.stringsArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:stringsArgs\(testArgs)}")
@@ -72,7 +72,7 @@ extension TestObject_String_RenderTests {
 
 extension TestObject_String_RenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, (String.Result, String.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.string 
             $0.string 
         }
@@ -80,7 +80,7 @@ extension TestObject_String_RenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, (String.Result, String.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.stringArgs(arguments: .testDefault) 
             $0.stringArgs(arguments: .testDefault) 
         }
@@ -88,7 +88,7 @@ extension TestObject_String_RenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([String.Result], [String.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.strings 
             $0.strings 
         }
@@ -96,7 +96,7 @@ extension TestObject_String_RenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([String.Result], [String.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.stringsArgs(arguments: .testDefault) 
             $0.stringsArgs(arguments: .testDefault) 
         }

@@ -8,28 +8,28 @@ import XCTest
 
 extension TestInterface1_Int_RenderTests {
     func testSingleRender() {
-        let query: _Operation<Query, Int.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i1_int 
         }
         XCTAssertEqual(query.render(), "{i1_int}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, Int.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i1_intArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{i1_intArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [Int.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i1_ints 
         }
         XCTAssertEqual(query.render(), "{i1_ints}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [Int.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i1_intsArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{i1_intsArgs\(testArgs)}")
@@ -40,28 +40,28 @@ extension TestInterface1_Int_RenderTests {
 
 extension TestInterface1_Int_RenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, Int.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i1_int(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:i1_int}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, Int.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i1_intArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:i1_intArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [Int.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i1_ints(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:i1_ints}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [Int.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i1_intsArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:i1_intsArgs\(testArgs)}")
@@ -72,7 +72,7 @@ extension TestInterface1_Int_RenderTests {
 
 extension TestInterface1_Int_RenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, (Int.Result, Int.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i1_int 
             $0.i1_int 
         }
@@ -80,7 +80,7 @@ extension TestInterface1_Int_RenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, (Int.Result, Int.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i1_intArgs(arguments: .testDefault) 
             $0.i1_intArgs(arguments: .testDefault) 
         }
@@ -88,7 +88,7 @@ extension TestInterface1_Int_RenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([Int.Result], [Int.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i1_ints 
             $0.i1_ints 
         }
@@ -96,7 +96,7 @@ extension TestInterface1_Int_RenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([Int.Result], [Int.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i1_intsArgs(arguments: .testDefault) 
             $0.i1_intsArgs(arguments: .testDefault) 
         }

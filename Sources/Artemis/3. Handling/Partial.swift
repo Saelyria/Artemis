@@ -26,7 +26,7 @@ extension Partial where T: Object {
     }
 
     public subscript<Value: Scalar, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args)>
+        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
     ) -> Value.Result? {
         guard let keyString = T.key(forPath: keyPath) else { return nil }
         return self.values[keyString] as? Value.Result
@@ -40,7 +40,7 @@ extension Partial where T: Object {
     }
 
     public subscript<Value: Collection & Scalar, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args)>
+        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
     ) -> Value.Result? {
         guard let keyString = T.key(forPath: keyPath) else { return nil }
         return self.values[keyString] as? Value.Result
@@ -61,7 +61,7 @@ extension Partial where T: Object {
     }
 
     public subscript<Value: Enum, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args)>
+        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
     ) -> Value? {
         guard let keyString = T.key(forPath: keyPath) else { return nil }
         if let raw = self.values[keyString] as? String {
@@ -81,7 +81,7 @@ extension Partial where T: Object {
     }
 
     public subscript<Value: Collection & Scalar, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args)>
+        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
     ) -> [Value.Element]? where Value.Element: Enum {
         guard let keyString = T.key(forPath: keyPath) else { return nil }
         if let raw = self.values[keyString] as? [String] {
@@ -103,7 +103,7 @@ extension Partial where T: Object {
     }
 
     public subscript<Value: Object, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args)>
+        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
     ) -> Partial<Value>? {
         guard let keyString = T.key(forPath: keyPath) else { return nil }
         guard let valueDict = self.values[keyString] as? [String: Any] else { return nil }
@@ -119,7 +119,7 @@ extension Partial where T: Object {
     }
 
     public subscript<Value: Collection & Object, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args)>
+        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
     ) -> [Partial<Value.Element>]? {
         guard let keyString = T.key(forPath: keyPath) else { return nil }
         guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
@@ -148,7 +148,7 @@ extension Partial where T: Object {
      - parameter alias: The aliased name of the property as in the request.
      */
     public func get<Value: Scalar, Args: ArgumentsList>(
-        _ keyPath: KeyPath<T.SubSchema, (Value, Args)>,
+        _ keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>,
         alias: String
     ) -> Value.Result? {
         return self.values[alias] as? Value.Result
@@ -174,7 +174,7 @@ extension Partial where T: Object {
      - parameter alias: The aliased name of the property as in the request.
      */
     public func get<Value: Collection & Scalar, Args: ArgumentsList>(
-        _ keyPath: KeyPath<T.SubSchema, (Value, Args)>,
+        _ keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>,
         alias: String
     ) -> Value.Result? {
         return self.values[alias] as? Value.Result
@@ -201,7 +201,7 @@ extension Partial where T: Object {
      - parameter alias: The aliased name of the property as in the request.
      */
     public func get<Value: Object, Args: ArgumentsList>(
-        _ keyPath: KeyPath<T.SubSchema, (Value, Args)>,
+        _ keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>,
         alias: String
     ) -> Partial<Value>? {
         guard let valueDict = self.values[alias] as? [String: Any] else { return nil }
@@ -229,7 +229,7 @@ extension Partial where T: Object {
      - parameter alias: The aliased name of the property as in the request.
      */
     public func get<Value: Collection & Object, Args: ArgumentsList>(
-        _ keyPath: KeyPath<T.SubSchema, (Value, Args)>,
+        _ keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>,
         alias: String
     ) -> [Partial<Value.Element>]? {
         guard let valuesArray = self.values[alias] as? [[String: Any]] else { return nil }

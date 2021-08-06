@@ -12,16 +12,15 @@ no `Data` or `[String: Any]` responses you need to parse though manually. Artemi
 in queries, so this request:
 
 ```swift
-// Artemis                                          // Rendered GraphQL query   
-                                                    //
-.query {                                            // query {   
-    $0.country(arguments: .init(code: "CA")) {      //    country(code: "CA") {       
-        $0.name                                     //       name
-        $0.continent {                              //       continent {
-            $0.name(alias: "continentName")         //          continentName: name
-        }                                           //       }
-    }                                               //    }
-}                                                   // }
+// Artemis                                              // Rendered GraphQL query   
+.query {                                                query {   
+    $0.country(arguments: .init(code: "CA")) {              country(code: "CA") {       
+        $0.name                                                 name
+        $0.continent {                                          continent {
+            $0.name(alias: "continentName")                         continentName: name
+        }                                                       }
+    }                                                       }
+}                                                       }
 ```
 
 ...is entirely type-checked - we can't add fields not on our schema, put fields in the wrong place, pass invalid arguments, or pass 
@@ -50,21 +49,20 @@ The schema representation in Swift is also very readable and maintains a reasona
 A schema for the above query might look something like this:
 
 ```swift
-// Artemis                                      // Original GraphQL schema
-                                                //
-final class Query: Object {                     // type Query {
-    @Field("country")                           //    country(code: String!): Country!
-    var country: (Country, CountryArgs.Type)    // }
-                                                //
-    struct CountryArgs: ArgumentsList {         // type Country {
-        var code: String                        //    name: String!
-    }                                           //    languages: [String!]!
-}                                               //    continent: Continent!
-                                                // }
-final class Country: Object {                   // 
-    @Field("name")                              // type Continent {
-    var name: String                            //    name: String!
-                                                // }
+// Artemis                                          // Original GraphQL schema
+final class Query: Object {                         type Query {
+    @Field("country")                                   country(code: String!): Country!
+    var country: (Country, CountryArgs.Type)        }
+                                                
+    struct CountryArgs: ArgumentsList {             type Country {
+        var code: String                                name: String!
+    }                                                   languages: [String!]!
+}                                                       continent: Continent!
+                                                    }
+final class Country: Object {                    
+    @Field("name")                                  type Continent {
+    var name: String                                    name: String!
+                                                    }
     @Field("languages")
     var languages: [String]
 

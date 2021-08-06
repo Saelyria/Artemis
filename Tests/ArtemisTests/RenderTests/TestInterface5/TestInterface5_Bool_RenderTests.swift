@@ -8,28 +8,28 @@ import XCTest
 
 extension TestInterface5_Bool_RenderTests {
     func testSingleRender() {
-        let query: _Operation<Query, Bool.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i5_bool 
         }
         XCTAssertEqual(query.render(), "{i5_bool}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, Bool.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i5_boolArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{i5_boolArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [Bool.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i5_bools 
         }
         XCTAssertEqual(query.render(), "{i5_bools}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [Bool.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i5_boolsArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{i5_boolsArgs\(testArgs)}")
@@ -40,28 +40,28 @@ extension TestInterface5_Bool_RenderTests {
 
 extension TestInterface5_Bool_RenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, Bool.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i5_bool(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:i5_bool}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, Bool.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i5_boolArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:i5_boolArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [Bool.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i5_bools(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:i5_bools}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [Bool.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i5_boolsArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:i5_boolsArgs\(testArgs)}")
@@ -72,7 +72,7 @@ extension TestInterface5_Bool_RenderTests {
 
 extension TestInterface5_Bool_RenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, (Bool.Result, Bool.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i5_bool 
             $0.i5_bool 
         }
@@ -80,7 +80,7 @@ extension TestInterface5_Bool_RenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, (Bool.Result, Bool.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i5_boolArgs(arguments: .testDefault) 
             $0.i5_boolArgs(arguments: .testDefault) 
         }
@@ -88,7 +88,7 @@ extension TestInterface5_Bool_RenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([Bool.Result], [Bool.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i5_bools 
             $0.i5_bools 
         }
@@ -96,7 +96,7 @@ extension TestInterface5_Bool_RenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([Bool.Result], [Bool.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i5_boolsArgs(arguments: .testDefault) 
             $0.i5_boolsArgs(arguments: .testDefault) 
         }

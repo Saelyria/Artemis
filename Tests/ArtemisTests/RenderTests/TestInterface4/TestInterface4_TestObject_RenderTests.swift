@@ -8,28 +8,28 @@ import XCTest
 
 extension TestInterface4_TestObject_RenderTests {
     func testSingleRender() {
-        let query: _Operation<Query, TestObject.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i4_testObject { $0.int }
         }
         XCTAssertEqual(query.render(), "{i4_testObject{int}}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, TestObject.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i4_testObjectArgs(arguments: .testDefault) { $0.int }
         }
         XCTAssertEqual(query.render(), "{i4_testObjectArgs\(testArgs){int}}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [TestObject.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i4_testObjects { $0.int }
         }
         XCTAssertEqual(query.render(), "{i4_testObjects{int}}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [TestObject.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i4_testObjectsArgs(arguments: .testDefault) { $0.int }
         }
         XCTAssertEqual(query.render(), "{i4_testObjectsArgs\(testArgs){int}}")
@@ -40,28 +40,28 @@ extension TestInterface4_TestObject_RenderTests {
 
 extension TestInterface4_TestObject_RenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, TestObject.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i4_testObject(alias: "alias") { $0.int }
         }
         XCTAssertEqual(query.render(), "{alias:i4_testObject{int}}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, TestObject.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i4_testObjectArgs(alias: "alias", arguments: .testDefault) { $0.int }
         }
         XCTAssertEqual(query.render(), "{alias:i4_testObjectArgs\(testArgs){int}}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [TestObject.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i4_testObjects(alias: "alias") { $0.int }
         }
         XCTAssertEqual(query.render(), "{alias:i4_testObjects{int}}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [TestObject.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i4_testObjectsArgs(alias: "alias", arguments: .testDefault) { $0.int }
         }
         XCTAssertEqual(query.render(), "{alias:i4_testObjectsArgs\(testArgs){int}}")
@@ -72,7 +72,7 @@ extension TestInterface4_TestObject_RenderTests {
 
 extension TestInterface4_TestObject_RenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, (TestObject.Result, TestObject.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i4_testObject { $0.int }
             $0.i4_testObject { $0.int }
         }
@@ -80,7 +80,7 @@ extension TestInterface4_TestObject_RenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, (TestObject.Result, TestObject.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i4_testObjectArgs(arguments: .testDefault) { $0.int }
             $0.i4_testObjectArgs(arguments: .testDefault) { $0.int }
         }
@@ -88,7 +88,7 @@ extension TestInterface4_TestObject_RenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([TestObject.Result], [TestObject.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i4_testObjects { $0.int }
             $0.i4_testObjects { $0.int }
         }
@@ -96,7 +96,7 @@ extension TestInterface4_TestObject_RenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([TestObject.Result], [TestObject.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i4_testObjectsArgs(arguments: .testDefault) { $0.int }
             $0.i4_testObjectsArgs(arguments: .testDefault) { $0.int }
         }
@@ -239,7 +239,7 @@ extension TestInterface4_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: TestObject.self) {
             $0.int
         }
-        let query: _Operation<Query, TestObject.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i4_testObject {
                 fragment
             }
@@ -251,7 +251,7 @@ extension TestInterface4_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: TestObject.self) {
             $0.int
         }
-        let query: _Operation<Query, [TestObject.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i4_testObjects {
                 fragment
             }
@@ -263,7 +263,7 @@ extension TestInterface4_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: TestObject.self) {
             $0.int
         }
-        let query: _Operation<Query, TestObject.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i4_testObjectArgs(arguments: .testDefault) {
                 fragment
             }
@@ -275,7 +275,7 @@ extension TestInterface4_TestObject_RenderTests {
         let fragment = Fragment("fragName", on: TestObject.self) {
             $0.int
         }
-        let query: _Operation<Query, [TestObject.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i4_testObjectsArgs(arguments: .testDefault) {
                 fragment
             }

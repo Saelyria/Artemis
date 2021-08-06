@@ -8,28 +8,28 @@ import XCTest
 
 extension TestInterface3_Float_RenderTests {
     func testSingleRender() {
-        let query: _Operation<Query, Float.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i3_float 
         }
         XCTAssertEqual(query.render(), "{i3_float}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, Float.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i3_floatArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{i3_floatArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [Float.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i3_floats 
         }
         XCTAssertEqual(query.render(), "{i3_floats}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [Float.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i3_floatsArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{i3_floatsArgs\(testArgs)}")
@@ -40,28 +40,28 @@ extension TestInterface3_Float_RenderTests {
 
 extension TestInterface3_Float_RenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, Float.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i3_float(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:i3_float}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, Float.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i3_floatArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:i3_floatArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [Float.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i3_floats(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:i3_floats}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [Float.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i3_floatsArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:i3_floatsArgs\(testArgs)}")
@@ -72,7 +72,7 @@ extension TestInterface3_Float_RenderTests {
 
 extension TestInterface3_Float_RenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, (Float.Result, Float.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i3_float 
             $0.i3_float 
         }
@@ -80,7 +80,7 @@ extension TestInterface3_Float_RenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, (Float.Result, Float.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i3_floatArgs(arguments: .testDefault) 
             $0.i3_floatArgs(arguments: .testDefault) 
         }
@@ -88,7 +88,7 @@ extension TestInterface3_Float_RenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([Float.Result], [Float.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i3_floats 
             $0.i3_floats 
         }
@@ -96,7 +96,7 @@ extension TestInterface3_Float_RenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([Float.Result], [Float.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i3_floatsArgs(arguments: .testDefault) 
             $0.i3_floatsArgs(arguments: .testDefault) 
         }

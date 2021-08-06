@@ -8,28 +8,28 @@ import XCTest
 
 extension TestObject_TestEnum_RenderTests {
     func testSingleRender() {
-        let query: _Operation<Query, TestEnum.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.testEnum 
         }
         XCTAssertEqual(query.render(), "{testEnum}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, TestEnum.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.testEnumArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{testEnumArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [TestEnum.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.testEnums 
         }
         XCTAssertEqual(query.render(), "{testEnums}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [TestEnum.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.testEnumsArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{testEnumsArgs\(testArgs)}")
@@ -40,28 +40,28 @@ extension TestObject_TestEnum_RenderTests {
 
 extension TestObject_TestEnum_RenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, TestEnum.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.testEnum(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:testEnum}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, TestEnum.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.testEnumArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:testEnumArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [TestEnum.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.testEnums(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:testEnums}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [TestEnum.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.testEnumsArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:testEnumsArgs\(testArgs)}")
@@ -72,7 +72,7 @@ extension TestObject_TestEnum_RenderTests {
 
 extension TestObject_TestEnum_RenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, (TestEnum.Result, TestEnum.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.testEnum 
             $0.testEnum 
         }
@@ -80,7 +80,7 @@ extension TestObject_TestEnum_RenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, (TestEnum.Result, TestEnum.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.testEnumArgs(arguments: .testDefault) 
             $0.testEnumArgs(arguments: .testDefault) 
         }
@@ -88,7 +88,7 @@ extension TestObject_TestEnum_RenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([TestEnum.Result], [TestEnum.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.testEnums 
             $0.testEnums 
         }
@@ -96,7 +96,7 @@ extension TestObject_TestEnum_RenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([TestEnum.Result], [TestEnum.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.testEnumsArgs(arguments: .testDefault) 
             $0.testEnumsArgs(arguments: .testDefault) 
         }

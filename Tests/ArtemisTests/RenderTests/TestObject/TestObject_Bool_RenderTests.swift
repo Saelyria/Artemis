@@ -8,28 +8,28 @@ import XCTest
 
 extension TestObject_Bool_RenderTests {
     func testSingleRender() {
-        let query: _Operation<Query, Bool.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.bool 
         }
         XCTAssertEqual(query.render(), "{bool}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, Bool.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.boolArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{boolArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [Bool.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.bools 
         }
         XCTAssertEqual(query.render(), "{bools}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [Bool.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.boolsArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{boolsArgs\(testArgs)}")
@@ -40,28 +40,28 @@ extension TestObject_Bool_RenderTests {
 
 extension TestObject_Bool_RenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, Bool.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.bool(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:bool}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, Bool.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.boolArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:boolArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [Bool.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.bools(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:bools}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [Bool.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.boolsArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:boolsArgs\(testArgs)}")
@@ -72,7 +72,7 @@ extension TestObject_Bool_RenderTests {
 
 extension TestObject_Bool_RenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, (Bool.Result, Bool.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.bool 
             $0.bool 
         }
@@ -80,7 +80,7 @@ extension TestObject_Bool_RenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, (Bool.Result, Bool.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.boolArgs(arguments: .testDefault) 
             $0.boolArgs(arguments: .testDefault) 
         }
@@ -88,7 +88,7 @@ extension TestObject_Bool_RenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([Bool.Result], [Bool.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.bools 
             $0.bools 
         }
@@ -96,7 +96,7 @@ extension TestObject_Bool_RenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([Bool.Result], [Bool.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.boolsArgs(arguments: .testDefault) 
             $0.boolsArgs(arguments: .testDefault) 
         }

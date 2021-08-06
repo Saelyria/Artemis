@@ -8,28 +8,28 @@ import XCTest
 
 extension TestObject_Float_RenderTests {
     func testSingleRender() {
-        let query: _Operation<Query, Float.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.float 
         }
         XCTAssertEqual(query.render(), "{float}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, Float.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.floatArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{floatArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [Float.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.floats 
         }
         XCTAssertEqual(query.render(), "{floats}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [Float.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.floatsArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{floatsArgs\(testArgs)}")
@@ -40,28 +40,28 @@ extension TestObject_Float_RenderTests {
 
 extension TestObject_Float_RenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, Float.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.float(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:float}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, Float.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.floatArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:floatArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [Float.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.floats(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:floats}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [Float.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.floatsArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:floatsArgs\(testArgs)}")
@@ -72,7 +72,7 @@ extension TestObject_Float_RenderTests {
 
 extension TestObject_Float_RenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, (Float.Result, Float.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.float 
             $0.float 
         }
@@ -80,7 +80,7 @@ extension TestObject_Float_RenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, (Float.Result, Float.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.floatArgs(arguments: .testDefault) 
             $0.floatArgs(arguments: .testDefault) 
         }
@@ -88,7 +88,7 @@ extension TestObject_Float_RenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([Float.Result], [Float.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.floats 
             $0.floats 
         }
@@ -96,7 +96,7 @@ extension TestObject_Float_RenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([Float.Result], [Float.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.floatsArgs(arguments: .testDefault) 
             $0.floatsArgs(arguments: .testDefault) 
         }

@@ -8,28 +8,28 @@ import XCTest
 
 extension TestInterface1_String_RenderTests {
     func testSingleRender() {
-        let query: _Operation<Query, String.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i1_string 
         }
         XCTAssertEqual(query.render(), "{i1_string}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, String.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i1_stringArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{i1_stringArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [String.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i1_strings 
         }
         XCTAssertEqual(query.render(), "{i1_strings}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [String.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i1_stringsArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{i1_stringsArgs\(testArgs)}")
@@ -40,28 +40,28 @@ extension TestInterface1_String_RenderTests {
 
 extension TestInterface1_String_RenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, String.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i1_string(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:i1_string}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, String.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i1_stringArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:i1_stringArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [String.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i1_strings(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:i1_strings}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [String.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i1_stringsArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:i1_stringsArgs\(testArgs)}")
@@ -72,7 +72,7 @@ extension TestInterface1_String_RenderTests {
 
 extension TestInterface1_String_RenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, (String.Result, String.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i1_string 
             $0.i1_string 
         }
@@ -80,7 +80,7 @@ extension TestInterface1_String_RenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, (String.Result, String.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i1_stringArgs(arguments: .testDefault) 
             $0.i1_stringArgs(arguments: .testDefault) 
         }
@@ -88,7 +88,7 @@ extension TestInterface1_String_RenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([String.Result], [String.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i1_strings 
             $0.i1_strings 
         }
@@ -96,7 +96,7 @@ extension TestInterface1_String_RenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([String.Result], [String.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i1_stringsArgs(arguments: .testDefault) 
             $0.i1_stringsArgs(arguments: .testDefault) 
         }

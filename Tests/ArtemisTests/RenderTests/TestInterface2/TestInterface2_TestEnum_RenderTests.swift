@@ -8,28 +8,28 @@ import XCTest
 
 extension TestInterface2_TestEnum_RenderTests {
     func testSingleRender() {
-        let query: _Operation<Query, TestEnum.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i2_testEnum 
         }
         XCTAssertEqual(query.render(), "{i2_testEnum}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, TestEnum.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i2_testEnumArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{i2_testEnumArgs\(testArgs)}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [TestEnum.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i2_testEnums 
         }
         XCTAssertEqual(query.render(), "{i2_testEnums}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [TestEnum.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i2_testEnumsArgs(arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{i2_testEnumsArgs\(testArgs)}")
@@ -40,28 +40,28 @@ extension TestInterface2_TestEnum_RenderTests {
 
 extension TestInterface2_TestEnum_RenderTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, TestEnum.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i2_testEnum(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:i2_testEnum}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, TestEnum.Result> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.i2_testEnumArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:i2_testEnumArgs\(testArgs)}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [TestEnum.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i2_testEnums(alias: "alias") 
         }
         XCTAssertEqual(query.render(), "{alias:i2_testEnums}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [TestEnum.Result]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.i2_testEnumsArgs(alias: "alias", arguments: .testDefault) 
         }
         XCTAssertEqual(query.render(), "{alias:i2_testEnumsArgs\(testArgs)}")
@@ -72,7 +72,7 @@ extension TestInterface2_TestEnum_RenderTests {
 
 extension TestInterface2_TestEnum_RenderTests {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, (TestEnum.Result, TestEnum.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i2_testEnum 
             $0.i2_testEnum 
         }
@@ -80,7 +80,7 @@ extension TestInterface2_TestEnum_RenderTests {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, (TestEnum.Result, TestEnum.Result)> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.i2_testEnumArgs(arguments: .testDefault) 
             $0.i2_testEnumArgs(arguments: .testDefault) 
         }
@@ -88,7 +88,7 @@ extension TestInterface2_TestEnum_RenderTests {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([TestEnum.Result], [TestEnum.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i2_testEnums 
             $0.i2_testEnums 
         }
@@ -96,7 +96,7 @@ extension TestInterface2_TestEnum_RenderTests {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([TestEnum.Result], [TestEnum.Result])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.i2_testEnumsArgs(arguments: .testDefault) 
             $0.i2_testEnumsArgs(arguments: .testDefault) 
         }

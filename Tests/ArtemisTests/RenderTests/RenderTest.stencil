@@ -16,8 +16,6 @@
 {% set _selBase %}{% call getAliasOf type "SelectionBase" %}{% endset %}
 {% set selBase %}{{_selBase|removeNewlines}}{% endset %}
 
-{% set selTypeRes %}{{selType}}.Result{% endset %}
-
 {# The property name that is used on the selection. If the property is on an interface, prepend an "iX_" #}
 {% set _sel %}
 {% if selBase|contains: "TestInterface" %}
@@ -48,28 +46,28 @@ import XCTest
 
 extension {{type.name}} {
     func testSingleRender() {
-        let query: _Operation<Query, {{selTypeRes}}> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.{{sel}}{{selTrail}}
         }
         XCTAssertEqual(query.render(), "{{o}}{{sel}}{{renderSelTrail}}}")
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, {{selTypeRes}}> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
         }
         XCTAssertEqual(query.render(), "{{o}}{{sel}}Args\(testArgs){{renderSelTrail}}}")
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.{{sel}}s{{selTrail}}
         }
         XCTAssertEqual(query.render(), "{{o}}{{sel}}s{{renderSelTrail}}}")
     }
 
     func testArrayArgsRender() {
-        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
         }
         XCTAssertEqual(query.render(), "{{o}}{{sel}}sArgs\(testArgs){{renderSelTrail}}}")
@@ -80,28 +78,28 @@ extension {{type.name}} {
 
 extension {{type.name}} {
     func testSingleAliasRender() {
-        let query: _Operation<Query, {{selTypeRes}}> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.{{sel}}(alias: "alias"){{selTrail}}
         }
         XCTAssertEqual(query.render(), "{alias:{{sel}}{{renderSelTrail}}}")
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, {{selTypeRes}}> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
         }
         XCTAssertEqual(query.render(), "{alias:{{sel}}Args\(testArgs){{renderSelTrail}}}")
     }
 
     func testArrayAliasRender() {
-        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.{{sel}}s(alias: "alias"){{selTrail}}
         }
         XCTAssertEqual(query.render(), "{alias:{{sel}}s{{renderSelTrail}}}")
     }
 
     func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
         }
         XCTAssertEqual(query.render(), "{alias:{{sel}}sArgs\(testArgs){{renderSelTrail}}}")
@@ -112,7 +110,7 @@ extension {{type.name}} {
 
 extension {{type.name}} {
     func testMultipleSingleRender() {
-        let query: _Operation<Query, ({{selTypeRes}}, {{selTypeRes}})> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.{{sel}}{{selTrail}}
             $0.{{sel}}{{selTrail}}
         }
@@ -120,7 +118,7 @@ extension {{type.name}} {
     }
 
     func testMultipleSingleArgsRender() {
-        let query: _Operation<Query, ({{selTypeRes}}, {{selTypeRes}})> = .query {
+        let query: _Operation<Query, (SelectionType.Result, SelectionType.Result)> = .query {
             $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
             $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
         }
@@ -128,7 +126,7 @@ extension {{type.name}} {
     }
 
     func testMultipleArrayRender() {
-        let query: _Operation<Query, ([{{selTypeRes}}], [{{selTypeRes}}])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.{{sel}}s{{selTrail}}
             $0.{{sel}}s{{selTrail}}
         }
@@ -136,7 +134,7 @@ extension {{type.name}} {
     }
 
     func testMultipleArrayArgsRender() {
-        let query: _Operation<Query, ([{{selTypeRes}}], [{{selTypeRes}}])> = .query {
+        let query: _Operation<Query, ([SelectionType.Result], [SelectionType.Result])> = .query {
             $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
             $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
         }
@@ -280,7 +278,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: {{selType}}.self) {
             $0.int
         }
-        let query: _Operation<Query, {{selTypeRes}}> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.{{sel}} {
                 fragment
             }
@@ -292,7 +290,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: {{selType}}.self) {
             $0.int
         }
-        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.{{sel}}s {
                 fragment
             }
@@ -304,7 +302,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: {{selType}}.self) {
             $0.int
         }
-        let query: _Operation<Query, {{selTypeRes}}> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             $0.{{sel}}Args(arguments: .testDefault) {
                 fragment
             }
@@ -316,7 +314,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: {{selType}}.self) {
             $0.int
         }
-        let query: _Operation<Query, [{{selTypeRes}}]> = .query {
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
             $0.{{sel}}sArgs(arguments: .testDefault) {
                 fragment
             }
