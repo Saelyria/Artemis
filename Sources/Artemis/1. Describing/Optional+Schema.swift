@@ -56,6 +56,8 @@ extension Optional: RawRepresentable where Wrapped: RawRepresentable, Wrapped.Ra
 }
 
 extension Optional: CaseIterable where Wrapped: Enum {
+    public typealias AllCases = [Self]
+
     public static var allCases: AllCases {
         return Wrapped.allCases.map { $0 }
     }
