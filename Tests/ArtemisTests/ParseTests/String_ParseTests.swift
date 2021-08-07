@@ -412,3 +412,295 @@ extension String_ParseTests {
         XCTAssertEqual(res[1], "value2")
     }
 }
+
+// MARK: - Tests to ensure fragments on Query selecting String and [String] with aliases can be used to pull values out of a result
+
+extension String_ParseTests {
+    func testSingleAliasOnFragmentParse() throws {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.string(alias: "alias")
+        }
+        let query: _Operation<Query, SelectionType.Result> = .query {
+            fragment
+        }
+        let response = Data("""
+        {
+            "data": {
+                "alias": "value"
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res, "value")
+    }
+
+    func testSingleArgsAliasOnFragmentParse() throws {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.stringArgs(alias: "alias", arguments: .testDefault)
+        }
+        let query: _Operation<Query, SelectionType.Result> = .query {
+            fragment
+        }
+        let response = Data("""
+        {
+            "data": {
+                "alias": "value"
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res, "value")
+    }
+
+    func testArrayAliasOnFragmentParse() throws {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.strings(alias: "alias")
+        }
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
+            fragment
+        }
+        let response = Data("""
+        {
+            "data": {
+                "alias": ["value1", "value2"]
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res.count, 2)
+        XCTAssertEqual(res[0], "value1")
+        XCTAssertEqual(res[1], "value2")
+    }
+
+    func testArrayArgsAliasOnFragmentParse() throws {
+        let fragment = Fragment("fragName", on: Query.self) {
+            $0.stringsArgs(alias: "alias", arguments: .testDefault)
+        }
+        let query: _Operation<Query, [SelectionType.Result]> = .query {
+            fragment
+        }
+        let response = Data("""
+        {
+            "data": {
+                "alias": ["value1", "value2"]
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res.count, 2)
+        XCTAssertEqual(res[0], "value1")
+        XCTAssertEqual(res[1], "value2")
+    }
+}
+
+
+// MARK: - Tests to ensure fragments on TestObject selecting String and [String] can be used to pull values out of a result
+
+extension String_ParseTests {
+    func testSingleOnObjectFragmentParse() throws {
+        let fragment = Fragment("fragName", on: TestObject.self) {
+            $0.string
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObject {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "string": "value"
+                }
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res.string, "value")
+    }
+
+    func testSingleArgsOnObjectFragmentParse() throws {
+        let fragment = Fragment("fragName", on: TestObject.self) {
+            $0.stringArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObject {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "stringArgs": "value"
+                }
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res.stringArgs, "value")
+    }
+
+    func testArrayOnObjectFragmentParse() throws {
+        let fragment = Fragment("fragName", on: TestObject.self) {
+            $0.strings
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObject {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "strings": ["value1", "value2"]
+                }
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res.strings?.count, 2)
+        XCTAssertEqual(res.strings?[0], "value1")
+        XCTAssertEqual(res.strings?[1], "value2")
+    }
+
+    func testArrayArgsOnObjectFragmentParse() throws {
+        let fragment = Fragment("fragName", on: TestObject.self) {
+            $0.stringsArgs(arguments: .testDefault)
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObject {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "stringsArgs": ["value1", "value2"]
+                }
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        XCTAssertEqual(res.stringsArgs?.count, 2)
+        XCTAssertEqual(res.stringsArgs?[0], "value1")
+        XCTAssertEqual(res.stringsArgs?[1], "value2")
+    }
+}
+
+// MARK: - Tests to ensure fragments on TestObject selecting String and [String] with aliases can be used to pull values out of a result
+
+extension String_ParseTests {
+    func testSingleAliasOnObjectFragmentParse() throws {
+        let fragment = Fragment("fragName", on: TestObject.self) {
+            $0.string(alias: "alias")
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObject {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": "value"
+                }
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        let aliased = res.get(\.string, alias: "alias")
+        XCTAssertEqual(aliased, "value")
+        XCTAssertNil(res.string)
+    }
+
+    func testSingleArgsAliasOnObjectFragmentParse() throws {
+        let fragment = Fragment("fragName", on: TestObject.self) {
+            $0.stringArgs(alias: "alias", arguments: .testDefault)
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObject {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": "value"
+                }
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        let aliased = res.get(\.stringArgs, alias: "alias")
+        XCTAssertEqual(aliased, "value")
+        XCTAssertNil(res.stringArgs)
+    }
+
+    func testArrayAliasOnObjectFragmentParse() throws {
+        let fragment = Fragment("fragName", on: TestObject.self) {
+            $0.strings(alias: "alias")
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObject {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": ["value1", "value2"]
+                }
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        let aliased = res.get(\.strings, alias: "alias")
+        XCTAssertEqual(aliased?.count, 2)
+        XCTAssertEqual(aliased?[0], "value1")
+        XCTAssertEqual(aliased?[1], "value2")
+        XCTAssertNil(res.strings)
+    }
+
+    func testArrayArgsAliasOnObjectFragmentParse() throws {
+        let fragment = Fragment("fragName", on: TestObject.self) {
+            $0.stringsArgs(alias: "alias", arguments: .testDefault)
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObject {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": ["value1", "value2"]
+                }
+            }
+        }
+        """.utf8)
+
+        let res = try query.createResult(from: response)
+        let aliased = res.get(\.stringsArgs, alias: "alias")
+        XCTAssertEqual(aliased?.count, 2)
+        XCTAssertEqual(aliased?[0], "value1")
+        XCTAssertEqual(aliased?[1], "value2")
+        XCTAssertNil(res.stringsArgs)
+    }}
