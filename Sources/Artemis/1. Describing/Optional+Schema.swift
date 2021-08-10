@@ -2,7 +2,7 @@ import Foundation
 
 extension Optional: _SelectionOutput where Wrapped: _SelectionOutput {
     public typealias Result = Wrapped.Result
-    public static func createUnsafeResult<R>(from: Any, key: String) throws -> R {
+    public static func createUnsafeResult(from: Any, key: String) throws -> Result {
         return try Wrapped.createUnsafeResult(from: from, key: key)
     }
 }

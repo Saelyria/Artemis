@@ -1,349 +1,351 @@
-/*
+// Generated using Sourcery 1.5.0 — https://github.com/krzysztofzablocki/Sourcery
+// DO NOT EDIT
+
 import XCTest
 @testable import Artemis
 
-// MARK: - Tests to ensure String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure TestEnum and [TestEnum] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface1_TestEnum_ParseTests {
     func testSingleParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.string
+            $0.i1_testEnum 
         }
         let response = Data("""
         {
             "data": {
-                "string": "value"
+                "i1_testEnum": "FIRST"
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, .first)
     }
 
     func testSingleArgsParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.stringArgs(arguments: .testDefault)
+            $0.i1_testEnumArgs(arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "stringArgs": "value"
+                "i1_testEnumArgs": "FIRST"
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, .first)
     }
 
     func testArrayParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.strings
+            $0.i1_testEnums 
         }
         let response = Data("""
         {
             "data": {
-                "strings": ["value1", "value2"]
+                "i1_testEnums": ["FIRST", "SECOND"]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], .first)
+        XCTAssertEqual(res?[safe: 1], .second)
     }
 
     func testArrayArgsParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.stringsArgs(arguments: .testDefault)
+            $0.i1_testEnumsArgs(arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "stringsArgs": ["value1", "value2"]
+                "i1_testEnumsArgs": ["FIRST", "SECOND"]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], .first)
+        XCTAssertEqual(res?[safe: 1], .second)
     }
 }
 
-// MARK: - Tests to ensure an alias of String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure an alias of TestEnum and [TestEnum] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface1_TestEnum_ParseTests {
     func testSingleAliasParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.string(alias: "alias")
+            $0.i1_testEnum(alias: "alias") 
         }
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": "FIRST"
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, .first)
     }
 
     func testSingleArgsAliasParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.stringArgs(alias: "alias", arguments: .testDefault)
+            $0.i1_testEnumArgs(alias: "alias", arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": "FIRST"
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, .first)
     }
 
     func testArrayAliasParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.strings(alias: "alias")
+            $0.i1_testEnums(alias: "alias") 
         }
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": ["FIRST", "SECOND"]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], .first)
+        XCTAssertEqual(res?[safe: 1], .second)
     }
 
     func testArrayArgsAliasParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.stringsArgs(alias: "alias", arguments: .testDefault)
+            $0.i1_testEnumsArgs(alias: "alias", arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": ["FIRST", "SECOND"]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], .first)
+        XCTAssertEqual(res?[safe: 1], .second)
     }
 }
 
-// MARK: - Tests to ensure String and [String] on an Object can be used to pull values out of a result
+// MARK: - Tests to ensure TestEnum and [TestEnum] on an Object can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface1_TestEnum_ParseTests {
     func testSingleOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.string
+                $0.i1_testEnum 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "string": "value"
+                    "i1_testEnum": "FIRST"
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.string, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i1_testEnum, .first)
     }
 
     func testSingleArgsOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringArgs(arguments: .testDefault)
+                $0.i1_testEnumArgs(arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "stringArgs": "value"
+                    "i1_testEnumArgs": "FIRST"
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.stringArgs, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i1_testEnumArgs, .first)
     }
 
     func testArrayOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.strings
+                $0.i1_testEnums 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "strings": ["value1", "value2"]
+                    "i1_testEnums": ["FIRST", "SECOND"]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.strings?.count, 2)
-        XCTAssertEqual(res.strings?[0], "value1")
-        XCTAssertEqual(res.strings?[1], "value2")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i1_testEnums?.count, 2)
+        XCTAssertEqual(res?.i1_testEnums?[safe: 0], .first)
+        XCTAssertEqual(res?.i1_testEnums?[safe: 1], .second)
     }
 
     func testArrayArgsOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringsArgs(arguments: .testDefault)
+                $0.i1_testEnumsArgs(arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "stringsArgs": ["value1", "value2"]
+                    "i1_testEnumsArgs": ["FIRST", "SECOND"]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.stringsArgs?.count, 2)
-        XCTAssertEqual(res.stringsArgs?[0], "value1")
-        XCTAssertEqual(res.stringsArgs?[1], "value2")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i1_testEnumsArgs?.count, 2)
+        XCTAssertEqual(res?.i1_testEnumsArgs?[safe: 0], .first)
+        XCTAssertEqual(res?.i1_testEnumsArgs?[safe: 1], .second)
     }
 }
 
-// MARK: - Tests to ensure an alias of String and [String] on an Object can be used to pull values out of a result
+// MARK: - Tests to ensure an alias of TestEnum and [TestEnum] on an Object can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface1_TestEnum_ParseTests {
     func testSingleAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.string(alias: "alias")
+                $0.i1_testEnum(alias: "alias") 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": "FIRST"
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.string, alias: "alias")
-        XCTAssertEqual(aliased, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i1_testEnum, alias: "alias")
+        XCTAssertEqual(aliased, .first)
     }
 
     func testSingleArgsAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringArgs(alias: "alias", arguments: .testDefault)
+                $0.i1_testEnumArgs(alias: "alias", arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": "FIRST"
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.stringArgs, alias: "alias")
-        XCTAssertEqual(aliased, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i1_testEnumArgs, alias: "alias")
+        XCTAssertEqual(aliased, .first)
     }
 
     func testArrayAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.strings(alias: "alias")
+                $0.i1_testEnums(alias: "alias") 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": ["FIRST", "SECOND"]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
 
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.strings, alias: "alias")
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i1_testEnums, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.strings)
+        XCTAssertEqual(aliased?[safe: 0], .first)
+        XCTAssertEqual(aliased?[safe: 1], .second)
+        XCTAssertNil(res?.i1_testEnums)
     }
 
     func testArrayArgsAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringsArgs(alias: "alias", arguments: .testDefault)
+                $0.i1_testEnumsArgs(alias: "alias", arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": ["FIRST", "SECOND"]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
 
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.stringsArgs, alias: "alias")
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i1_testEnumsArgs, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.stringsArgs)
+        XCTAssertEqual(aliased?[safe: 0], .first)
+        XCTAssertEqual(aliased?[safe: 1], .second)
+        XCTAssertNil(res?.i1_testEnumsArgs)
     }
 }
 
-// MARK: - Tests to ensure fragments on Query selecting String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on Query selecting TestEnum and [TestEnum] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface1_TestEnum_ParseTests {
     func testSingleOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.string
+            $0.i1_testEnum 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -351,18 +353,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "string": "value"
+                "i1_testEnum": "FIRST"
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, .first)
     }
 
     func testSingleArgsOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringArgs(arguments: .testDefault)
+            $0.i1_testEnumArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -370,18 +372,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "stringArgs": "value"
+                "i1_testEnumArgs": "FIRST"
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, .first)
     }
 
     func testArrayOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.strings
+            $0.i1_testEnums 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -389,20 +391,20 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "strings": ["value1", "value2"]
+                "i1_testEnums": ["FIRST", "SECOND"]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], .first)
+        XCTAssertEqual(res?[safe: 1], .second)
     }
 
     func testArrayArgsOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringsArgs(arguments: .testDefault)
+            $0.i1_testEnumsArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -410,24 +412,24 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "stringsArgs": ["value1", "value2"]
+                "i1_testEnumsArgs": ["FIRST", "SECOND"]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], .first)
+        XCTAssertEqual(res?[safe: 1], .second)
     }
 }
 
-// MARK: - Tests to ensure fragments on Query selecting String and [String] with aliases can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on Query selecting TestEnum and [TestEnum] with aliases can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface1_TestEnum_ParseTests {
     func testSingleAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.string(alias: "alias")
+            $0.i1_testEnum(alias: "alias") 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -435,18 +437,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": "FIRST"
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, .first)
     }
 
     func testSingleArgsAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringArgs(alias: "alias", arguments: .testDefault)
+            $0.i1_testEnumArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -454,18 +456,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": "FIRST"
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, .first)
     }
 
     func testArrayAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.strings(alias: "alias")
+            $0.i1_testEnums(alias: "alias") 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -473,20 +475,20 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": ["FIRST", "SECOND"]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], .first)
+        XCTAssertEqual(res?[safe: 1], .second)
     }
 
     func testArrayArgsAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringsArgs(alias: "alias", arguments: .testDefault)
+            $0.i1_testEnumsArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -494,25 +496,25 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": ["FIRST", "SECOND"]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], .first)
+        XCTAssertEqual(res?[safe: 1], .second)
     }
 }
 
 
-// MARK: - Tests to ensure fragments on TestObject selecting String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on TestObject selecting TestEnum and [TestEnum] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface1_TestEnum_ParseTests {
     func testSingleOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.string
+            $0.i1_testEnum 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -523,19 +525,19 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "string": "value"
+                    "i1_testEnum": "FIRST"
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.string, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i1_testEnum, .first)
     }
 
     func testSingleArgsOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringArgs(arguments: .testDefault)
+            $0.i1_testEnumArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -546,19 +548,19 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "stringArgs": "value"
+                    "i1_testEnumArgs": "FIRST"
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.stringArgs, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i1_testEnumArgs, .first)
     }
 
     func testArrayOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.strings
+            $0.i1_testEnums 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -569,21 +571,21 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "strings": ["value1", "value2"]
+                    "i1_testEnums": ["FIRST", "SECOND"]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.strings?.count, 2)
-        XCTAssertEqual(res.strings?[0], "value1")
-        XCTAssertEqual(res.strings?[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i1_testEnums?.count, 2)
+        XCTAssertEqual(res?.i1_testEnums?[safe: 0], .first)
+        XCTAssertEqual(res?.i1_testEnums?[safe: 1], .second)
     }
 
     func testArrayArgsOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringsArgs(arguments: .testDefault)
+            $0.i1_testEnumsArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -594,25 +596,25 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "stringsArgs": ["value1", "value2"]
+                    "i1_testEnumsArgs": ["FIRST", "SECOND"]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.stringsArgs?.count, 2)
-        XCTAssertEqual(res.stringsArgs?[0], "value1")
-        XCTAssertEqual(res.stringsArgs?[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i1_testEnumsArgs?.count, 2)
+        XCTAssertEqual(res?.i1_testEnumsArgs?[safe: 0], .first)
+        XCTAssertEqual(res?.i1_testEnumsArgs?[safe: 1], .second)
     }
 }
 
-// MARK: - Tests to ensure fragments on TestObject selecting String and [String] with aliases can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on TestObject selecting TestEnum and [TestEnum] with aliases can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface1_TestEnum_ParseTests {
     func testSingleAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.string(alias: "alias")
+            $0.i1_testEnum(alias: "alias") 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -623,21 +625,21 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": "FIRST"
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.string, alias: "alias")
-        XCTAssertEqual(aliased, "value")
-        XCTAssertNil(res.string)
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i1_testEnum, alias: "alias")
+        XCTAssertEqual(aliased, .first)
+        XCTAssertNil(res?.i1_testEnum)
     }
 
     func testSingleArgsAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringArgs(alias: "alias", arguments: .testDefault)
+            $0.i1_testEnumArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -648,21 +650,21 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": "FIRST"
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.stringArgs, alias: "alias")
-        XCTAssertEqual(aliased, "value")
-        XCTAssertNil(res.stringArgs)
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i1_testEnumArgs, alias: "alias")
+        XCTAssertEqual(aliased, .first)
+        XCTAssertNil(res?.i1_testEnumArgs)
     }
 
     func testArrayAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.strings(alias: "alias")
+            $0.i1_testEnums(alias: "alias") 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -673,23 +675,23 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": ["FIRST", "SECOND"]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.strings, alias: "alias")
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i1_testEnums, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.strings)
+        XCTAssertEqual(aliased?[safe: 0], .first)
+        XCTAssertEqual(aliased?[safe: 1], .second)
+        XCTAssertNil(res?.i1_testEnums)
     }
 
     func testArrayArgsAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringsArgs(alias: "alias", arguments: .testDefault)
+            $0.i1_testEnumsArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -700,18 +702,17 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": ["FIRST", "SECOND"]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.stringsArgs, alias: "alias")
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i1_testEnumsArgs, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.stringsArgs)
+        XCTAssertEqual(aliased?[safe: 0], .first)
+        XCTAssertEqual(aliased?[safe: 1], .second)
+        XCTAssertNil(res?.i1_testEnumsArgs)
     }
 }
-*/

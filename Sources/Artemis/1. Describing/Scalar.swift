@@ -10,9 +10,8 @@ public protocol Scalar: _SelectionOutput, _SelectionInput {
 }
 
 public extension Scalar {
-    static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
-        guard R.self == Result.self else { throw GraphQLError.invalidOperation }
-        guard let returnValue = object as? R else { throw GraphQLError.singleItemParseFailure(operation: key) }
+    static func createUnsafeResult(from object: Any, key: String) throws -> Result {
+        guard let returnValue = object as? Result else { throw GraphQLError.singleItemParseFailure(operation: key) }
         return returnValue
     }
 }

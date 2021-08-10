@@ -63,8 +63,8 @@ public protocol Interface: Object { }
 /**
 A protocol that designates a type as representing a GraphQL 'enum'.
 */
-public protocol Enum: Scalar, CaseIterable, RawRepresentable, Encodable where Self.RawValue == String, Self.Result == String { }
-extension Enum {
+public protocol Enum: Scalar, CaseIterable, RawRepresentable, Encodable where Self.RawValue == String { }
+extension Enum where Result == Self {
     public static var `default`: Self {
         return self.allCases[self.allCases.startIndex]
     }
@@ -72,6 +72,13 @@ extension Enum {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(EncodedEnum(rawValue: self.rawValue))
+    }
+
+    public static func createUnsafeResult(from object: Any, key: String) throws -> Result {
+        guard let raw = object as? String,
+              let returnValue = Self(rawValue: raw)
+        else { throw GraphQLError.singleItemParseFailure(operation: key) }
+        return returnValue
     }
 }
 
@@ -153,12 +160,9 @@ public extension _ObjectSchema where ImplementedInterfaces == Interfaces<Void, V
 }
 
 public extension Object {
-	static func createUnsafeResult<R>(from object: Any, key: String) throws -> R {
-		guard R.self == Result.self else {
-            throw GraphQLError.invalidOperation
-        }
+	static func createUnsafeResult(from object: Any, key: String) throws -> Result {
 		guard let dictRepresentation = object as? [String: Any] else { throw GraphQLError.singleItemParseFailure(operation: key) }
-		return Partial<Self>(values: dictRepresentation) as! R
+		return Partial<Self>(values: dictRepresentation) as! Result
 	}
 }
 

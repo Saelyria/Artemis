@@ -1,262 +1,167 @@
-{% macro getAliasOf type aliasName %}{% typed type as Type %}
-{% for alias in types.typealiases %}
-{% if alias.aliasName == aliasName and alias.parentName == type.name %}
-{{alias.typeName}}
-{% endif %}
-{% endfor %}
-{% endmacro %}
-
-{% for type in types.all where type.implements.ParseTestCase %}
-
-{# The aliased type that this test is selecting (e.g. Int, String) #}
-{% set _selType %}{% call getAliasOf type "SelectionType" %}{% endset %}
-{% set selType %}{{_selType|removeNewlines}}{% endset %}
-
-{# The aliased type that this test is selecting on (e.g. TestObject, TestInterface1) #}
-{% set _selBase %}{% call getAliasOf type "SelectionBase" %}{% endset %}
-{% set selBase %}{{_selBase|removeNewlines}}{% endset %}
-
-{# The property name that is used on the selection. If the property is on an interface, prepend an "iX_" #}
-{% set _sel %}
-{% if selBase|contains: "TestInterface" %}
-i{{selBase|replace: "TestInterface", ""}}_{{_selType|removeNewlines|lowerFirstLetter}}
-{% else %}
-{{_selType|removeNewlines|lowerFirstLetter}}
-{% endif %}
-{% endset %}
-{% set sel %}{{_sel|removeNewlines}}{% endset %}
-
-{% set _selTrail %}
-{% if selType == "TestObject" %}
- { $0.int }
-{% endif %}
-{% endset %}
-{% set selTrail %} {{_selTrail|removeNewlines: "leading"}}{% endset %}
-{% set renderSelTrail %}{{selTrail||replace: "$0.", ""|removeNewlines}}{% endset %}
-
-{% set _value %}
-{% if selType == "String" %}
-"value"
-{% elif selType == "Int" %}
-123
-{% elif selType == "Double" or selType == "Float" %}
-1.23
-{% elif selType == "Bool" %}
-true
-{% elif selType == "TestEnum" %}
-.first
-{% elif selType == "TestObject" %}
-{ "int": 321 }
-{% endif %}
-{% endset %}
-{% set value %}{{_value|removeNewlines: "leading"}}{% endset %}
-{% set _valueRaw %}
-{% if selType == "TestEnum" %}"FIRST"{% else %}{{value}}{% endif %}
-{% endset %}
-{% set valueRaw %}{{_valueRaw|removeNewlines: "leading"}}{% endset %}
-
-{% set _value2 %}
-{% if selType == "String" %}
-"value2"
-{% elif selType == "Int" %}
-321
-{% elif selType == "Double" or selType == "Float" %}
-3.21
-{% elif selType == "Bool" %}
-false
-{% elif selType == "TestEnum" %}
-.second
-{% elif selType == "TestObject" %}
-{ "int": 123 }
-{% endif %}
-{% endset %}
-{% set value2 %}{{_value2|removeNewlines: "leading"}}{% endset %}
-{% set _value2Raw %}
-{% if selType == "TestEnum" %}"SECOND"{% else %}{{value2}}{% endif %}
-{% endset %}
-{% set value2Raw %}{{_value2Raw|removeNewlines: "leading"}}{% endset %}
-
-{% set _resultCompare %}
-{% if selType == "TestObject" %}
-?.int, 321
-{% else %}
-, {{value}}
-{% endif %}
-{% endset %}
-{% set resultCompare %}{{_resultCompare|removeNewlines: "leading"}}{% endset %}
-
-{% set _resultCompare2 %}
-{% if selType == "TestObject" %}
-?.int, 123
-{% else %}
-, {{value2}}
-{% endif %}
-{% endset %}
-{% set resultCompare2 %}{{_resultCompare2|removeNewlines: "leading"}}{% endset %}
-
-// sourcery:file:ParseTests/{{selBase}}/{{type.name}}.swift
+// Generated using Sourcery 1.5.0 — https://github.com/krzysztofzablocki/Sourcery
+// DO NOT EDIT
 
 import XCTest
 @testable import Artemis
 
-// MARK: - Tests to ensure {{selType}} and [{{selType}}] can be used to pull values out of a result
+// MARK: - Tests to ensure TestObject and [TestObject] can be used to pull values out of a result
 
-extension {{type.name}} {
+extension TestInterface4_TestObject_ParseTests {
     func testSingleParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.{{sel}}{{selTrail}}
+            $0.i4_testObject { $0.int }
         }
         let response = Data("""
         {
             "data": {
-                "{{sel}}": {{valueRaw}}
+                "i4_testObject": { "int": 321 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res{{resultCompare}})
+        XCTAssertEqual(res?.int, 321)
     }
 
     func testSingleArgsParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectArgs(arguments: .testDefault) { $0.int }
         }
         let response = Data("""
         {
             "data": {
-                "{{sel}}Args": {{valueRaw}}
+                "i4_testObjectArgs": { "int": 321 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res{{resultCompare}})
+        XCTAssertEqual(res?.int, 321)
     }
 
     func testArrayParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.{{sel}}s{{selTrail}}
+            $0.i4_testObjects { $0.int }
         }
         let response = Data("""
         {
             "data": {
-                "{{sel}}s": [{{valueRaw}}, {{value2Raw}}]
+                "i4_testObjects": [{ "int": 321 }, { "int": 123 }]
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 
     func testArrayArgsParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectsArgs(arguments: .testDefault) { $0.int }
         }
         let response = Data("""
         {
             "data": {
-                "{{sel}}sArgs": [{{valueRaw}}, {{value2Raw}}]
+                "i4_testObjectsArgs": [{ "int": 321 }, { "int": 123 }]
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 }
 
-// MARK: - Tests to ensure an alias of {{selType}} and [{{selType}}] can be used to pull values out of a result
+// MARK: - Tests to ensure an alias of TestObject and [TestObject] can be used to pull values out of a result
 
-extension {{type.name}} {
+extension TestInterface4_TestObject_ParseTests {
     func testSingleAliasParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.{{sel}}(alias: "alias"){{selTrail}}
+            $0.i4_testObject(alias: "alias") { $0.int }
         }
         let response = Data("""
         {
             "data": {
-                "alias": {{valueRaw}}
+                "alias": { "int": 321 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res{{resultCompare}})
+        XCTAssertEqual(res?.int, 321)
     }
 
     func testSingleArgsAliasParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectArgs(alias: "alias", arguments: .testDefault) { $0.int }
         }
         let response = Data("""
         {
             "data": {
-                "alias": {{valueRaw}}
+                "alias": { "int": 321 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res{{resultCompare}})
+        XCTAssertEqual(res?.int, 321)
     }
 
     func testArrayAliasParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.{{sel}}s(alias: "alias"){{selTrail}}
+            $0.i4_testObjects(alias: "alias") { $0.int }
         }
         let response = Data("""
         {
             "data": {
-                "alias": [{{valueRaw}}, {{value2Raw}}]
+                "alias": [{ "int": 321 }, { "int": 123 }]
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 
     func testArrayArgsAliasParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectsArgs(alias: "alias", arguments: .testDefault) { $0.int }
         }
         let response = Data("""
         {
             "data": {
-                "alias": [{{valueRaw}}, {{value2Raw}}]
+                "alias": [{ "int": 321 }, { "int": 123 }]
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 }
 
-// MARK: - Tests to ensure {{selType}} and [{{selType}}] on an Object can be used to pull values out of a result
+// MARK: - Tests to ensure TestObject and [TestObject] on an Object can be used to pull values out of a result
 
-extension {{type.name}} {
+extension TestInterface4_TestObject_ParseTests {
     func testSingleOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.{{sel}}{{selTrail}}
+                $0.i4_testObject { $0.int }
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "{{sel}}": {{valueRaw}}
+                    "i4_testObject": { "int": 321 }
                 }
             }
         }
@@ -264,20 +169,20 @@ extension {{type.name}} {
 
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        XCTAssertEqual(res?.{{sel}}{{resultCompare}})
+        XCTAssertEqual(res?.i4_testObject?.int, 321)
     }
 
     func testSingleArgsOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
+                $0.i4_testObjectArgs(arguments: .testDefault) { $0.int }
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "{{sel}}Args": {{valueRaw}}
+                    "i4_testObjectArgs": { "int": 321 }
                 }
             }
         }
@@ -285,20 +190,20 @@ extension {{type.name}} {
 
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        XCTAssertEqual(res?.{{sel}}Args{{resultCompare}})
+        XCTAssertEqual(res?.i4_testObjectArgs?.int, 321)
     }
 
     func testArrayOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.{{sel}}s{{selTrail}}
+                $0.i4_testObjects { $0.int }
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "{{sel}}s": [{{valueRaw}}, {{value2Raw}}]
+                    "i4_testObjects": [{ "int": 321 }, { "int": 123 }]
                 }
             }
         }
@@ -306,22 +211,22 @@ extension {{type.name}} {
 
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        XCTAssertEqual(res?.{{sel}}s?.count, 2)
-        XCTAssertEqual(res?.{{sel}}s?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?.{{sel}}s?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?.i4_testObjects?.count, 2)
+        XCTAssertEqual(res?.i4_testObjects?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?.i4_testObjects?[safe: 1]?.int, 123)
     }
 
     func testArrayArgsOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
+                $0.i4_testObjectsArgs(arguments: .testDefault) { $0.int }
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "{{sel}}sArgs": [{{valueRaw}}, {{value2Raw}}]
+                    "i4_testObjectsArgs": [{ "int": 321 }, { "int": 123 }]
                 }
             }
         }
@@ -329,26 +234,26 @@ extension {{type.name}} {
 
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        XCTAssertEqual(res?.{{sel}}sArgs?.count, 2)
-        XCTAssertEqual(res?.{{sel}}sArgs?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?.{{sel}}sArgs?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?.i4_testObjectsArgs?.count, 2)
+        XCTAssertEqual(res?.i4_testObjectsArgs?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?.i4_testObjectsArgs?[safe: 1]?.int, 123)
     }
 }
 
-// MARK: - Tests to ensure an alias of {{selType}} and [{{selType}}] on an Object can be used to pull values out of a result
+// MARK: - Tests to ensure an alias of TestObject and [TestObject] on an Object can be used to pull values out of a result
 
-extension {{type.name}} {
+extension TestInterface4_TestObject_ParseTests {
     func testSingleAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.{{sel}}(alias: "alias"){{selTrail}}
+                $0.i4_testObject(alias: "alias") { $0.int }
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": {{valueRaw}}
+                    "alias": { "int": 321 }
                 }
             }
         }
@@ -356,21 +261,21 @@ extension {{type.name}} {
 
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.{{sel}}, alias: "alias")
-        XCTAssertEqual(aliased{{resultCompare}})
+        let aliased = res?.get(\.i4_testObject, alias: "alias")
+        XCTAssertEqual(aliased?.int, 321)
     }
 
     func testSingleArgsAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
+                $0.i4_testObjectArgs(alias: "alias", arguments: .testDefault) { $0.int }
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": {{valueRaw}}
+                    "alias": { "int": 321 }
                 }
             }
         }
@@ -378,21 +283,21 @@ extension {{type.name}} {
 
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.{{sel}}Args, alias: "alias")
-        XCTAssertEqual(aliased{{resultCompare}})
+        let aliased = res?.get(\.i4_testObjectArgs, alias: "alias")
+        XCTAssertEqual(aliased?.int, 321)
     }
 
     func testArrayAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.{{sel}}s(alias: "alias"){{selTrail}}
+                $0.i4_testObjects(alias: "alias") { $0.int }
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": [{{valueRaw}}, {{value2Raw}}]
+                    "alias": [{ "int": 321 }, { "int": 123 }]
                 }
             }
         }
@@ -401,24 +306,24 @@ extension {{type.name}} {
         let res: Partial<TestObject>? = try? query.createResult(from: response)
 
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.{{sel}}s, alias: "alias")
+        let aliased = res?.get(\.i4_testObjects, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(aliased?[safe: 1]{{resultCompare2}})
-        XCTAssertNil(res?.{{sel}}s)
+        XCTAssertEqual(aliased?[safe: 0]?.int, 321)
+        XCTAssertEqual(aliased?[safe: 1]?.int, 123)
+        XCTAssertNil(res?.i4_testObjects)
     }
 
     func testArrayArgsAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
+                $0.i4_testObjectsArgs(alias: "alias", arguments: .testDefault) { $0.int }
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": [{{valueRaw}}, {{value2Raw}}]
+                    "alias": [{ "int": 321 }, { "int": 123 }]
                 }
             }
         }
@@ -427,20 +332,20 @@ extension {{type.name}} {
         let res: Partial<TestObject>? = try? query.createResult(from: response)
 
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.{{sel}}sArgs, alias: "alias")
+        let aliased = res?.get(\.i4_testObjectsArgs, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(aliased?[safe: 1]{{resultCompare2}})
-        XCTAssertNil(res?.{{sel}}sArgs)
+        XCTAssertEqual(aliased?[safe: 0]?.int, 321)
+        XCTAssertEqual(aliased?[safe: 1]?.int, 123)
+        XCTAssertNil(res?.i4_testObjectsArgs)
     }
 }
 
-// MARK: - Tests to ensure fragments on Query selecting {{selType}} and [{{selType}}] can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on Query selecting TestObject and [TestObject] can be used to pull values out of a result
 
-extension {{type.name}} {
+extension TestInterface4_TestObject_ParseTests {
     func testSingleOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}{{selTrail}}
+            $0.i4_testObject { $0.int }
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -448,18 +353,18 @@ extension {{type.name}} {
         let response = Data("""
         {
             "data": {
-                "{{sel}}": {{valueRaw}}
+                "i4_testObject": { "int": 321 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res{{resultCompare}})
+        XCTAssertEqual(res?.int, 321)
     }
 
     func testSingleArgsOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectArgs(arguments: .testDefault) { $0.int }
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -467,18 +372,18 @@ extension {{type.name}} {
         let response = Data("""
         {
             "data": {
-                "{{sel}}Args": {{valueRaw}}
+                "i4_testObjectArgs": { "int": 321 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res{{resultCompare}})
+        XCTAssertEqual(res?.int, 321)
     }
 
     func testArrayOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}s{{selTrail}}
+            $0.i4_testObjects { $0.int }
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -486,20 +391,20 @@ extension {{type.name}} {
         let response = Data("""
         {
             "data": {
-                "{{sel}}s": [{{valueRaw}}, {{value2Raw}}]
+                "i4_testObjects": [{ "int": 321 }, { "int": 123 }]
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 
     func testArrayArgsOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectsArgs(arguments: .testDefault) { $0.int }
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -507,24 +412,24 @@ extension {{type.name}} {
         let response = Data("""
         {
             "data": {
-                "{{sel}}sArgs": [{{valueRaw}}, {{value2Raw}}]
+                "i4_testObjectsArgs": [{ "int": 321 }, { "int": 123 }]
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 }
 
-// MARK: - Tests to ensure fragments on Query selecting {{selType}} and [{{selType}}] with aliases can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on Query selecting TestObject and [TestObject] with aliases can be used to pull values out of a result
 
-extension {{type.name}} {
+extension TestInterface4_TestObject_ParseTests {
     func testSingleAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}(alias: "alias"){{selTrail}}
+            $0.i4_testObject(alias: "alias") { $0.int }
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -532,18 +437,18 @@ extension {{type.name}} {
         let response = Data("""
         {
             "data": {
-                "alias": {{valueRaw}}
+                "alias": { "int": 321 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res{{resultCompare}})
+        XCTAssertEqual(res?.int, 321)
     }
 
     func testSingleArgsAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectArgs(alias: "alias", arguments: .testDefault) { $0.int }
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -551,18 +456,18 @@ extension {{type.name}} {
         let response = Data("""
         {
             "data": {
-                "alias": {{valueRaw}}
+                "alias": { "int": 321 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res{{resultCompare}})
+        XCTAssertEqual(res?.int, 321)
     }
 
     func testArrayAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}s(alias: "alias"){{selTrail}}
+            $0.i4_testObjects(alias: "alias") { $0.int }
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -570,20 +475,20 @@ extension {{type.name}} {
         let response = Data("""
         {
             "data": {
-                "alias": [{{valueRaw}}, {{value2Raw}}]
+                "alias": [{ "int": 321 }, { "int": 123 }]
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 
     func testArrayArgsAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectsArgs(alias: "alias", arguments: .testDefault) { $0.int }
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -591,25 +496,25 @@ extension {{type.name}} {
         let response = Data("""
         {
             "data": {
-                "alias": [{{valueRaw}}, {{value2Raw}}]
+                "alias": [{ "int": 321 }, { "int": 123 }]
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 }
 
 
-// MARK: - Tests to ensure fragments on TestObject selecting {{selType}} and [{{selType}}] can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on TestObject selecting TestObject and [TestObject] can be used to pull values out of a result
 
-extension {{type.name}} {
+extension TestInterface4_TestObject_ParseTests {
     func testSingleOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.{{sel}}{{selTrail}}
+            $0.i4_testObject { $0.int }
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -620,19 +525,19 @@ extension {{type.name}} {
         {
             "data": {
                 "testObject": {
-                    "{{sel}}": {{valueRaw}}
+                    "i4_testObject": { "int": 321 }
                 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.{{sel}}{{resultCompare}})
+        XCTAssertEqual(res?.i4_testObject?.int, 321)
     }
 
     func testSingleArgsOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectArgs(arguments: .testDefault) { $0.int }
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -643,19 +548,19 @@ extension {{type.name}} {
         {
             "data": {
                 "testObject": {
-                    "{{sel}}Args": {{valueRaw}}
+                    "i4_testObjectArgs": { "int": 321 }
                 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.{{sel}}Args{{resultCompare}})
+        XCTAssertEqual(res?.i4_testObjectArgs?.int, 321)
     }
 
     func testArrayOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.{{sel}}s{{selTrail}}
+            $0.i4_testObjects { $0.int }
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -666,21 +571,21 @@ extension {{type.name}} {
         {
             "data": {
                 "testObject": {
-                    "{{sel}}s": [{{valueRaw}}, {{value2Raw}}]
+                    "i4_testObjects": [{ "int": 321 }, { "int": 123 }]
                 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.{{sel}}s?.count, 2)
-        XCTAssertEqual(res?.{{sel}}s?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?.{{sel}}s?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?.i4_testObjects?.count, 2)
+        XCTAssertEqual(res?.i4_testObjects?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?.i4_testObjects?[safe: 1]?.int, 123)
     }
 
     func testArrayArgsOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectsArgs(arguments: .testDefault) { $0.int }
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -691,25 +596,25 @@ extension {{type.name}} {
         {
             "data": {
                 "testObject": {
-                    "{{sel}}sArgs": [{{valueRaw}}, {{value2Raw}}]
+                    "i4_testObjectsArgs": [{ "int": 321 }, { "int": 123 }]
                 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.{{sel}}sArgs?.count, 2)
-        XCTAssertEqual(res?.{{sel}}sArgs?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?.{{sel}}sArgs?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?.i4_testObjectsArgs?.count, 2)
+        XCTAssertEqual(res?.i4_testObjectsArgs?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?.i4_testObjectsArgs?[safe: 1]?.int, 123)
     }
 }
 
-// MARK: - Tests to ensure fragments on TestObject selecting {{selType}} and [{{selType}}] with aliases can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on TestObject selecting TestObject and [TestObject] with aliases can be used to pull values out of a result
 
-extension {{type.name}} {
+extension TestInterface4_TestObject_ParseTests {
     func testSingleAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.{{sel}}(alias: "alias"){{selTrail}}
+            $0.i4_testObject(alias: "alias") { $0.int }
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -720,21 +625,21 @@ extension {{type.name}} {
         {
             "data": {
                 "testObject": {
-                    "alias": {{valueRaw}}
+                    "alias": { "int": 321 }
                 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        let aliased = res?.get(\.{{sel}}, alias: "alias")
-        XCTAssertEqual(aliased{{resultCompare}})
-        XCTAssertNil(res?.{{sel}})
+        let aliased = res?.get(\.i4_testObject, alias: "alias")
+        XCTAssertEqual(aliased?.int, 321)
+        XCTAssertNil(res?.i4_testObject)
     }
 
     func testSingleArgsAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectArgs(alias: "alias", arguments: .testDefault) { $0.int }
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -745,21 +650,21 @@ extension {{type.name}} {
         {
             "data": {
                 "testObject": {
-                    "alias": {{valueRaw}}
+                    "alias": { "int": 321 }
                 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        let aliased = res?.get(\.{{sel}}Args, alias: "alias")
-        XCTAssertEqual(aliased{{resultCompare}})
-        XCTAssertNil(res?.{{sel}}Args)
+        let aliased = res?.get(\.i4_testObjectArgs, alias: "alias")
+        XCTAssertEqual(aliased?.int, 321)
+        XCTAssertNil(res?.i4_testObjectArgs)
     }
 
     func testArrayAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.{{sel}}s(alias: "alias"){{selTrail}}
+            $0.i4_testObjects(alias: "alias") { $0.int }
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -770,23 +675,23 @@ extension {{type.name}} {
         {
             "data": {
                 "testObject": {
-                    "alias": [{{valueRaw}}, {{value2Raw}}]
+                    "alias": [{ "int": 321 }, { "int": 123 }]
                 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        let aliased = res?.get(\.{{sel}}s, alias: "alias")
+        let aliased = res?.get(\.i4_testObjects, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(aliased?[safe: 1]{{resultCompare2}})
-        XCTAssertNil(res?.{{sel}}s)
+        XCTAssertEqual(aliased?[safe: 0]?.int, 321)
+        XCTAssertEqual(aliased?[safe: 1]?.int, 123)
+        XCTAssertNil(res?.i4_testObjects)
     }
 
     func testArrayArgsAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
+            $0.i4_testObjectsArgs(alias: "alias", arguments: .testDefault) { $0.int }
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -797,21 +702,17 @@ extension {{type.name}} {
         {
             "data": {
                 "testObject": {
-                    "alias": [{{valueRaw}}, {{value2Raw}}]
+                    "alias": [{ "int": 321 }, { "int": 123 }]
                 }
             }
         }
         """.utf8)
 
         let res = try? query.createResult(from: response)
-        let aliased = res?.get(\.{{sel}}sArgs, alias: "alias")
+        let aliased = res?.get(\.i4_testObjectsArgs, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(aliased?[safe: 1]{{resultCompare2}})
-        XCTAssertNil(res?.{{sel}}sArgs)
+        XCTAssertEqual(aliased?[safe: 0]?.int, 321)
+        XCTAssertEqual(aliased?[safe: 1]?.int, 123)
+        XCTAssertNil(res?.i4_testObjectsArgs)
     }
 }
-
-// sourcery:end
-
-{% endfor %}

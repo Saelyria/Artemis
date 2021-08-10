@@ -1,349 +1,351 @@
-/*
+// Generated using Sourcery 1.5.0 — https://github.com/krzysztofzablocki/Sourcery
+// DO NOT EDIT
+
 import XCTest
 @testable import Artemis
 
-// MARK: - Tests to ensure String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure Double and [Double] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface2_Double_ParseTests {
     func testSingleParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.string
+            $0.i2_double 
         }
         let response = Data("""
         {
             "data": {
-                "string": "value"
+                "i2_double": 1.23
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, 1.23)
     }
 
     func testSingleArgsParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.stringArgs(arguments: .testDefault)
+            $0.i2_doubleArgs(arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "stringArgs": "value"
+                "i2_doubleArgs": 1.23
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, 1.23)
     }
 
     func testArrayParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.strings
+            $0.i2_doubles 
         }
         let response = Data("""
         {
             "data": {
-                "strings": ["value1", "value2"]
+                "i2_doubles": [1.23, 3.21]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], 1.23)
+        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 
     func testArrayArgsParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.stringsArgs(arguments: .testDefault)
+            $0.i2_doublesArgs(arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "stringsArgs": ["value1", "value2"]
+                "i2_doublesArgs": [1.23, 3.21]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], 1.23)
+        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 }
 
-// MARK: - Tests to ensure an alias of String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure an alias of Double and [Double] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface2_Double_ParseTests {
     func testSingleAliasParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.string(alias: "alias")
+            $0.i2_double(alias: "alias") 
         }
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": 1.23
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, 1.23)
     }
 
     func testSingleArgsAliasParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.stringArgs(alias: "alias", arguments: .testDefault)
+            $0.i2_doubleArgs(alias: "alias", arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": 1.23
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, 1.23)
     }
 
     func testArrayAliasParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.strings(alias: "alias")
+            $0.i2_doubles(alias: "alias") 
         }
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": [1.23, 3.21]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], 1.23)
+        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 
     func testArrayArgsAliasParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.stringsArgs(alias: "alias", arguments: .testDefault)
+            $0.i2_doublesArgs(alias: "alias", arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": [1.23, 3.21]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], 1.23)
+        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 }
 
-// MARK: - Tests to ensure String and [String] on an Object can be used to pull values out of a result
+// MARK: - Tests to ensure Double and [Double] on an Object can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface2_Double_ParseTests {
     func testSingleOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.string
+                $0.i2_double 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "string": "value"
+                    "i2_double": 1.23
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.string, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i2_double, 1.23)
     }
 
     func testSingleArgsOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringArgs(arguments: .testDefault)
+                $0.i2_doubleArgs(arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "stringArgs": "value"
+                    "i2_doubleArgs": 1.23
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.stringArgs, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i2_doubleArgs, 1.23)
     }
 
     func testArrayOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.strings
+                $0.i2_doubles 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "strings": ["value1", "value2"]
+                    "i2_doubles": [1.23, 3.21]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.strings?.count, 2)
-        XCTAssertEqual(res.strings?[0], "value1")
-        XCTAssertEqual(res.strings?[1], "value2")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i2_doubles?.count, 2)
+        XCTAssertEqual(res?.i2_doubles?[safe: 0], 1.23)
+        XCTAssertEqual(res?.i2_doubles?[safe: 1], 3.21)
     }
 
     func testArrayArgsOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringsArgs(arguments: .testDefault)
+                $0.i2_doublesArgs(arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "stringsArgs": ["value1", "value2"]
+                    "i2_doublesArgs": [1.23, 3.21]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.stringsArgs?.count, 2)
-        XCTAssertEqual(res.stringsArgs?[0], "value1")
-        XCTAssertEqual(res.stringsArgs?[1], "value2")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i2_doublesArgs?.count, 2)
+        XCTAssertEqual(res?.i2_doublesArgs?[safe: 0], 1.23)
+        XCTAssertEqual(res?.i2_doublesArgs?[safe: 1], 3.21)
     }
 }
 
-// MARK: - Tests to ensure an alias of String and [String] on an Object can be used to pull values out of a result
+// MARK: - Tests to ensure an alias of Double and [Double] on an Object can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface2_Double_ParseTests {
     func testSingleAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.string(alias: "alias")
+                $0.i2_double(alias: "alias") 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": 1.23
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.string, alias: "alias")
-        XCTAssertEqual(aliased, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i2_double, alias: "alias")
+        XCTAssertEqual(aliased, 1.23)
     }
 
     func testSingleArgsAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringArgs(alias: "alias", arguments: .testDefault)
+                $0.i2_doubleArgs(alias: "alias", arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": 1.23
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.stringArgs, alias: "alias")
-        XCTAssertEqual(aliased, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i2_doubleArgs, alias: "alias")
+        XCTAssertEqual(aliased, 1.23)
     }
 
     func testArrayAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.strings(alias: "alias")
+                $0.i2_doubles(alias: "alias") 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": [1.23, 3.21]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
 
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.strings, alias: "alias")
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i2_doubles, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.strings)
+        XCTAssertEqual(aliased?[safe: 0], 1.23)
+        XCTAssertEqual(aliased?[safe: 1], 3.21)
+        XCTAssertNil(res?.i2_doubles)
     }
 
     func testArrayArgsAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringsArgs(alias: "alias", arguments: .testDefault)
+                $0.i2_doublesArgs(alias: "alias", arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": [1.23, 3.21]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
 
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.stringsArgs, alias: "alias")
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i2_doublesArgs, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.stringsArgs)
+        XCTAssertEqual(aliased?[safe: 0], 1.23)
+        XCTAssertEqual(aliased?[safe: 1], 3.21)
+        XCTAssertNil(res?.i2_doublesArgs)
     }
 }
 
-// MARK: - Tests to ensure fragments on Query selecting String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on Query selecting Double and [Double] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface2_Double_ParseTests {
     func testSingleOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.string
+            $0.i2_double 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -351,18 +353,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "string": "value"
+                "i2_double": 1.23
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, 1.23)
     }
 
     func testSingleArgsOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringArgs(arguments: .testDefault)
+            $0.i2_doubleArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -370,18 +372,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "stringArgs": "value"
+                "i2_doubleArgs": 1.23
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, 1.23)
     }
 
     func testArrayOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.strings
+            $0.i2_doubles 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -389,20 +391,20 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "strings": ["value1", "value2"]
+                "i2_doubles": [1.23, 3.21]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], 1.23)
+        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 
     func testArrayArgsOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringsArgs(arguments: .testDefault)
+            $0.i2_doublesArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -410,24 +412,24 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "stringsArgs": ["value1", "value2"]
+                "i2_doublesArgs": [1.23, 3.21]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], 1.23)
+        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 }
 
-// MARK: - Tests to ensure fragments on Query selecting String and [String] with aliases can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on Query selecting Double and [Double] with aliases can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface2_Double_ParseTests {
     func testSingleAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.string(alias: "alias")
+            $0.i2_double(alias: "alias") 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -435,18 +437,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": 1.23
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, 1.23)
     }
 
     func testSingleArgsAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringArgs(alias: "alias", arguments: .testDefault)
+            $0.i2_doubleArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -454,18 +456,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": 1.23
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, 1.23)
     }
 
     func testArrayAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.strings(alias: "alias")
+            $0.i2_doubles(alias: "alias") 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -473,20 +475,20 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": [1.23, 3.21]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], 1.23)
+        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 
     func testArrayArgsAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringsArgs(alias: "alias", arguments: .testDefault)
+            $0.i2_doublesArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -494,25 +496,25 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": [1.23, 3.21]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], 1.23)
+        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 }
 
 
-// MARK: - Tests to ensure fragments on TestObject selecting String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on TestObject selecting Double and [Double] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface2_Double_ParseTests {
     func testSingleOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.string
+            $0.i2_double 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -523,19 +525,19 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "string": "value"
+                    "i2_double": 1.23
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.string, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i2_double, 1.23)
     }
 
     func testSingleArgsOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringArgs(arguments: .testDefault)
+            $0.i2_doubleArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -546,19 +548,19 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "stringArgs": "value"
+                    "i2_doubleArgs": 1.23
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.stringArgs, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i2_doubleArgs, 1.23)
     }
 
     func testArrayOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.strings
+            $0.i2_doubles 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -569,21 +571,21 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "strings": ["value1", "value2"]
+                    "i2_doubles": [1.23, 3.21]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.strings?.count, 2)
-        XCTAssertEqual(res.strings?[0], "value1")
-        XCTAssertEqual(res.strings?[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i2_doubles?.count, 2)
+        XCTAssertEqual(res?.i2_doubles?[safe: 0], 1.23)
+        XCTAssertEqual(res?.i2_doubles?[safe: 1], 3.21)
     }
 
     func testArrayArgsOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringsArgs(arguments: .testDefault)
+            $0.i2_doublesArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -594,25 +596,25 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "stringsArgs": ["value1", "value2"]
+                    "i2_doublesArgs": [1.23, 3.21]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.stringsArgs?.count, 2)
-        XCTAssertEqual(res.stringsArgs?[0], "value1")
-        XCTAssertEqual(res.stringsArgs?[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i2_doublesArgs?.count, 2)
+        XCTAssertEqual(res?.i2_doublesArgs?[safe: 0], 1.23)
+        XCTAssertEqual(res?.i2_doublesArgs?[safe: 1], 3.21)
     }
 }
 
-// MARK: - Tests to ensure fragments on TestObject selecting String and [String] with aliases can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on TestObject selecting Double and [Double] with aliases can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface2_Double_ParseTests {
     func testSingleAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.string(alias: "alias")
+            $0.i2_double(alias: "alias") 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -623,21 +625,21 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": 1.23
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.string, alias: "alias")
-        XCTAssertEqual(aliased, "value")
-        XCTAssertNil(res.string)
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i2_double, alias: "alias")
+        XCTAssertEqual(aliased, 1.23)
+        XCTAssertNil(res?.i2_double)
     }
 
     func testSingleArgsAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringArgs(alias: "alias", arguments: .testDefault)
+            $0.i2_doubleArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -648,21 +650,21 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": 1.23
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.stringArgs, alias: "alias")
-        XCTAssertEqual(aliased, "value")
-        XCTAssertNil(res.stringArgs)
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i2_doubleArgs, alias: "alias")
+        XCTAssertEqual(aliased, 1.23)
+        XCTAssertNil(res?.i2_doubleArgs)
     }
 
     func testArrayAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.strings(alias: "alias")
+            $0.i2_doubles(alias: "alias") 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -673,23 +675,23 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": [1.23, 3.21]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.strings, alias: "alias")
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i2_doubles, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.strings)
+        XCTAssertEqual(aliased?[safe: 0], 1.23)
+        XCTAssertEqual(aliased?[safe: 1], 3.21)
+        XCTAssertNil(res?.i2_doubles)
     }
 
     func testArrayArgsAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringsArgs(alias: "alias", arguments: .testDefault)
+            $0.i2_doublesArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -700,18 +702,17 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": [1.23, 3.21]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.stringsArgs, alias: "alias")
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i2_doublesArgs, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.stringsArgs)
+        XCTAssertEqual(aliased?[safe: 0], 1.23)
+        XCTAssertEqual(aliased?[safe: 1], 3.21)
+        XCTAssertNil(res?.i2_doublesArgs)
     }
 }
-*/

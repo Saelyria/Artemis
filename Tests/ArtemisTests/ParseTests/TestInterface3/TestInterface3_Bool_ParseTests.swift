@@ -1,349 +1,351 @@
-/*
+// Generated using Sourcery 1.5.0 — https://github.com/krzysztofzablocki/Sourcery
+// DO NOT EDIT
+
 import XCTest
 @testable import Artemis
 
-// MARK: - Tests to ensure String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure Bool and [Bool] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface3_Bool_ParseTests {
     func testSingleParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.string
+            $0.i3_bool 
         }
         let response = Data("""
         {
             "data": {
-                "string": "value"
+                "i3_bool": true
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, true)
     }
 
     func testSingleArgsParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.stringArgs(arguments: .testDefault)
+            $0.i3_boolArgs(arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "stringArgs": "value"
+                "i3_boolArgs": true
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, true)
     }
 
     func testArrayParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.strings
+            $0.i3_bools 
         }
         let response = Data("""
         {
             "data": {
-                "strings": ["value1", "value2"]
+                "i3_bools": [true, false]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], true)
+        XCTAssertEqual(res?[safe: 1], false)
     }
 
     func testArrayArgsParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.stringsArgs(arguments: .testDefault)
+            $0.i3_boolsArgs(arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "stringsArgs": ["value1", "value2"]
+                "i3_boolsArgs": [true, false]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], true)
+        XCTAssertEqual(res?[safe: 1], false)
     }
 }
 
-// MARK: - Tests to ensure an alias of String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure an alias of Bool and [Bool] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface3_Bool_ParseTests {
     func testSingleAliasParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.string(alias: "alias")
+            $0.i3_bool(alias: "alias") 
         }
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": true
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, true)
     }
 
     func testSingleArgsAliasParse() throws {
         let query: _Operation<Query, SelectionType.Result> = .query {
-            $0.stringArgs(alias: "alias", arguments: .testDefault)
+            $0.i3_boolArgs(alias: "alias", arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": true
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, true)
     }
 
     func testArrayAliasParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.strings(alias: "alias")
+            $0.i3_bools(alias: "alias") 
         }
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": [true, false]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], true)
+        XCTAssertEqual(res?[safe: 1], false)
     }
 
     func testArrayArgsAliasParse() throws {
         let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.stringsArgs(alias: "alias", arguments: .testDefault)
+            $0.i3_boolsArgs(alias: "alias", arguments: .testDefault) 
         }
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": [true, false]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], true)
+        XCTAssertEqual(res?[safe: 1], false)
     }
 }
 
-// MARK: - Tests to ensure String and [String] on an Object can be used to pull values out of a result
+// MARK: - Tests to ensure Bool and [Bool] on an Object can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface3_Bool_ParseTests {
     func testSingleOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.string
+                $0.i3_bool 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "string": "value"
+                    "i3_bool": true
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.string, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i3_bool, true)
     }
 
     func testSingleArgsOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringArgs(arguments: .testDefault)
+                $0.i3_boolArgs(arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "stringArgs": "value"
+                    "i3_boolArgs": true
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.stringArgs, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i3_boolArgs, true)
     }
 
     func testArrayOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.strings
+                $0.i3_bools 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "strings": ["value1", "value2"]
+                    "i3_bools": [true, false]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.strings?.count, 2)
-        XCTAssertEqual(res.strings?[0], "value1")
-        XCTAssertEqual(res.strings?[1], "value2")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i3_bools?.count, 2)
+        XCTAssertEqual(res?.i3_bools?[safe: 0], true)
+        XCTAssertEqual(res?.i3_bools?[safe: 1], false)
     }
 
     func testArrayArgsOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringsArgs(arguments: .testDefault)
+                $0.i3_boolsArgs(arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "stringsArgs": ["value1", "value2"]
+                    "i3_boolsArgs": [true, false]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        XCTAssertEqual(res.stringsArgs?.count, 2)
-        XCTAssertEqual(res.stringsArgs?[0], "value1")
-        XCTAssertEqual(res.stringsArgs?[1], "value2")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i3_boolsArgs?.count, 2)
+        XCTAssertEqual(res?.i3_boolsArgs?[safe: 0], true)
+        XCTAssertEqual(res?.i3_boolsArgs?[safe: 1], false)
     }
 }
 
-// MARK: - Tests to ensure an alias of String and [String] on an Object can be used to pull values out of a result
+// MARK: - Tests to ensure an alias of Bool and [Bool] on an Object can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface3_Bool_ParseTests {
     func testSingleAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.string(alias: "alias")
+                $0.i3_bool(alias: "alias") 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": true
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.string, alias: "alias")
-        XCTAssertEqual(aliased, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i3_bool, alias: "alias")
+        XCTAssertEqual(aliased, true)
     }
 
     func testSingleArgsAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringArgs(alias: "alias", arguments: .testDefault)
+                $0.i3_boolArgs(alias: "alias", arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": true
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.stringArgs, alias: "alias")
-        XCTAssertEqual(aliased, "value")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i3_boolArgs, alias: "alias")
+        XCTAssertEqual(aliased, true)
     }
 
     func testArrayAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.strings(alias: "alias")
+                $0.i3_bools(alias: "alias") 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": [true, false]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
 
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.strings, alias: "alias")
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i3_bools, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.strings)
+        XCTAssertEqual(aliased?[safe: 0], true)
+        XCTAssertEqual(aliased?[safe: 1], false)
+        XCTAssertNil(res?.i3_bools)
     }
 
     func testArrayArgsAliasOnObjectParse() throws {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.stringsArgs(alias: "alias", arguments: .testDefault)
+                $0.i3_boolsArgs(alias: "alias", arguments: .testDefault) 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": [true, false]
                 }
             }
         }
         """.utf8)
 
-        let res: Partial<TestObject> = try query.createResult(from: response)
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
 
-        XCTAssertEqual(res.values.count, 1)
-        let aliased = res.get(\.stringsArgs, alias: "alias")
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.get(\.i3_boolsArgs, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.stringsArgs)
+        XCTAssertEqual(aliased?[safe: 0], true)
+        XCTAssertEqual(aliased?[safe: 1], false)
+        XCTAssertNil(res?.i3_boolsArgs)
     }
 }
 
-// MARK: - Tests to ensure fragments on Query selecting String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on Query selecting Bool and [Bool] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface3_Bool_ParseTests {
     func testSingleOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.string
+            $0.i3_bool 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -351,18 +353,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "string": "value"
+                "i3_bool": true
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, true)
     }
 
     func testSingleArgsOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringArgs(arguments: .testDefault)
+            $0.i3_boolArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -370,18 +372,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "stringArgs": "value"
+                "i3_boolArgs": true
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, true)
     }
 
     func testArrayOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.strings
+            $0.i3_bools 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -389,20 +391,20 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "strings": ["value1", "value2"]
+                "i3_bools": [true, false]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], true)
+        XCTAssertEqual(res?[safe: 1], false)
     }
 
     func testArrayArgsOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringsArgs(arguments: .testDefault)
+            $0.i3_boolsArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -410,24 +412,24 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "stringsArgs": ["value1", "value2"]
+                "i3_boolsArgs": [true, false]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], true)
+        XCTAssertEqual(res?[safe: 1], false)
     }
 }
 
-// MARK: - Tests to ensure fragments on Query selecting String and [String] with aliases can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on Query selecting Bool and [Bool] with aliases can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface3_Bool_ParseTests {
     func testSingleAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.string(alias: "alias")
+            $0.i3_bool(alias: "alias") 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -435,18 +437,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": true
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, true)
     }
 
     func testSingleArgsAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringArgs(alias: "alias", arguments: .testDefault)
+            $0.i3_boolArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
@@ -454,18 +456,18 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": "value"
+                "alias": true
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res, true)
     }
 
     func testArrayAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.strings(alias: "alias")
+            $0.i3_bools(alias: "alias") 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -473,20 +475,20 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": [true, false]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], true)
+        XCTAssertEqual(res?[safe: 1], false)
     }
 
     func testArrayArgsAliasOnFragmentParse() throws {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.stringsArgs(alias: "alias", arguments: .testDefault)
+            $0.i3_boolsArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, [SelectionType.Result]> = .query {
             fragment
@@ -494,25 +496,25 @@ extension String_ParseTests {
         let response = Data("""
         {
             "data": {
-                "alias": ["value1", "value2"]
+                "alias": [true, false]
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.count, 2)
-        XCTAssertEqual(res[0], "value1")
-        XCTAssertEqual(res[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.count, 2)
+        XCTAssertEqual(res?[safe: 0], true)
+        XCTAssertEqual(res?[safe: 1], false)
     }
 }
 
 
-// MARK: - Tests to ensure fragments on TestObject selecting String and [String] can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on TestObject selecting Bool and [Bool] can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface3_Bool_ParseTests {
     func testSingleOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.string
+            $0.i3_bool 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -523,19 +525,19 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "string": "value"
+                    "i3_bool": true
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.string, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i3_bool, true)
     }
 
     func testSingleArgsOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringArgs(arguments: .testDefault)
+            $0.i3_boolArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -546,19 +548,19 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "stringArgs": "value"
+                    "i3_boolArgs": true
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.stringArgs, "value")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i3_boolArgs, true)
     }
 
     func testArrayOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.strings
+            $0.i3_bools 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -569,21 +571,21 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "strings": ["value1", "value2"]
+                    "i3_bools": [true, false]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.strings?.count, 2)
-        XCTAssertEqual(res.strings?[0], "value1")
-        XCTAssertEqual(res.strings?[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i3_bools?.count, 2)
+        XCTAssertEqual(res?.i3_bools?[safe: 0], true)
+        XCTAssertEqual(res?.i3_bools?[safe: 1], false)
     }
 
     func testArrayArgsOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringsArgs(arguments: .testDefault)
+            $0.i3_boolsArgs(arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -594,25 +596,25 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "stringsArgs": ["value1", "value2"]
+                    "i3_boolsArgs": [true, false]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        XCTAssertEqual(res.stringsArgs?.count, 2)
-        XCTAssertEqual(res.stringsArgs?[0], "value1")
-        XCTAssertEqual(res.stringsArgs?[1], "value2")
+        let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.i3_boolsArgs?.count, 2)
+        XCTAssertEqual(res?.i3_boolsArgs?[safe: 0], true)
+        XCTAssertEqual(res?.i3_boolsArgs?[safe: 1], false)
     }
 }
 
-// MARK: - Tests to ensure fragments on TestObject selecting String and [String] with aliases can be used to pull values out of a result
+// MARK: - Tests to ensure fragments on TestObject selecting Bool and [Bool] with aliases can be used to pull values out of a result
 
-extension String_ParseTests {
+extension TestInterface3_Bool_ParseTests {
     func testSingleAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.string(alias: "alias")
+            $0.i3_bool(alias: "alias") 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -623,21 +625,21 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": true
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.string, alias: "alias")
-        XCTAssertEqual(aliased, "value")
-        XCTAssertNil(res.string)
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i3_bool, alias: "alias")
+        XCTAssertEqual(aliased, true)
+        XCTAssertNil(res?.i3_bool)
     }
 
     func testSingleArgsAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringArgs(alias: "alias", arguments: .testDefault)
+            $0.i3_boolArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -648,21 +650,21 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": "value"
+                    "alias": true
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.stringArgs, alias: "alias")
-        XCTAssertEqual(aliased, "value")
-        XCTAssertNil(res.stringArgs)
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i3_boolArgs, alias: "alias")
+        XCTAssertEqual(aliased, true)
+        XCTAssertNil(res?.i3_boolArgs)
     }
 
     func testArrayAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.strings(alias: "alias")
+            $0.i3_bools(alias: "alias") 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -673,23 +675,23 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": [true, false]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.strings, alias: "alias")
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i3_bools, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.strings)
+        XCTAssertEqual(aliased?[safe: 0], true)
+        XCTAssertEqual(aliased?[safe: 1], false)
+        XCTAssertNil(res?.i3_bools)
     }
 
     func testArrayArgsAliasOnObjectFragmentParse() throws {
         let fragment = Fragment("fragName", on: TestObject.self) {
-            $0.stringsArgs(alias: "alias", arguments: .testDefault)
+            $0.i3_boolsArgs(alias: "alias", arguments: .testDefault) 
         }
         let query: _Operation<Query, TestObject.Result> = .query {
             $0.testObject {
@@ -700,18 +702,17 @@ extension String_ParseTests {
         {
             "data": {
                 "testObject": {
-                    "alias": ["value1", "value2"]
+                    "alias": [true, false]
                 }
             }
         }
         """.utf8)
 
-        let res = try query.createResult(from: response)
-        let aliased = res.get(\.stringsArgs, alias: "alias")
+        let res = try? query.createResult(from: response)
+        let aliased = res?.get(\.i3_boolsArgs, alias: "alias")
         XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[0], "value1")
-        XCTAssertEqual(aliased?[1], "value2")
-        XCTAssertNil(res.stringsArgs)
+        XCTAssertEqual(aliased?[safe: 0], true)
+        XCTAssertEqual(aliased?[safe: 1], false)
+        XCTAssertNil(res?.i3_boolsArgs)
     }
 }
-*/
