@@ -71,7 +71,7 @@ public struct _SelectionSetBuilder<T: Object> {
 }
 
 extension _SelectionSetBuilder {
-    public static func buildBlock<S: _SelectionProtocol>(_ set: S) -> S {
+    public static func buildBlock<R>(_ set: _SelectionSet<R>) -> _SelectionSet<R> {
         return set
     }
 
@@ -296,6 +296,20 @@ extension _SelectionSetBuilder {
             rendered: "...\(fragment.name)",
             resultBuilder: fragment.selection.createResult(from:)
         )
+    }
+}
+
+extension _SelectionSetBuilder {
+    public static func buildIf<R>(_ set: _SelectionSet<R>?) -> _SelectionSet<R> {
+        return set ?? _SelectionSet(items: [], rendered: "", resultBuilder: { _ in fatalError() })
+    }
+
+    public static func buildEither<R>(first set: _SelectionSet<R>) -> _SelectionSet<R> {
+        return set
+    }
+
+    public static func buildEither<R>(second set: _SelectionSet<R>) -> _SelectionSet<R> {
+        return set
     }
 }
 
