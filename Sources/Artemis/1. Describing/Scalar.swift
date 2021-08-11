@@ -47,6 +47,11 @@ extension Float: Scalar {
         return String(describing: self)
     }
     public static var `default`: Float { 0 }
+
+    public static func createUnsafeResult(from object: Any, key: String) throws -> Result {
+        guard let returnValue = object as? Double else { throw GraphQLError.singleItemParseFailure(operation: key) }
+        return Float(returnValue)
+    }
 }
 extension Double: Scalar {
     public typealias Result = Double

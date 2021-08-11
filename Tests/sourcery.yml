@@ -1,7 +1,5 @@
 sources:
-    - ArtemisTests/RenderTests/RenderTestCases.swift
-    - ArtemisTests/ParseTests/ParseTestCases.swift
+    - ArtemisTests/TypeTestCases.swift
 templates:
-    - ArtemisTests/RenderTests/RenderTest.stencil
-    - ArtemisTests/ParseTests/ParseTest.stencil
+    - ArtemisTests/TypeTest.stencil
 output: ArtemisTests

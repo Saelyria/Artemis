@@ -1,82 +1,38 @@
 import Foundation
 
-// MARK: Fetching Scalar & [Scalar]
-
 extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
     public typealias I3 = T.ImplementedInterfaces.I3
 }
+
+// MARK: Fetching Scalar & [Scalar]
 
 extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
     ) -> Value.Result? {
         guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        return self.values[keyString] as? Value.Result
+        return try? Value.createUnsafeResult(from: self.values[keyString] as Any, key: "")
     }
 
     public subscript<Value: Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>
     ) -> Value.Result? {
         guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        return self.values[keyString] as? Value.Result
+        return try? Value.createUnsafeResult(from: self.values[keyString] as Any, key: "")
     }
 
     public subscript<Value: Collection & Scalar>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
     ) -> Value.Result? {
         guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        return self.values[keyString] as? Value.Result
+        return try? Value.createUnsafeResult(from: self.values[keyString] as Any, key: "")
     }
 
     public subscript<Value: Collection & Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>
     ) -> Value.Result? {
         guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        return self.values[keyString] as? Value.Result
-    }
-}
-
-// MARK: Fetching Enum & [Enum]
-
-extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
-    public subscript<Value: Enum>(
-        dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
-    ) -> Value? {
-        guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        if let raw = self.values[keyString] as? String {
-            return Value.init(rawValue: raw)
-        }
-        return nil
-    }
-
-    public subscript<Value: Enum, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>
-    ) -> Value? {
-        guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        if let raw = self.values[keyString] as? String {
-            return Value.init(rawValue: raw)
-        }
-        return nil
-    }
-
-    public subscript<Value: Collection & Scalar>(
-        dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
-    ) -> [Value.Element]? where Value.Element: Enum {
-        guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        if let raw = self.values[keyString] as? [String] {
-            return raw.map { Value.Element.init(rawValue: $0) }.compactMap { $0 }
-        }
-        return nil
-    }
-
-    public subscript<Value: Collection & Scalar, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>
-    ) -> [Value.Element]? where Value.Element: Enum {
-        guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        if let raw = self.values[keyString] as? [String] {
-            return raw.map { Value.Element.init(rawValue: $0) }.compactMap { $0 }
-        }
-        return nil
+        return try? Value.createUnsafeResult(from: self.values[keyString] as Any, key: "")
     }
 }
 
@@ -127,7 +83,7 @@ extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
         _ keyPath: KeyPath<I3.SubSchema, Value>,
         alias: String
     ) -> Value.Result? {
-        return self.values[alias] as? Value.Result
+        return try? Value.createUnsafeResult(from: self.values[alias] as Any, key: "")
     }
 
     /**
@@ -140,7 +96,7 @@ extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
         _ keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>,
         alias: String
     ) -> Value.Result? {
-        return self.values[alias] as? Value.Result
+        return try? Value.createUnsafeResult(from: self.values[alias] as Any, key: "")
     }
 
     /**
@@ -153,7 +109,7 @@ extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
         _ keyPath: KeyPath<I3.SubSchema, Value>,
         alias: String
     ) -> Value.Result? {
-        return self.values[alias] as? Value.Result
+        return try? Value.createUnsafeResult(from: self.values[alias] as Any, key: "")
     }
 
     /**
@@ -166,7 +122,7 @@ extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
         _ keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>,
         alias: String
     ) -> Value.Result? {
-        return self.values[alias] as? Value.Result
+        return try? Value.createUnsafeResult(from: self.values[alias] as Any, key: "")
     }
 
     /**
