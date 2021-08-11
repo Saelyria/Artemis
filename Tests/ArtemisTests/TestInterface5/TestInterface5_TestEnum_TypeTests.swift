@@ -60,23 +60,21 @@ extension TestInterface5_TestEnum_TypeTests {
         XCTAssertEqual(res?[safe: 1], .second)
     }
 
-    func testArrayArgsRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i5_testEnumsArgs(arguments: .testDefault) 
+    func testOptionalRender() {
+        let query: _Operation<Query, SelectionType.Result> = .query {
+            $0.i5_testEnumOptional 
         }
         let response = Data("""
         {
             "data": {
-                "i5_testEnumsArgs": ["FIRST", "SECOND"]
+                "i5_testEnumOptional": "FIRST"
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{i5_testEnumsArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{i5_testEnumOptional}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], .first)
-        XCTAssertEqual(res?[safe: 1], .second)
+        XCTAssertEqual(res, .first)
     }
 }
 
@@ -115,43 +113,6 @@ extension TestInterface5_TestEnum_TypeTests {
         XCTAssertEqual(query.render(), "{alias:i5_testEnumArgs\(testArgs)}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res, .first)
-    }
-
-    func testArrayAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i5_testEnums(alias: "alias") 
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": ["FIRST", "SECOND"]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{alias:i5_testEnums}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], .first)
-        XCTAssertEqual(res?[safe: 1], .second)
-    }
-
-    func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i5_testEnumsArgs(alias: "alias", arguments: .testDefault) 
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": ["FIRST", "SECOND"]
-            }
-        }
-        """.utf8)
-        XCTAssertEqual(query.render(), "{alias:i5_testEnumsArgs\(testArgs)}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], .first)
-        XCTAssertEqual(res?[safe: 1], .second)
     }
 }
 
@@ -226,28 +187,26 @@ extension TestInterface5_TestEnum_TypeTests {
         XCTAssertEqual(res?.i5_testEnums?[safe: 1], .second)
     }
 
-    func testArrayArgsOnObjectRender() {
+    func testOptionalOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.i5_testEnumsArgs(arguments: .testDefault) 
+                $0.i5_testEnumOptional 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "i5_testEnumsArgs": ["FIRST", "SECOND"]
+                    "i5_testEnumOptional": "FIRST"
                 }
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{testObject{i5_testEnumsArgs\(testArgs)}}")
+        XCTAssertEqual(query.render(), "{testObject{i5_testEnumOptional}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        XCTAssertEqual(res?.i5_testEnumsArgs?.count, 2)
-        XCTAssertEqual(res?.i5_testEnumsArgs?[safe: 0], .first)
-        XCTAssertEqual(res?.i5_testEnumsArgs?[safe: 1], .second)
+        XCTAssertEqual(res?.i5_testEnumOptional, .first)
     }
 }
 
@@ -298,58 +257,6 @@ extension TestInterface5_TestEnum_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         let aliased = res?.get(\.i5_testEnumArgs, alias: "alias")
         XCTAssertEqual(aliased, .first)
-    }
-
-    func testArrayAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testEnums(alias: "alias") 
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": ["FIRST", "SECOND"]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testEnums}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i5_testEnums, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0], .first)
-        XCTAssertEqual(aliased?[safe: 1], .second)
-        XCTAssertNil(res?.i5_testEnums)
-    }
-
-    func testArrayArgsAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testEnumsArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": ["FIRST", "SECOND"]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testEnumsArgs\(testArgs)}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i5_testEnumsArgs, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0], .first)
-        XCTAssertEqual(aliased?[safe: 1], .second)
-        XCTAssertNil(res?.i5_testEnumsArgs)
     }
 }
 
@@ -418,26 +325,24 @@ extension TestInterface5_TestEnum_TypeTests {
         XCTAssertEqual(res?[safe: 1], .second)
     }
 
-    func testArrayArgsOnFragmentRender() {
+    func testOptionalOnFragmentRender() {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.i5_testEnumsArgs(arguments: .testDefault) 
+            $0.i5_testEnumOptional 
         }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
         {
             "data": {
-                "i5_testEnumsArgs": ["FIRST", "SECOND"]
+                "i5_testEnumOptional": "FIRST"
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i5_testEnumsArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i5_testEnumOptional}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], .first)
-        XCTAssertEqual(res?[safe: 1], .second)
+        XCTAssertEqual(res, .first)
     }
 }
 
@@ -482,50 +387,6 @@ extension TestInterface5_TestEnum_TypeTests {
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i5_testEnumArgs\(testArgs)}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res, .first)
-    }
-
-    func testArrayAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.i5_testEnums(alias: "alias") 
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": ["FIRST", "SECOND"]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i5_testEnums}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], .first)
-        XCTAssertEqual(res?[safe: 1], .second)
-    }
-
-    func testArrayArgsAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.i5_testEnumsArgs(alias: "alias", arguments: .testDefault) 
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": ["FIRST", "SECOND"]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i5_testEnumsArgs\(testArgs)}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], .first)
-        XCTAssertEqual(res?[safe: 1], .second)
     }
 }
 
@@ -582,5 +443,30 @@ extension TestInterface5_TestEnum_TypeTests {
         XCTAssertEqual(res?.count, 2)
         XCTAssertEqual(res?[safe: 0]?.i5_testEnum, .first)
         XCTAssertEqual(res?[safe: 1]?.i5_testEnum, .second)
+    }
+
+    func testOptionalOnObjectFragmentRender() {
+        let fragment = Fragment("fragName", on: TestInterface5.self) {
+            $0.i5_testEnum 
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObjectOptional {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObjectOptional": {
+                    "i5_testEnum": "FIRST"
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObjectOptional{...fragName}},fragment fragName on TestInterface5{i5_testEnum}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i5_testEnum, .first)
     }
 }

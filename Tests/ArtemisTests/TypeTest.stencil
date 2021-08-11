@@ -158,23 +158,21 @@ extension {{type.name}} {
         XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
     }
 
-    func testArrayArgsRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
+    func testOptionalRender() {
+        let query: _Operation<Query, SelectionType.Result> = .query {
+            $0.{{sel}}Optional{{selTrail}}
         }
         let response = Data("""
         {
             "data": {
-                "{{sel}}sArgs": [{{valueRaw}}, {{value2Raw}}]
+                "{{sel}}Optional": {{valueRaw}}
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{{o}}{{sel}}sArgs\(testArgs){{renderSelTrail}}}")
+        XCTAssertEqual(query.render(), "{{o}}{{sel}}Optional{{renderSelTrail}}}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res{{resultCompare}})
     }
 }
 
@@ -213,43 +211,6 @@ extension {{type.name}} {
         XCTAssertEqual(query.render(), "{alias:{{sel}}Args\(testArgs){{renderSelTrail}}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res{{resultCompare}})
-    }
-
-    func testArrayAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.{{sel}}s(alias: "alias"){{selTrail}}
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [{{valueRaw}}, {{value2Raw}}]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{alias:{{sel}}s{{renderSelTrail}}}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
-    }
-
-    func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [{{valueRaw}}, {{value2Raw}}]
-            }
-        }
-        """.utf8)
-        XCTAssertEqual(query.render(), "{alias:{{sel}}sArgs\(testArgs){{renderSelTrail}}}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
     }
 }
 
@@ -324,28 +285,26 @@ extension {{type.name}} {
         XCTAssertEqual(res?.{{sel}}s?[safe: 1]{{resultCompare2}})
     }
 
-    func testArrayArgsOnObjectRender() {
+    func testOptionalOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
+                $0.{{sel}}Optional{{selTrail}}
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "{{sel}}sArgs": [{{valueRaw}}, {{value2Raw}}]
+                    "{{sel}}Optional": {{valueRaw}}
                 }
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{testObject{{o}}{{sel}}sArgs\(testArgs){{renderSelTrail}}}}")
+        XCTAssertEqual(query.render(), "{testObject{{o}}{{sel}}Optional{{renderSelTrail}}}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        XCTAssertEqual(res?.{{sel}}sArgs?.count, 2)
-        XCTAssertEqual(res?.{{sel}}sArgs?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?.{{sel}}sArgs?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res?.{{sel}}Optional{{resultCompare}})
     }
 }
 
@@ -396,58 +355,6 @@ extension {{type.name}} {
         XCTAssertEqual(res?.values.count, 1)
         let aliased = res?.get(\.{{sel}}Args, alias: "alias")
         XCTAssertEqual(aliased{{resultCompare}})
-    }
-
-    func testArrayAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.{{sel}}s(alias: "alias"){{selTrail}}
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": [{{valueRaw}}, {{value2Raw}}]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{{o}}alias:{{sel}}s{{renderSelTrail}}}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.{{sel}}s, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(aliased?[safe: 1]{{resultCompare2}})
-        XCTAssertNil(res?.{{sel}}s)
-    }
-
-    func testArrayArgsAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": [{{valueRaw}}, {{value2Raw}}]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{{o}}alias:{{sel}}sArgs\(testArgs){{renderSelTrail}}}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.{{sel}}sArgs, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(aliased?[safe: 1]{{resultCompare2}})
-        XCTAssertNil(res?.{{sel}}sArgs)
     }
 }
 
@@ -516,26 +423,24 @@ extension {{type.name}} {
         XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
     }
 
-    func testArrayArgsOnFragmentRender() {
+    func testOptionalOnFragmentRender() {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
+            $0.{{sel}}Optional{{selTrail}}
         }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
         {
             "data": {
-                "{{sel}}sArgs": [{{valueRaw}}, {{value2Raw}}]
+                "{{sel}}Optional": {{valueRaw}}
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}sArgs\(testArgs){{renderSelTrail}}}")
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}{{sel}}Optional{{renderSelTrail}}}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
+        XCTAssertEqual(res{{resultCompare}})
     }
 }
 
@@ -580,50 +485,6 @@ extension {{type.name}} {
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}alias:{{sel}}Args\(testArgs){{renderSelTrail}}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res{{resultCompare}})
-    }
-
-    func testArrayAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}s(alias: "alias"){{selTrail}}
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [{{valueRaw}}, {{value2Raw}}]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}alias:{{sel}}s{{renderSelTrail}}}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
-    }
-
-    func testArrayArgsAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [{{valueRaw}}, {{value2Raw}}]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{{o}}alias:{{sel}}sArgs\(testArgs){{renderSelTrail}}}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]{{resultCompare}})
-        XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
     }
 }
 
@@ -681,6 +542,31 @@ extension {{type.name}} {
         XCTAssertEqual(res?.count, 2)
         XCTAssertEqual(res?[safe: 0]?.{{sel}}{{resultCompare}})
         XCTAssertEqual(res?[safe: 1]?.{{sel}}{{resultCompare2}})
+    }
+
+    func testOptionalOnObjectFragmentRender() {
+        let fragment = Fragment("fragName", on: {{selBase}}.self) {
+            $0.{{sel}}{{selTrail}}
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObjectOptional {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObjectOptional": {
+                    "{{sel}}": {{valueRaw}}
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObjectOptional{...fragName}},fragment fragName on {{selBase}}{{o}}{{sel}}}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.{{sel}}{{resultCompare}})
     }
 }
 {% endif %}

@@ -60,23 +60,21 @@ extension TestInterface4_Bool_TypeTests {
         XCTAssertEqual(res?[safe: 1], false)
     }
 
-    func testArrayArgsRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i4_boolsArgs(arguments: .testDefault) 
+    func testOptionalRender() {
+        let query: _Operation<Query, SelectionType.Result> = .query {
+            $0.i4_boolOptional 
         }
         let response = Data("""
         {
             "data": {
-                "i4_boolsArgs": [true, false]
+                "i4_boolOptional": true
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{i4_boolsArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{i4_boolOptional}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], true)
-        XCTAssertEqual(res?[safe: 1], false)
+        XCTAssertEqual(res, true)
     }
 }
 
@@ -115,43 +113,6 @@ extension TestInterface4_Bool_TypeTests {
         XCTAssertEqual(query.render(), "{alias:i4_boolArgs\(testArgs)}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res, true)
-    }
-
-    func testArrayAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i4_bools(alias: "alias") 
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [true, false]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{alias:i4_bools}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], true)
-        XCTAssertEqual(res?[safe: 1], false)
-    }
-
-    func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i4_boolsArgs(alias: "alias", arguments: .testDefault) 
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [true, false]
-            }
-        }
-        """.utf8)
-        XCTAssertEqual(query.render(), "{alias:i4_boolsArgs\(testArgs)}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], true)
-        XCTAssertEqual(res?[safe: 1], false)
     }
 }
 
@@ -226,28 +187,26 @@ extension TestInterface4_Bool_TypeTests {
         XCTAssertEqual(res?.i4_bools?[safe: 1], false)
     }
 
-    func testArrayArgsOnObjectRender() {
+    func testOptionalOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.i4_boolsArgs(arguments: .testDefault) 
+                $0.i4_boolOptional 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "i4_boolsArgs": [true, false]
+                    "i4_boolOptional": true
                 }
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{testObject{i4_boolsArgs\(testArgs)}}")
+        XCTAssertEqual(query.render(), "{testObject{i4_boolOptional}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        XCTAssertEqual(res?.i4_boolsArgs?.count, 2)
-        XCTAssertEqual(res?.i4_boolsArgs?[safe: 0], true)
-        XCTAssertEqual(res?.i4_boolsArgs?[safe: 1], false)
+        XCTAssertEqual(res?.i4_boolOptional, true)
     }
 }
 
@@ -298,58 +257,6 @@ extension TestInterface4_Bool_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         let aliased = res?.get(\.i4_boolArgs, alias: "alias")
         XCTAssertEqual(aliased, true)
-    }
-
-    func testArrayAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i4_bools(alias: "alias") 
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": [true, false]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:i4_bools}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i4_bools, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0], true)
-        XCTAssertEqual(aliased?[safe: 1], false)
-        XCTAssertNil(res?.i4_bools)
-    }
-
-    func testArrayArgsAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i4_boolsArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": [true, false]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:i4_boolsArgs\(testArgs)}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i4_boolsArgs, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0], true)
-        XCTAssertEqual(aliased?[safe: 1], false)
-        XCTAssertNil(res?.i4_boolsArgs)
     }
 }
 
@@ -418,26 +325,24 @@ extension TestInterface4_Bool_TypeTests {
         XCTAssertEqual(res?[safe: 1], false)
     }
 
-    func testArrayArgsOnFragmentRender() {
+    func testOptionalOnFragmentRender() {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.i4_boolsArgs(arguments: .testDefault) 
+            $0.i4_boolOptional 
         }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
         {
             "data": {
-                "i4_boolsArgs": [true, false]
+                "i4_boolOptional": true
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i4_boolsArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i4_boolOptional}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], true)
-        XCTAssertEqual(res?[safe: 1], false)
+        XCTAssertEqual(res, true)
     }
 }
 
@@ -482,50 +387,6 @@ extension TestInterface4_Bool_TypeTests {
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i4_boolArgs\(testArgs)}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res, true)
-    }
-
-    func testArrayAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.i4_bools(alias: "alias") 
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [true, false]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i4_bools}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], true)
-        XCTAssertEqual(res?[safe: 1], false)
-    }
-
-    func testArrayArgsAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.i4_boolsArgs(alias: "alias", arguments: .testDefault) 
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [true, false]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i4_boolsArgs\(testArgs)}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], true)
-        XCTAssertEqual(res?[safe: 1], false)
     }
 }
 
@@ -582,5 +443,30 @@ extension TestInterface4_Bool_TypeTests {
         XCTAssertEqual(res?.count, 2)
         XCTAssertEqual(res?[safe: 0]?.i4_bool, true)
         XCTAssertEqual(res?[safe: 1]?.i4_bool, false)
+    }
+
+    func testOptionalOnObjectFragmentRender() {
+        let fragment = Fragment("fragName", on: TestInterface4.self) {
+            $0.i4_bool 
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObjectOptional {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObjectOptional": {
+                    "i4_bool": true
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObjectOptional{...fragName}},fragment fragName on TestInterface4{i4_bool}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i4_bool, true)
     }
 }

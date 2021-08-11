@@ -60,23 +60,21 @@ extension TestInterface3_Double_TypeTests {
         XCTAssertEqual(res?[safe: 1], 3.21)
     }
 
-    func testArrayArgsRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i3_doublesArgs(arguments: .testDefault) 
+    func testOptionalRender() {
+        let query: _Operation<Query, SelectionType.Result> = .query {
+            $0.i3_doubleOptional 
         }
         let response = Data("""
         {
             "data": {
-                "i3_doublesArgs": [1.23, 3.21]
+                "i3_doubleOptional": 1.23
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{i3_doublesArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{i3_doubleOptional}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
+        XCTAssertEqual(res, 1.23)
     }
 }
 
@@ -115,43 +113,6 @@ extension TestInterface3_Double_TypeTests {
         XCTAssertEqual(query.render(), "{alias:i3_doubleArgs\(testArgs)}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res, 1.23)
-    }
-
-    func testArrayAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i3_doubles(alias: "alias") 
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [1.23, 3.21]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{alias:i3_doubles}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
-    }
-
-    func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i3_doublesArgs(alias: "alias", arguments: .testDefault) 
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [1.23, 3.21]
-            }
-        }
-        """.utf8)
-        XCTAssertEqual(query.render(), "{alias:i3_doublesArgs\(testArgs)}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 }
 
@@ -226,28 +187,26 @@ extension TestInterface3_Double_TypeTests {
         XCTAssertEqual(res?.i3_doubles?[safe: 1], 3.21)
     }
 
-    func testArrayArgsOnObjectRender() {
+    func testOptionalOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.i3_doublesArgs(arguments: .testDefault) 
+                $0.i3_doubleOptional 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "i3_doublesArgs": [1.23, 3.21]
+                    "i3_doubleOptional": 1.23
                 }
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{testObject{i3_doublesArgs\(testArgs)}}")
+        XCTAssertEqual(query.render(), "{testObject{i3_doubleOptional}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        XCTAssertEqual(res?.i3_doublesArgs?.count, 2)
-        XCTAssertEqual(res?.i3_doublesArgs?[safe: 0], 1.23)
-        XCTAssertEqual(res?.i3_doublesArgs?[safe: 1], 3.21)
+        XCTAssertEqual(res?.i3_doubleOptional, 1.23)
     }
 }
 
@@ -298,58 +257,6 @@ extension TestInterface3_Double_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         let aliased = res?.get(\.i3_doubleArgs, alias: "alias")
         XCTAssertEqual(aliased, 1.23)
-    }
-
-    func testArrayAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i3_doubles(alias: "alias") 
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": [1.23, 3.21]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:i3_doubles}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i3_doubles, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0], 1.23)
-        XCTAssertEqual(aliased?[safe: 1], 3.21)
-        XCTAssertNil(res?.i3_doubles)
-    }
-
-    func testArrayArgsAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i3_doublesArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": [1.23, 3.21]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:i3_doublesArgs\(testArgs)}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i3_doublesArgs, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0], 1.23)
-        XCTAssertEqual(aliased?[safe: 1], 3.21)
-        XCTAssertNil(res?.i3_doublesArgs)
     }
 }
 
@@ -418,26 +325,24 @@ extension TestInterface3_Double_TypeTests {
         XCTAssertEqual(res?[safe: 1], 3.21)
     }
 
-    func testArrayArgsOnFragmentRender() {
+    func testOptionalOnFragmentRender() {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.i3_doublesArgs(arguments: .testDefault) 
+            $0.i3_doubleOptional 
         }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
         {
             "data": {
-                "i3_doublesArgs": [1.23, 3.21]
+                "i3_doubleOptional": 1.23
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i3_doublesArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i3_doubleOptional}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
+        XCTAssertEqual(res, 1.23)
     }
 }
 
@@ -482,50 +387,6 @@ extension TestInterface3_Double_TypeTests {
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i3_doubleArgs\(testArgs)}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res, 1.23)
-    }
-
-    func testArrayAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.i3_doubles(alias: "alias") 
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [1.23, 3.21]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i3_doubles}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
-    }
-
-    func testArrayArgsAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.i3_doublesArgs(alias: "alias", arguments: .testDefault) 
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [1.23, 3.21]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i3_doublesArgs\(testArgs)}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 }
 
@@ -582,5 +443,30 @@ extension TestInterface3_Double_TypeTests {
         XCTAssertEqual(res?.count, 2)
         XCTAssertEqual(res?[safe: 0]?.i3_double, 1.23)
         XCTAssertEqual(res?[safe: 1]?.i3_double, 3.21)
+    }
+
+    func testOptionalOnObjectFragmentRender() {
+        let fragment = Fragment("fragName", on: TestInterface3.self) {
+            $0.i3_double 
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObjectOptional {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObjectOptional": {
+                    "i3_double": 1.23
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObjectOptional{...fragName}},fragment fragName on TestInterface3{i3_double}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i3_double, 1.23)
     }
 }

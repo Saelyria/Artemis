@@ -60,23 +60,21 @@ extension TestObject_Float_TypeTests {
         XCTAssertEqual(res?[safe: 1], 3.21)
     }
 
-    func testArrayArgsRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.floatsArgs(arguments: .testDefault) 
+    func testOptionalRender() {
+        let query: _Operation<Query, SelectionType.Result> = .query {
+            $0.floatOptional 
         }
         let response = Data("""
         {
             "data": {
-                "floatsArgs": [1.23, 3.21]
+                "floatOptional": 1.23
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{floatsArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{floatOptional}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
+        XCTAssertEqual(res, 1.23)
     }
 }
 
@@ -115,43 +113,6 @@ extension TestObject_Float_TypeTests {
         XCTAssertEqual(query.render(), "{alias:floatArgs\(testArgs)}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res, 1.23)
-    }
-
-    func testArrayAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.floats(alias: "alias") 
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [1.23, 3.21]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{alias:floats}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
-    }
-
-    func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.floatsArgs(alias: "alias", arguments: .testDefault) 
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [1.23, 3.21]
-            }
-        }
-        """.utf8)
-        XCTAssertEqual(query.render(), "{alias:floatsArgs\(testArgs)}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 }
 
@@ -226,28 +187,26 @@ extension TestObject_Float_TypeTests {
         XCTAssertEqual(res?.floats?[safe: 1], 3.21)
     }
 
-    func testArrayArgsOnObjectRender() {
+    func testOptionalOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.floatsArgs(arguments: .testDefault) 
+                $0.floatOptional 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "floatsArgs": [1.23, 3.21]
+                    "floatOptional": 1.23
                 }
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{testObject{floatsArgs\(testArgs)}}")
+        XCTAssertEqual(query.render(), "{testObject{floatOptional}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        XCTAssertEqual(res?.floatsArgs?.count, 2)
-        XCTAssertEqual(res?.floatsArgs?[safe: 0], 1.23)
-        XCTAssertEqual(res?.floatsArgs?[safe: 1], 3.21)
+        XCTAssertEqual(res?.floatOptional, 1.23)
     }
 }
 
@@ -298,58 +257,6 @@ extension TestObject_Float_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         let aliased = res?.get(\.floatArgs, alias: "alias")
         XCTAssertEqual(aliased, 1.23)
-    }
-
-    func testArrayAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.floats(alias: "alias") 
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": [1.23, 3.21]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:floats}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.floats, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0], 1.23)
-        XCTAssertEqual(aliased?[safe: 1], 3.21)
-        XCTAssertNil(res?.floats)
-    }
-
-    func testArrayArgsAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.floatsArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": [1.23, 3.21]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:floatsArgs\(testArgs)}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.floatsArgs, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0], 1.23)
-        XCTAssertEqual(aliased?[safe: 1], 3.21)
-        XCTAssertNil(res?.floatsArgs)
     }
 }
 
@@ -418,26 +325,24 @@ extension TestObject_Float_TypeTests {
         XCTAssertEqual(res?[safe: 1], 3.21)
     }
 
-    func testArrayArgsOnFragmentRender() {
+    func testOptionalOnFragmentRender() {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.floatsArgs(arguments: .testDefault) 
+            $0.floatOptional 
         }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
         {
             "data": {
-                "floatsArgs": [1.23, 3.21]
+                "floatOptional": 1.23
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{floatsArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{floatOptional}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
+        XCTAssertEqual(res, 1.23)
     }
 }
 
@@ -482,50 +387,6 @@ extension TestObject_Float_TypeTests {
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:floatArgs\(testArgs)}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res, 1.23)
-    }
-
-    func testArrayAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.floats(alias: "alias") 
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [1.23, 3.21]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:floats}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
-    }
-
-    func testArrayArgsAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.floatsArgs(alias: "alias", arguments: .testDefault) 
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [1.23, 3.21]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:floatsArgs\(testArgs)}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], 1.23)
-        XCTAssertEqual(res?[safe: 1], 3.21)
     }
 }
 
@@ -582,5 +443,30 @@ extension TestObject_Float_TypeTests {
         XCTAssertEqual(res?.count, 2)
         XCTAssertEqual(res?[safe: 0]?.float, 1.23)
         XCTAssertEqual(res?[safe: 1]?.float, 3.21)
+    }
+
+    func testOptionalOnObjectFragmentRender() {
+        let fragment = Fragment("fragName", on: TestObject.self) {
+            $0.float 
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObjectOptional {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObjectOptional": {
+                    "float": 1.23
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObjectOptional{...fragName}},fragment fragName on TestObject{float}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.float, 1.23)
     }
 }

@@ -60,23 +60,21 @@ extension TestInterface5_String_TypeTests {
         XCTAssertEqual(res?[safe: 1], "value2")
     }
 
-    func testArrayArgsRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i5_stringsArgs(arguments: .testDefault) 
+    func testOptionalRender() {
+        let query: _Operation<Query, SelectionType.Result> = .query {
+            $0.i5_stringOptional 
         }
         let response = Data("""
         {
             "data": {
-                "i5_stringsArgs": ["value", "value2"]
+                "i5_stringOptional": "value"
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{i5_stringsArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{i5_stringOptional}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], "value")
-        XCTAssertEqual(res?[safe: 1], "value2")
+        XCTAssertEqual(res, "value")
     }
 }
 
@@ -115,43 +113,6 @@ extension TestInterface5_String_TypeTests {
         XCTAssertEqual(query.render(), "{alias:i5_stringArgs\(testArgs)}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res, "value")
-    }
-
-    func testArrayAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i5_strings(alias: "alias") 
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": ["value", "value2"]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{alias:i5_strings}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], "value")
-        XCTAssertEqual(res?[safe: 1], "value2")
-    }
-
-    func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i5_stringsArgs(alias: "alias", arguments: .testDefault) 
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": ["value", "value2"]
-            }
-        }
-        """.utf8)
-        XCTAssertEqual(query.render(), "{alias:i5_stringsArgs\(testArgs)}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], "value")
-        XCTAssertEqual(res?[safe: 1], "value2")
     }
 }
 
@@ -226,28 +187,26 @@ extension TestInterface5_String_TypeTests {
         XCTAssertEqual(res?.i5_strings?[safe: 1], "value2")
     }
 
-    func testArrayArgsOnObjectRender() {
+    func testOptionalOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.i5_stringsArgs(arguments: .testDefault) 
+                $0.i5_stringOptional 
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "i5_stringsArgs": ["value", "value2"]
+                    "i5_stringOptional": "value"
                 }
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{testObject{i5_stringsArgs\(testArgs)}}")
+        XCTAssertEqual(query.render(), "{testObject{i5_stringOptional}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        XCTAssertEqual(res?.i5_stringsArgs?.count, 2)
-        XCTAssertEqual(res?.i5_stringsArgs?[safe: 0], "value")
-        XCTAssertEqual(res?.i5_stringsArgs?[safe: 1], "value2")
+        XCTAssertEqual(res?.i5_stringOptional, "value")
     }
 }
 
@@ -298,58 +257,6 @@ extension TestInterface5_String_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         let aliased = res?.get(\.i5_stringArgs, alias: "alias")
         XCTAssertEqual(aliased, "value")
-    }
-
-    func testArrayAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_strings(alias: "alias") 
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": ["value", "value2"]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_strings}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i5_strings, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0], "value")
-        XCTAssertEqual(aliased?[safe: 1], "value2")
-        XCTAssertNil(res?.i5_strings)
-    }
-
-    func testArrayArgsAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_stringsArgs(alias: "alias", arguments: .testDefault) 
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": ["value", "value2"]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_stringsArgs\(testArgs)}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i5_stringsArgs, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0], "value")
-        XCTAssertEqual(aliased?[safe: 1], "value2")
-        XCTAssertNil(res?.i5_stringsArgs)
     }
 }
 
@@ -418,26 +325,24 @@ extension TestInterface5_String_TypeTests {
         XCTAssertEqual(res?[safe: 1], "value2")
     }
 
-    func testArrayArgsOnFragmentRender() {
+    func testOptionalOnFragmentRender() {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.i5_stringsArgs(arguments: .testDefault) 
+            $0.i5_stringOptional 
         }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
         {
             "data": {
-                "i5_stringsArgs": ["value", "value2"]
+                "i5_stringOptional": "value"
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i5_stringsArgs\(testArgs)}")
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i5_stringOptional}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], "value")
-        XCTAssertEqual(res?[safe: 1], "value2")
+        XCTAssertEqual(res, "value")
     }
 }
 
@@ -482,50 +387,6 @@ extension TestInterface5_String_TypeTests {
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i5_stringArgs\(testArgs)}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res, "value")
-    }
-
-    func testArrayAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.i5_strings(alias: "alias") 
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": ["value", "value2"]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i5_strings}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], "value")
-        XCTAssertEqual(res?[safe: 1], "value2")
-    }
-
-    func testArrayArgsAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.i5_stringsArgs(alias: "alias", arguments: .testDefault) 
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": ["value", "value2"]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i5_stringsArgs\(testArgs)}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0], "value")
-        XCTAssertEqual(res?[safe: 1], "value2")
     }
 }
 
@@ -582,5 +443,30 @@ extension TestInterface5_String_TypeTests {
         XCTAssertEqual(res?.count, 2)
         XCTAssertEqual(res?[safe: 0]?.i5_string, "value")
         XCTAssertEqual(res?[safe: 1]?.i5_string, "value2")
+    }
+
+    func testOptionalOnObjectFragmentRender() {
+        let fragment = Fragment("fragName", on: TestInterface5.self) {
+            $0.i5_string 
+        }
+        let query: _Operation<Query, TestObject.Result> = .query {
+            $0.testObjectOptional {
+                fragment
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObjectOptional": {
+                    "i5_string": "value"
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObjectOptional{...fragName}},fragment fragName on TestInterface5{i5_string}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.i5_string, "value")
     }
 }

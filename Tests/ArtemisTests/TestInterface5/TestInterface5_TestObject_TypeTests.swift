@@ -60,23 +60,21 @@ extension TestInterface5_TestObject_TypeTests {
         XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 
-    func testArrayArgsRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i5_testObjectsArgs(arguments: .testDefault) { $0.int }
+    func testOptionalRender() {
+        let query: _Operation<Query, SelectionType.Result> = .query {
+            $0.i5_testObjectOptional { $0.int }
         }
         let response = Data("""
         {
             "data": {
-                "i5_testObjectsArgs": [{ "int": 321 }, { "int": 123 }]
+                "i5_testObjectOptional": { "int": 321 }
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{i5_testObjectsArgs\(testArgs){int}}")
+        XCTAssertEqual(query.render(), "{i5_testObjectOptional{int}}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]?.int, 321)
-        XCTAssertEqual(res?[safe: 1]?.int, 123)
+        XCTAssertEqual(res?.int, 321)
     }
 }
 
@@ -115,43 +113,6 @@ extension TestInterface5_TestObject_TypeTests {
         XCTAssertEqual(query.render(), "{alias:i5_testObjectArgs\(testArgs){int}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.int, 321)
-    }
-
-    func testArrayAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i5_testObjects(alias: "alias") { $0.int }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [{ "int": 321 }, { "int": 123 }]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{alias:i5_testObjects{int}}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]?.int, 321)
-        XCTAssertEqual(res?[safe: 1]?.int, 123)
-    }
-
-    func testArrayArgsAliasRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            $0.i5_testObjectsArgs(alias: "alias", arguments: .testDefault) { $0.int }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [{ "int": 321 }, { "int": 123 }]
-            }
-        }
-        """.utf8)
-        XCTAssertEqual(query.render(), "{alias:i5_testObjectsArgs\(testArgs){int}}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]?.int, 321)
-        XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 }
 
@@ -226,28 +187,26 @@ extension TestInterface5_TestObject_TypeTests {
         XCTAssertEqual(res?.i5_testObjects?[safe: 1]?.int, 123)
     }
 
-    func testArrayArgsOnObjectRender() {
+    func testOptionalOnObjectRender() {
         let query: _Operation<Query, Partial<TestObject>> = .query {
             $0.testObject {
-                $0.i5_testObjectsArgs(arguments: .testDefault) { $0.int }
+                $0.i5_testObjectOptional { $0.int }
             }
         }
         let response = Data("""
         {
             "data": {
                 "testObject": {
-                    "i5_testObjectsArgs": [{ "int": 321 }, { "int": 123 }]
+                    "i5_testObjectOptional": { "int": 321 }
                 }
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{testObject{i5_testObjectsArgs\(testArgs){int}}}")
+        XCTAssertEqual(query.render(), "{testObject{i5_testObjectOptional{int}}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        XCTAssertEqual(res?.i5_testObjectsArgs?.count, 2)
-        XCTAssertEqual(res?.i5_testObjectsArgs?[safe: 0]?.int, 321)
-        XCTAssertEqual(res?.i5_testObjectsArgs?[safe: 1]?.int, 123)
+        XCTAssertEqual(res?.i5_testObjectOptional?.int, 321)
     }
 }
 
@@ -298,58 +257,6 @@ extension TestInterface5_TestObject_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         let aliased = res?.get(\.i5_testObjectArgs, alias: "alias")
         XCTAssertEqual(aliased?.int, 321)
-    }
-
-    func testArrayAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testObjects(alias: "alias") { $0.int }
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": [{ "int": 321 }, { "int": 123 }]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testObjects{int}}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i5_testObjects, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0]?.int, 321)
-        XCTAssertEqual(aliased?[safe: 1]?.int, 123)
-        XCTAssertNil(res?.i5_testObjects)
-    }
-
-    func testArrayArgsAliasOnObjectParse() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
-            $0.testObject {
-                $0.i5_testObjectsArgs(alias: "alias", arguments: .testDefault) { $0.int }
-            }
-        }
-        let response = Data("""
-        {
-            "data": {
-                "testObject": {
-                    "alias": [{ "int": 321 }, { "int": 123 }]
-                }
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{testObject{alias:i5_testObjectsArgs\(testArgs){int}}}")
-        let res: Partial<TestObject>? = try? query.createResult(from: response)
-        XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i5_testObjectsArgs, alias: "alias")
-        XCTAssertEqual(aliased?.count, 2)
-        XCTAssertEqual(aliased?[safe: 0]?.int, 321)
-        XCTAssertEqual(aliased?[safe: 1]?.int, 123)
-        XCTAssertNil(res?.i5_testObjectsArgs)
     }
 }
 
@@ -418,26 +325,24 @@ extension TestInterface5_TestObject_TypeTests {
         XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 
-    func testArrayArgsOnFragmentRender() {
+    func testOptionalOnFragmentRender() {
         let fragment = Fragment("fragName", on: Query.self) {
-            $0.i5_testObjectsArgs(arguments: .testDefault) { $0.int }
+            $0.i5_testObjectOptional { $0.int }
         }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<Query, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
         {
             "data": {
-                "i5_testObjectsArgs": [{ "int": 321 }, { "int": 123 }]
+                "i5_testObjectOptional": { "int": 321 }
             }
         }
         """.utf8)
 
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i5_testObjectsArgs\(testArgs){int}}")
+        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{i5_testObjectOptional{int}}")
         let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]?.int, 321)
-        XCTAssertEqual(res?[safe: 1]?.int, 123)
+        XCTAssertEqual(res?.int, 321)
     }
 }
 
@@ -482,49 +387,5 @@ extension TestInterface5_TestObject_TypeTests {
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i5_testObjectArgs\(testArgs){int}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.int, 321)
-    }
-
-    func testArrayAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.i5_testObjects(alias: "alias") { $0.int }
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [{ "int": 321 }, { "int": 123 }]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i5_testObjects{int}}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]?.int, 321)
-        XCTAssertEqual(res?[safe: 1]?.int, 123)
-    }
-
-    func testArrayArgsAliasOnFragment() {
-        let fragment = Fragment("fragName", on: Query.self) {
-            $0.i5_testObjectsArgs(alias: "alias", arguments: .testDefault) { $0.int }
-        }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
-            fragment
-        }
-        let response = Data("""
-        {
-            "data": {
-                "alias": [{ "int": 321 }, { "int": 123 }]
-            }
-        }
-        """.utf8)
-
-        XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:i5_testObjectsArgs\(testArgs){int}}")
-        let res = try? query.createResult(from: response)
-        XCTAssertEqual(res?.count, 2)
-        XCTAssertEqual(res?[safe: 0]?.int, 321)
-        XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 }
