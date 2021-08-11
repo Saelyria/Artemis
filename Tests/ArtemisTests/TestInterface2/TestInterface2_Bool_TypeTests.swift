@@ -7,7 +7,7 @@ import XCTest
 // MARK: - Tests to ensure single selections of Bool and [Bool] render as expected
 
 extension TestInterface2_Bool_TypeTests {
-    func testSingleRender() {
+    func testSingle() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i2_bool 
         }
@@ -24,7 +24,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res, true)
     }
 
-    func testSingleArgsRender() {
+    func testSingleArgs() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i2_boolArgs(arguments: .testDefault) 
         }
@@ -41,7 +41,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res, true)
     }
 
-    func testArrayRender() {
+    func testArray() {
         let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             $0.i2_bools 
         }
@@ -60,7 +60,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res?[safe: 1], false)
     }
 
-    func testOptionalRender() {
+    func testOptional() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i2_boolOptional 
         }
@@ -81,7 +81,7 @@ extension TestInterface2_Bool_TypeTests {
 // MARK: - Tests to ensure single selections of Bool and [Bool] with aliases render as expected
 
 extension TestInterface2_Bool_TypeTests {
-    func testSingleAliasRender() {
+    func testSingleAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i2_bool(alias: "alias") 
         }
@@ -98,7 +98,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res, true)
     }
 
-    func testSingleArgsAliasRender() {
+    func testSingleArgsAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i2_boolArgs(alias: "alias", arguments: .testDefault) 
         }
@@ -119,7 +119,7 @@ extension TestInterface2_Bool_TypeTests {
 // MARK: - Tests to ensure selections render as expected on selections of Bool and [Bool] on an Object
 
 extension TestInterface2_Bool_TypeTests {
-    func testSingleOnObjectRender() {
+    func testSingleOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i2_bool 
@@ -141,7 +141,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res?.i2_bool, true)
     }
 
-    func testSingleArgsOnObjectRender() {
+    func testSingleArgsOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i2_boolArgs(arguments: .testDefault) 
@@ -163,7 +163,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res?.i2_boolArgs, true)
     }
 
-    func testArrayOnObjectRender() {
+    func testArrayOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i2_bools 
@@ -187,7 +187,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res?.i2_bools?[safe: 1], false)
     }
 
-    func testOptionalOnObjectRender() {
+    func testOptionalOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i2_boolOptional 
@@ -263,7 +263,7 @@ extension TestInterface2_Bool_TypeTests {
 // MARK: - Tests to ensure fragments on Query selecting Bool and [Bool] can be used at the top level of an operation
 
 extension TestInterface2_Bool_TypeTests {
-    func testSingleOnFragmentRender() {
+    func testSingleOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i2_bool 
         }
@@ -283,7 +283,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res, true)
     }
 
-    func testSingleArgsOnFragmentRender() {
+    func testSingleArgsOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i2_boolArgs(arguments: .testDefault) 
         }
@@ -303,7 +303,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res, true)
     }
 
-    func testArrayOnFragmentRender() {
+    func testArrayOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i2_bools 
         }
@@ -325,7 +325,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res?[safe: 1], false)
     }
 
-    func testOptionalOnFragmentRender() {
+    func testOptionalOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i2_boolOptional 
         }
@@ -390,6 +390,7 @@ extension TestInterface2_Bool_TypeTests {
     }
 }
 
+
 // MARK: - Tests to ensure fragments on TestInterface2 can be used on selections of Bool or [Bool]
 
 extension TestInterface2_Bool_TypeTests {
@@ -418,7 +419,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res?.i2_bool, true)
     }
 
-    func testArrayOnObjectFragmentRender() {
+    func testArrayOnObjectFragment() {
         let fragment = Fragment("fragName", on: TestInterface2.self) {
             $0.i2_bool 
         }
@@ -445,7 +446,7 @@ extension TestInterface2_Bool_TypeTests {
         XCTAssertEqual(res?[safe: 1]?.i2_bool, false)
     }
 
-    func testOptionalOnObjectFragmentRender() {
+    func testOptionalOnObjectFragment() {
         let fragment = Fragment("fragName", on: TestInterface2.self) {
             $0.i2_bool 
         }

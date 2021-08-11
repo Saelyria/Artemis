@@ -7,7 +7,7 @@ import XCTest
 // MARK: - Tests to ensure single selections of TestObject and [TestObject] render as expected
 
 extension TestObject_TestObject_TypeTests {
-    func testSingleRender() {
+    func testSingle() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testObject { $0.int }
         }
@@ -24,7 +24,7 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?.int, 321)
     }
 
-    func testSingleArgsRender() {
+    func testSingleArgs() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testObjectArgs(arguments: .testDefault) { $0.int }
         }
@@ -41,7 +41,7 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?.int, 321)
     }
 
-    func testArrayRender() {
+    func testArray() {
         let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             $0.testObjects { $0.int }
         }
@@ -60,7 +60,7 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 
-    func testOptionalRender() {
+    func testOptional() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testObjectOptional { $0.int }
         }
@@ -81,7 +81,7 @@ extension TestObject_TestObject_TypeTests {
 // MARK: - Tests to ensure single selections of TestObject and [TestObject] with aliases render as expected
 
 extension TestObject_TestObject_TypeTests {
-    func testSingleAliasRender() {
+    func testSingleAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testObject(alias: "alias") { $0.int }
         }
@@ -98,7 +98,7 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?.int, 321)
     }
 
-    func testSingleArgsAliasRender() {
+    func testSingleArgsAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testObjectArgs(alias: "alias", arguments: .testDefault) { $0.int }
         }
@@ -119,7 +119,7 @@ extension TestObject_TestObject_TypeTests {
 // MARK: - Tests to ensure selections render as expected on selections of TestObject and [TestObject] on an Object
 
 extension TestObject_TestObject_TypeTests {
-    func testSingleOnObjectRender() {
+    func testSingleOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testObject { $0.int }
@@ -141,7 +141,7 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?.testObject?.int, 321)
     }
 
-    func testSingleArgsOnObjectRender() {
+    func testSingleArgsOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testObjectArgs(arguments: .testDefault) { $0.int }
@@ -163,7 +163,7 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?.testObjectArgs?.int, 321)
     }
 
-    func testArrayOnObjectRender() {
+    func testArrayOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testObjects { $0.int }
@@ -187,7 +187,7 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?.testObjects?[safe: 1]?.int, 123)
     }
 
-    func testOptionalOnObjectRender() {
+    func testOptionalOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testObjectOptional { $0.int }
@@ -263,7 +263,7 @@ extension TestObject_TestObject_TypeTests {
 // MARK: - Tests to ensure fragments on Query selecting TestObject and [TestObject] can be used at the top level of an operation
 
 extension TestObject_TestObject_TypeTests {
-    func testSingleOnFragmentRender() {
+    func testSingleOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testObject { $0.int }
         }
@@ -283,7 +283,7 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?.int, 321)
     }
 
-    func testSingleArgsOnFragmentRender() {
+    func testSingleArgsOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testObjectArgs(arguments: .testDefault) { $0.int }
         }
@@ -303,7 +303,7 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?.int, 321)
     }
 
-    func testArrayOnFragmentRender() {
+    func testArrayOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testObjects { $0.int }
         }
@@ -325,7 +325,7 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?[safe: 1]?.int, 123)
     }
 
-    func testOptionalOnFragmentRender() {
+    func testOptionalOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testObjectOptional { $0.int }
         }
@@ -386,6 +386,27 @@ extension TestObject_TestObject_TypeTests {
 
         XCTAssertEqual(query.render(), "{...fragName},fragment fragName on Query{alias:testObjectArgs\(testArgs){int}}")
         let res = try? query.createResult(from: response)
+        XCTAssertEqual(res?.int, 321)
+    }
+}
+
+// MARK: - Test selections of TestObject on Mutation
+
+extension TestObject_TestObject_TypeTests {
+    func testMutationSelection() {
+        let mutation: _Operation<TestSchema, SelectionType.Result> = .mutation {
+            $0.mut_testObject { $0.int }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "mut_testObject": { "int": 321 }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(mutation.render(), "mutation{mut_testObject{int}}")
+        let res = try? mutation.createResult(from: response)
         XCTAssertEqual(res?.int, 321)
     }
 }

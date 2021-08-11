@@ -1,15 +1,9 @@
 {
   "configurations" : [
-    {
-      "id" : "B22BF271-3DD1-4689-B8E3-FC92F433F4FC",
-      "name" : "Configuration 1",
-      "options" : {
 
-      }
-    }
   ],
   "defaultOptions" : {
-
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

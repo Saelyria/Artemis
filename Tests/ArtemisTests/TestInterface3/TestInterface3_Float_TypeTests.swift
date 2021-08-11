@@ -7,7 +7,7 @@ import XCTest
 // MARK: - Tests to ensure single selections of Float and [Float] render as expected
 
 extension TestInterface3_Float_TypeTests {
-    func testSingleRender() {
+    func testSingle() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i3_float 
         }
@@ -24,7 +24,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res, 1.23)
     }
 
-    func testSingleArgsRender() {
+    func testSingleArgs() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i3_floatArgs(arguments: .testDefault) 
         }
@@ -41,7 +41,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res, 1.23)
     }
 
-    func testArrayRender() {
+    func testArray() {
         let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             $0.i3_floats 
         }
@@ -60,7 +60,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res?[safe: 1], 3.21)
     }
 
-    func testOptionalRender() {
+    func testOptional() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i3_floatOptional 
         }
@@ -81,7 +81,7 @@ extension TestInterface3_Float_TypeTests {
 // MARK: - Tests to ensure single selections of Float and [Float] with aliases render as expected
 
 extension TestInterface3_Float_TypeTests {
-    func testSingleAliasRender() {
+    func testSingleAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i3_float(alias: "alias") 
         }
@@ -98,7 +98,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res, 1.23)
     }
 
-    func testSingleArgsAliasRender() {
+    func testSingleArgsAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i3_floatArgs(alias: "alias", arguments: .testDefault) 
         }
@@ -119,7 +119,7 @@ extension TestInterface3_Float_TypeTests {
 // MARK: - Tests to ensure selections render as expected on selections of Float and [Float] on an Object
 
 extension TestInterface3_Float_TypeTests {
-    func testSingleOnObjectRender() {
+    func testSingleOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i3_float 
@@ -141,7 +141,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res?.i3_float, 1.23)
     }
 
-    func testSingleArgsOnObjectRender() {
+    func testSingleArgsOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i3_floatArgs(arguments: .testDefault) 
@@ -163,7 +163,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res?.i3_floatArgs, 1.23)
     }
 
-    func testArrayOnObjectRender() {
+    func testArrayOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i3_floats 
@@ -187,7 +187,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res?.i3_floats?[safe: 1], 3.21)
     }
 
-    func testOptionalOnObjectRender() {
+    func testOptionalOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i3_floatOptional 
@@ -263,7 +263,7 @@ extension TestInterface3_Float_TypeTests {
 // MARK: - Tests to ensure fragments on Query selecting Float and [Float] can be used at the top level of an operation
 
 extension TestInterface3_Float_TypeTests {
-    func testSingleOnFragmentRender() {
+    func testSingleOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_float 
         }
@@ -283,7 +283,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res, 1.23)
     }
 
-    func testSingleArgsOnFragmentRender() {
+    func testSingleArgsOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_floatArgs(arguments: .testDefault) 
         }
@@ -303,7 +303,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res, 1.23)
     }
 
-    func testArrayOnFragmentRender() {
+    func testArrayOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_floats 
         }
@@ -325,7 +325,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res?[safe: 1], 3.21)
     }
 
-    func testOptionalOnFragmentRender() {
+    func testOptionalOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i3_floatOptional 
         }
@@ -390,6 +390,7 @@ extension TestInterface3_Float_TypeTests {
     }
 }
 
+
 // MARK: - Tests to ensure fragments on TestInterface3 can be used on selections of Float or [Float]
 
 extension TestInterface3_Float_TypeTests {
@@ -418,7 +419,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res?.i3_float, 1.23)
     }
 
-    func testArrayOnObjectFragmentRender() {
+    func testArrayOnObjectFragment() {
         let fragment = Fragment("fragName", on: TestInterface3.self) {
             $0.i3_float 
         }
@@ -445,7 +446,7 @@ extension TestInterface3_Float_TypeTests {
         XCTAssertEqual(res?[safe: 1]?.i3_float, 3.21)
     }
 
-    func testOptionalOnObjectFragmentRender() {
+    func testOptionalOnObjectFragment() {
         let fragment = Fragment("fragName", on: TestInterface3.self) {
             $0.i3_float 
         }

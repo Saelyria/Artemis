@@ -105,7 +105,7 @@ import XCTest
 // MARK: - Tests to ensure single selections of {{selType}} and [{{selType}}] render as expected
 
 extension {{type.name}} {
-    func testSingleRender() {
+    func testSingle() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.{{sel}}{{selTrail}}
         }
@@ -122,7 +122,7 @@ extension {{type.name}} {
         XCTAssertEqual(res{{resultCompare}})
     }
 
-    func testSingleArgsRender() {
+    func testSingleArgs() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
         }
@@ -139,7 +139,7 @@ extension {{type.name}} {
         XCTAssertEqual(res{{resultCompare}})
     }
 
-    func testArrayRender() {
+    func testArray() {
         let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             $0.{{sel}}s{{selTrail}}
         }
@@ -158,7 +158,7 @@ extension {{type.name}} {
         XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
     }
 
-    func testOptionalRender() {
+    func testOptional() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.{{sel}}Optional{{selTrail}}
         }
@@ -179,7 +179,7 @@ extension {{type.name}} {
 // MARK: - Tests to ensure single selections of {{selType}} and [{{selType}}] with aliases render as expected
 
 extension {{type.name}} {
-    func testSingleAliasRender() {
+    func testSingleAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.{{sel}}(alias: "alias"){{selTrail}}
         }
@@ -196,7 +196,7 @@ extension {{type.name}} {
         XCTAssertEqual(res{{resultCompare}})
     }
 
-    func testSingleArgsAliasRender() {
+    func testSingleArgsAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
         }
@@ -217,7 +217,7 @@ extension {{type.name}} {
 // MARK: - Tests to ensure selections render as expected on selections of {{selType}} and [{{selType}}] on an Object
 
 extension {{type.name}} {
-    func testSingleOnObjectRender() {
+    func testSingleOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.{{sel}}{{selTrail}}
@@ -239,7 +239,7 @@ extension {{type.name}} {
         XCTAssertEqual(res?.{{sel}}{{resultCompare}})
     }
 
-    func testSingleArgsOnObjectRender() {
+    func testSingleArgsOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
@@ -261,7 +261,7 @@ extension {{type.name}} {
         XCTAssertEqual(res?.{{sel}}Args{{resultCompare}})
     }
 
-    func testArrayOnObjectRender() {
+    func testArrayOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.{{sel}}s{{selTrail}}
@@ -285,7 +285,7 @@ extension {{type.name}} {
         XCTAssertEqual(res?.{{sel}}s?[safe: 1]{{resultCompare2}})
     }
 
-    func testOptionalOnObjectRender() {
+    func testOptionalOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.{{sel}}Optional{{selTrail}}
@@ -361,7 +361,7 @@ extension {{type.name}} {
 // MARK: - Tests to ensure fragments on Query selecting {{selType}} and [{{selType}}] can be used at the top level of an operation
 
 extension {{type.name}} {
-    func testSingleOnFragmentRender() {
+    func testSingleOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}{{selTrail}}
         }
@@ -381,7 +381,7 @@ extension {{type.name}} {
         XCTAssertEqual(res{{resultCompare}})
     }
 
-    func testSingleArgsOnFragmentRender() {
+    func testSingleArgsOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
         }
@@ -401,7 +401,7 @@ extension {{type.name}} {
         XCTAssertEqual(res{{resultCompare}})
     }
 
-    func testArrayOnFragmentRender() {
+    func testArrayOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}s{{selTrail}}
         }
@@ -423,7 +423,7 @@ extension {{type.name}} {
         XCTAssertEqual(res?[safe: 1]{{resultCompare2}})
     }
 
-    func testOptionalOnFragmentRender() {
+    func testOptionalOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}Optional{{selTrail}}
         }
@@ -488,6 +488,29 @@ extension {{type.name}} {
     }
 }
 
+{% if selBase == "TestObject" %}
+// MARK: - Test selections of {{selType}} on Mutation
+
+extension {{type.name}} {
+    func testMutationSelection() {
+        let mutation: _Operation<TestSchema, SelectionType.Result> = .mutation {
+            $0.mut_{{sel}}{{selTrail}}
+        }
+        let response = Data("""
+        {
+            "data": {
+                "mut_{{sel}}": {{valueRaw}}
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(mutation.render(), "mutation{mut_{{sel}}{{renderSelTrail}}}")
+        let res = try? mutation.createResult(from: response)
+        XCTAssertEqual(res{{resultCompare}})
+    }
+}
+{% endif %}
+
 {% if selType != "TestObject" %}
 // MARK: - Tests to ensure fragments on {{selBase}} can be used on selections of {{selType}} or [{{selType}}]
 
@@ -517,7 +540,7 @@ extension {{type.name}} {
         XCTAssertEqual(res?.{{sel}}{{resultCompare}})
     }
 
-    func testArrayOnObjectFragmentRender() {
+    func testArrayOnObjectFragment() {
         let fragment = Fragment("fragName", on: {{selBase}}.self) {
             $0.{{sel}}{{selTrail}}
         }
@@ -544,7 +567,7 @@ extension {{type.name}} {
         XCTAssertEqual(res?[safe: 1]?.{{sel}}{{resultCompare2}})
     }
 
-    func testOptionalOnObjectFragmentRender() {
+    func testOptionalOnObjectFragment() {
         let fragment = Fragment("fragName", on: {{selBase}}.self) {
             $0.{{sel}}{{selTrail}}
         }

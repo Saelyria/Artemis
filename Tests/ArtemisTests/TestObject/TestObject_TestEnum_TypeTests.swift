@@ -7,7 +7,7 @@ import XCTest
 // MARK: - Tests to ensure single selections of TestEnum and [TestEnum] render as expected
 
 extension TestObject_TestEnum_TypeTests {
-    func testSingleRender() {
+    func testSingle() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testEnum 
         }
@@ -24,7 +24,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res, .first)
     }
 
-    func testSingleArgsRender() {
+    func testSingleArgs() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testEnumArgs(arguments: .testDefault) 
         }
@@ -41,7 +41,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res, .first)
     }
 
-    func testArrayRender() {
+    func testArray() {
         let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             $0.testEnums 
         }
@@ -60,7 +60,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res?[safe: 1], .second)
     }
 
-    func testOptionalRender() {
+    func testOptional() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testEnumOptional 
         }
@@ -81,7 +81,7 @@ extension TestObject_TestEnum_TypeTests {
 // MARK: - Tests to ensure single selections of TestEnum and [TestEnum] with aliases render as expected
 
 extension TestObject_TestEnum_TypeTests {
-    func testSingleAliasRender() {
+    func testSingleAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testEnum(alias: "alias") 
         }
@@ -98,7 +98,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res, .first)
     }
 
-    func testSingleArgsAliasRender() {
+    func testSingleArgsAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testEnumArgs(alias: "alias", arguments: .testDefault) 
         }
@@ -119,7 +119,7 @@ extension TestObject_TestEnum_TypeTests {
 // MARK: - Tests to ensure selections render as expected on selections of TestEnum and [TestEnum] on an Object
 
 extension TestObject_TestEnum_TypeTests {
-    func testSingleOnObjectRender() {
+    func testSingleOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testEnum 
@@ -141,7 +141,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res?.testEnum, .first)
     }
 
-    func testSingleArgsOnObjectRender() {
+    func testSingleArgsOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testEnumArgs(arguments: .testDefault) 
@@ -163,7 +163,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res?.testEnumArgs, .first)
     }
 
-    func testArrayOnObjectRender() {
+    func testArrayOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testEnums 
@@ -187,7 +187,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res?.testEnums?[safe: 1], .second)
     }
 
-    func testOptionalOnObjectRender() {
+    func testOptionalOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testEnumOptional 
@@ -263,7 +263,7 @@ extension TestObject_TestEnum_TypeTests {
 // MARK: - Tests to ensure fragments on Query selecting TestEnum and [TestEnum] can be used at the top level of an operation
 
 extension TestObject_TestEnum_TypeTests {
-    func testSingleOnFragmentRender() {
+    func testSingleOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testEnum 
         }
@@ -283,7 +283,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res, .first)
     }
 
-    func testSingleArgsOnFragmentRender() {
+    func testSingleArgsOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testEnumArgs(arguments: .testDefault) 
         }
@@ -303,7 +303,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res, .first)
     }
 
-    func testArrayOnFragmentRender() {
+    func testArrayOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testEnums 
         }
@@ -325,7 +325,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res?[safe: 1], .second)
     }
 
-    func testOptionalOnFragmentRender() {
+    func testOptionalOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testEnumOptional 
         }
@@ -390,6 +390,27 @@ extension TestObject_TestEnum_TypeTests {
     }
 }
 
+// MARK: - Test selections of TestEnum on Mutation
+
+extension TestObject_TestEnum_TypeTests {
+    func testMutationSelection() {
+        let mutation: _Operation<TestSchema, SelectionType.Result> = .mutation {
+            $0.mut_testEnum 
+        }
+        let response = Data("""
+        {
+            "data": {
+                "mut_testEnum": "FIRST"
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(mutation.render(), "mutation{mut_testEnum}")
+        let res = try? mutation.createResult(from: response)
+        XCTAssertEqual(res, .first)
+    }
+}
+
 // MARK: - Tests to ensure fragments on TestObject can be used on selections of TestEnum or [TestEnum]
 
 extension TestObject_TestEnum_TypeTests {
@@ -418,7 +439,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res?.testEnum, .first)
     }
 
-    func testArrayOnObjectFragmentRender() {
+    func testArrayOnObjectFragment() {
         let fragment = Fragment("fragName", on: TestObject.self) {
             $0.testEnum 
         }
@@ -445,7 +466,7 @@ extension TestObject_TestEnum_TypeTests {
         XCTAssertEqual(res?[safe: 1]?.testEnum, .second)
     }
 
-    func testOptionalOnObjectFragmentRender() {
+    func testOptionalOnObjectFragment() {
         let fragment = Fragment("fragName", on: TestObject.self) {
             $0.testEnum 
         }

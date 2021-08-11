@@ -2,6 +2,7 @@
 
 final class TestSchema: Schema {
     static let query = Query()
+    static let mutation = Mutation()
 }
 
 final class Query: Object {
@@ -47,6 +48,51 @@ final class Query: Object {
     @Field("floatArgs") var floatArgs: (Float, TestArguments.Type)
     @Field("floats") var floats: [Float]
     @Field("floatOptional") var floatOptional: Float?
+}
+
+final class Mutation: Object {
+    static let implements = Interfaces(
+        TestInterface1.self,
+        TestInterface2.self,
+        TestInterface3.self,
+        TestInterface4.self,
+        TestInterface5.self
+    )
+
+    @Field("mut_testObject") var mut_testObject: TestObject
+    @Field("mut_testObjectArgs") var mut_testObjectArgs: (TestObject, TestArguments.Type)
+    @Field("mut_testObjects") var mut_testObjects: [TestObject]
+    @Field("mut_testObjectOptional") var mut_testObjectOptional: TestObject?
+
+    @Field("mut_testEnum") var mut_testEnum: TestEnum
+    @Field("mut_testEnumArgs") var mut_testEnumArgs: (TestEnum, TestArguments.Type)
+    @Field("mut_testEnums") var mut_testEnums: [TestEnum]
+    @Field("mut_testEnumOptional") var mut_testEnumOptional: TestEnum?
+
+    @Field("mut_int") var mut_int: Int
+    @Field("mut_intArgs") var mut_intArgs: (Int, TestArguments.Type)
+    @Field("mut_ints") var mut_ints: [Int]
+    @Field("mut_intOptional") var mut_intOptional: Int?
+
+    @Field("mut_string") var mut_string: String
+    @Field("mut_stringArgs") var mut_stringArgs: (String, TestArguments.Type)
+    @Field("mut_strings") var mut_strings: [String]
+    @Field("mut_stringOptional") var mut_stringOptional: String?
+
+    @Field("mut_bool") var mut_bool: Bool
+    @Field("mut_boolArgs") var mut_boolArgs: (Bool, TestArguments.Type)
+    @Field("mut_bools") var mut_bools: [Bool]
+    @Field("mut_boolOptional") var mut_boolOptional: Bool?
+
+    @Field("mut_double") var mut_double: Double
+    @Field("mut_doubleArgs") var mut_doubleArgs: (Double, TestArguments.Type)
+    @Field("mut_doubles") var mut_doubles: [Double]
+    @Field("mut_doubleOptional") var mut_doubleOptional: Double?
+
+    @Field("mut_float") var mut_float: Float
+    @Field("mut_floatArgs") var mut_floatArgs: (Float, TestArguments.Type)
+    @Field("mut_floats") var mut_floats: [Float]
+    @Field("mut_floatOptional") var mut_floatOptional: Float?
 }
 
 final class TestObject: Object {

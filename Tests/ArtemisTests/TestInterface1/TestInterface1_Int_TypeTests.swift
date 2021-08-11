@@ -7,7 +7,7 @@ import XCTest
 // MARK: - Tests to ensure single selections of Int and [Int] render as expected
 
 extension TestInterface1_Int_TypeTests {
-    func testSingleRender() {
+    func testSingle() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i1_int 
         }
@@ -24,7 +24,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res, 123)
     }
 
-    func testSingleArgsRender() {
+    func testSingleArgs() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i1_intArgs(arguments: .testDefault) 
         }
@@ -41,7 +41,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res, 123)
     }
 
-    func testArrayRender() {
+    func testArray() {
         let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             $0.i1_ints 
         }
@@ -60,7 +60,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res?[safe: 1], 321)
     }
 
-    func testOptionalRender() {
+    func testOptional() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i1_intOptional 
         }
@@ -81,7 +81,7 @@ extension TestInterface1_Int_TypeTests {
 // MARK: - Tests to ensure single selections of Int and [Int] with aliases render as expected
 
 extension TestInterface1_Int_TypeTests {
-    func testSingleAliasRender() {
+    func testSingleAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i1_int(alias: "alias") 
         }
@@ -98,7 +98,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res, 123)
     }
 
-    func testSingleArgsAliasRender() {
+    func testSingleArgsAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i1_intArgs(alias: "alias", arguments: .testDefault) 
         }
@@ -119,7 +119,7 @@ extension TestInterface1_Int_TypeTests {
 // MARK: - Tests to ensure selections render as expected on selections of Int and [Int] on an Object
 
 extension TestInterface1_Int_TypeTests {
-    func testSingleOnObjectRender() {
+    func testSingleOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i1_int 
@@ -141,7 +141,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res?.i1_int, 123)
     }
 
-    func testSingleArgsOnObjectRender() {
+    func testSingleArgsOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i1_intArgs(arguments: .testDefault) 
@@ -163,7 +163,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res?.i1_intArgs, 123)
     }
 
-    func testArrayOnObjectRender() {
+    func testArrayOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i1_ints 
@@ -187,7 +187,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res?.i1_ints?[safe: 1], 321)
     }
 
-    func testOptionalOnObjectRender() {
+    func testOptionalOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i1_intOptional 
@@ -263,7 +263,7 @@ extension TestInterface1_Int_TypeTests {
 // MARK: - Tests to ensure fragments on Query selecting Int and [Int] can be used at the top level of an operation
 
 extension TestInterface1_Int_TypeTests {
-    func testSingleOnFragmentRender() {
+    func testSingleOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i1_int 
         }
@@ -283,7 +283,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res, 123)
     }
 
-    func testSingleArgsOnFragmentRender() {
+    func testSingleArgsOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i1_intArgs(arguments: .testDefault) 
         }
@@ -303,7 +303,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res, 123)
     }
 
-    func testArrayOnFragmentRender() {
+    func testArrayOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i1_ints 
         }
@@ -325,7 +325,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res?[safe: 1], 321)
     }
 
-    func testOptionalOnFragmentRender() {
+    func testOptionalOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i1_intOptional 
         }
@@ -390,6 +390,7 @@ extension TestInterface1_Int_TypeTests {
     }
 }
 
+
 // MARK: - Tests to ensure fragments on TestInterface1 can be used on selections of Int or [Int]
 
 extension TestInterface1_Int_TypeTests {
@@ -418,7 +419,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res?.i1_int, 123)
     }
 
-    func testArrayOnObjectFragmentRender() {
+    func testArrayOnObjectFragment() {
         let fragment = Fragment("fragName", on: TestInterface1.self) {
             $0.i1_int 
         }
@@ -445,7 +446,7 @@ extension TestInterface1_Int_TypeTests {
         XCTAssertEqual(res?[safe: 1]?.i1_int, 321)
     }
 
-    func testOptionalOnObjectFragmentRender() {
+    func testOptionalOnObjectFragment() {
         let fragment = Fragment("fragName", on: TestInterface1.self) {
             $0.i1_int 
         }

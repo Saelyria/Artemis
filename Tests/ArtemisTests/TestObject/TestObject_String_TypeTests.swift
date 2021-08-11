@@ -7,7 +7,7 @@ import XCTest
 // MARK: - Tests to ensure single selections of String and [String] render as expected
 
 extension TestObject_String_TypeTests {
-    func testSingleRender() {
+    func testSingle() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.string 
         }
@@ -24,7 +24,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res, "value")
     }
 
-    func testSingleArgsRender() {
+    func testSingleArgs() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.stringArgs(arguments: .testDefault) 
         }
@@ -41,7 +41,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res, "value")
     }
 
-    func testArrayRender() {
+    func testArray() {
         let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             $0.strings 
         }
@@ -60,7 +60,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res?[safe: 1], "value2")
     }
 
-    func testOptionalRender() {
+    func testOptional() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.stringOptional 
         }
@@ -81,7 +81,7 @@ extension TestObject_String_TypeTests {
 // MARK: - Tests to ensure single selections of String and [String] with aliases render as expected
 
 extension TestObject_String_TypeTests {
-    func testSingleAliasRender() {
+    func testSingleAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.string(alias: "alias") 
         }
@@ -98,7 +98,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res, "value")
     }
 
-    func testSingleArgsAliasRender() {
+    func testSingleArgsAlias() {
         let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.stringArgs(alias: "alias", arguments: .testDefault) 
         }
@@ -119,7 +119,7 @@ extension TestObject_String_TypeTests {
 // MARK: - Tests to ensure selections render as expected on selections of String and [String] on an Object
 
 extension TestObject_String_TypeTests {
-    func testSingleOnObjectRender() {
+    func testSingleOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.string 
@@ -141,7 +141,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res?.string, "value")
     }
 
-    func testSingleArgsOnObjectRender() {
+    func testSingleArgsOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.stringArgs(arguments: .testDefault) 
@@ -163,7 +163,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res?.stringArgs, "value")
     }
 
-    func testArrayOnObjectRender() {
+    func testArrayOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.strings 
@@ -187,7 +187,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res?.strings?[safe: 1], "value2")
     }
 
-    func testOptionalOnObjectRender() {
+    func testOptionalOnObject() {
         let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.stringOptional 
@@ -263,7 +263,7 @@ extension TestObject_String_TypeTests {
 // MARK: - Tests to ensure fragments on Query selecting String and [String] can be used at the top level of an operation
 
 extension TestObject_String_TypeTests {
-    func testSingleOnFragmentRender() {
+    func testSingleOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.string 
         }
@@ -283,7 +283,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res, "value")
     }
 
-    func testSingleArgsOnFragmentRender() {
+    func testSingleArgsOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.stringArgs(arguments: .testDefault) 
         }
@@ -303,7 +303,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res, "value")
     }
 
-    func testArrayOnFragmentRender() {
+    func testArrayOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.strings 
         }
@@ -325,7 +325,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res?[safe: 1], "value2")
     }
 
-    func testOptionalOnFragmentRender() {
+    func testOptionalOnFragment() {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.stringOptional 
         }
@@ -390,6 +390,27 @@ extension TestObject_String_TypeTests {
     }
 }
 
+// MARK: - Test selections of String on Mutation
+
+extension TestObject_String_TypeTests {
+    func testMutationSelection() {
+        let mutation: _Operation<TestSchema, SelectionType.Result> = .mutation {
+            $0.mut_string 
+        }
+        let response = Data("""
+        {
+            "data": {
+                "mut_string": "value"
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(mutation.render(), "mutation{mut_string}")
+        let res = try? mutation.createResult(from: response)
+        XCTAssertEqual(res, "value")
+    }
+}
+
 // MARK: - Tests to ensure fragments on TestObject can be used on selections of String or [String]
 
 extension TestObject_String_TypeTests {
@@ -418,7 +439,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res?.string, "value")
     }
 
-    func testArrayOnObjectFragmentRender() {
+    func testArrayOnObjectFragment() {
         let fragment = Fragment("fragName", on: TestObject.self) {
             $0.string 
         }
@@ -445,7 +466,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(res?[safe: 1]?.string, "value2")
     }
 
-    func testOptionalOnObjectFragmentRender() {
+    func testOptionalOnObjectFragment() {
         let fragment = Fragment("fragName", on: TestObject.self) {
             $0.string 
         }
