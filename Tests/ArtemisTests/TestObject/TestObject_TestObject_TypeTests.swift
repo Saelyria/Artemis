@@ -8,7 +8,7 @@ import XCTest
 
 extension TestObject_TestObject_TypeTests {
     func testSingleRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testObject { $0.int }
         }
         let response = Data("""
@@ -25,7 +25,7 @@ extension TestObject_TestObject_TypeTests {
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testObjectArgs(arguments: .testDefault) { $0.int }
         }
         let response = Data("""
@@ -42,7 +42,7 @@ extension TestObject_TestObject_TypeTests {
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             $0.testObjects { $0.int }
         }
         let response = Data("""
@@ -61,7 +61,7 @@ extension TestObject_TestObject_TypeTests {
     }
 
     func testOptionalRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testObjectOptional { $0.int }
         }
         let response = Data("""
@@ -82,7 +82,7 @@ extension TestObject_TestObject_TypeTests {
 
 extension TestObject_TestObject_TypeTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testObject(alias: "alias") { $0.int }
         }
         let response = Data("""
@@ -99,7 +99,7 @@ extension TestObject_TestObject_TypeTests {
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.testObjectArgs(alias: "alias", arguments: .testDefault) { $0.int }
         }
         let response = Data("""
@@ -120,7 +120,7 @@ extension TestObject_TestObject_TypeTests {
 
 extension TestObject_TestObject_TypeTests {
     func testSingleOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testObject { $0.int }
             }
@@ -142,7 +142,7 @@ extension TestObject_TestObject_TypeTests {
     }
 
     func testSingleArgsOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testObjectArgs(arguments: .testDefault) { $0.int }
             }
@@ -164,7 +164,7 @@ extension TestObject_TestObject_TypeTests {
     }
 
     func testArrayOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testObjects { $0.int }
             }
@@ -188,7 +188,7 @@ extension TestObject_TestObject_TypeTests {
     }
 
     func testOptionalOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testObjectOptional { $0.int }
             }
@@ -214,7 +214,7 @@ extension TestObject_TestObject_TypeTests {
 
 extension TestObject_TestObject_TypeTests {
     func testSingleAliasOnObject() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testObject(alias: "alias") { $0.int }
             }
@@ -237,7 +237,7 @@ extension TestObject_TestObject_TypeTests {
     }
 
     func testSingleArgsAliasOnObject() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.testObjectArgs(alias: "alias", arguments: .testDefault) { $0.int }
             }
@@ -267,7 +267,7 @@ extension TestObject_TestObject_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testObject { $0.int }
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -287,7 +287,7 @@ extension TestObject_TestObject_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testObjectArgs(arguments: .testDefault) { $0.int }
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -307,7 +307,7 @@ extension TestObject_TestObject_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testObjects { $0.int }
         }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             fragment
         }
         let response = Data("""
@@ -329,7 +329,7 @@ extension TestObject_TestObject_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testObjectOptional { $0.int }
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -353,7 +353,7 @@ extension TestObject_TestObject_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testObject(alias: "alias") { $0.int }
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -373,7 +373,7 @@ extension TestObject_TestObject_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.testObjectArgs(alias: "alias", arguments: .testDefault) { $0.int }
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""

@@ -1,5 +1,9 @@
 @testable import Artemis
 
+final class TestSchema: Schema {
+    static let query = Query()
+}
+
 final class Query: Object {
     static let implements = Interfaces(
         TestInterface1.self,

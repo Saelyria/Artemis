@@ -9,7 +9,7 @@ describe the GraphQL request document by being created with the selected fields 
 These objects are generally created inside a `Client.perform(_:completion:)` method call so that their `Schema` and
 `Result` types can be inferred from the selections done inside their function builders.
 */
-public struct _Operation<FullSchema: Object, Result> {
+public struct _Operation<FullSchema: Schema, Result> {
 	/// A type of GraphQL operation.
     enum OperationType {
 		/// An operation that is meant to query data from a GraphQL API.
@@ -34,10 +34,10 @@ public struct _Operation<FullSchema: Object, Result> {
 	- parameter selection: A function builder of `Add` objects that selects the fields to include in the response to
 	this operation.
 	*/
-    fileprivate init<S: _SelectionProtocol>(_ type: OperationType, name: String? = nil, @_SelectionSetBuilder<FullSchema> _ selection: (_Selector<FullSchema>) -> S) where S.Result == Result {
+    fileprivate init<S: _SelectionProtocol, Q: Object>(_ type: OperationType, on: Q.Type, name: String? = nil, @_SelectionSetBuilder<Q> _ selection: (_Selector<Q>) -> S) where S.Result == Result {
 		self.operationType = type
 		self.name = name
-		let fieldsAggegate = selection(_Selector<FullSchema>())
+		let fieldsAggegate = selection(_Selector<Q>())
 		self.error = fieldsAggegate.error
 		self.rendered_SelectionSets = fieldsAggegate.render()
 		self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
@@ -136,31 +136,31 @@ public struct _Operation<FullSchema: Object, Result> {
 }
 
 extension _Operation {
-    public static func query<FullSchema: Object, Sel: _SelectionProtocol>(
+    public static func query<FullSchema: Schema, Sel: _SelectionProtocol>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema> _ selection: (_Selector<FullSchema>) -> Sel
+        @_SelectionSetBuilder<FullSchema.QueryType> _ selection: (_Selector<FullSchema.QueryType>) -> Sel
     ) -> _Operation<FullSchema, Sel.Result> {
-        return _Operation<FullSchema, Sel.Result>(.query, name: name, selection)
+        return _Operation<FullSchema, Sel.Result>(.query, on: FullSchema.QueryType.self, name: name, selection)
     }
 
-    public static func mutation<FullSchema: Object, Sel: _SelectionProtocol>(
+    public static func mutation<FullSchema: Schema, Sel: _SelectionProtocol>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema> _ selection: (_Selector<FullSchema>) -> Sel
-    ) -> _Operation<FullSchema, Sel.Result> {
-        return _Operation<FullSchema, Sel.Result>(.mutation, name: name, selection)
+        @_SelectionSetBuilder<FullSchema.MutationType> _ selection: (_Selector<FullSchema.MutationType>) -> Sel
+    ) -> _Operation<FullSchema, Sel.Result> where FullSchema.MutationType: Object {
+        return _Operation<FullSchema, Sel.Result>(.mutation, on: FullSchema.MutationType.self, name: name, selection)
     }
 
-    public static func query<FullSchema: Object, Sel: _SelectionProtocol>(
+    public static func query<FullSchema: Schema, Sel: _SelectionProtocol>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema> _ selection: () -> Sel
+        @_SelectionSetBuilder<FullSchema.QueryType> _ selection: () -> Sel
     ) -> _Operation<FullSchema, Sel.Result> {
-        return _Operation<FullSchema, Sel.Result>(.query, name: name, { _ in return selection() })
+        return _Operation<FullSchema, Sel.Result>(.query, on: FullSchema.QueryType.self, name: name, { _ in return selection() })
     }
 
-    public static func mutation<FullSchema: Object, Sel: _SelectionProtocol>(
+    public static func mutation<FullSchema: Schema, Sel: _SelectionProtocol>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema> _ selection: () -> Sel
-    ) -> _Operation<FullSchema, Sel.Result> {
-        return _Operation<FullSchema, Sel.Result>(.mutation, name: name, { _ in return selection() })
+        @_SelectionSetBuilder<FullSchema.MutationType> _ selection: () -> Sel
+    ) -> _Operation<FullSchema, Sel.Result> where FullSchema.MutationType: Object {
+        return _Operation<FullSchema, Sel.Result>(.mutation, on: FullSchema.MutationType.self, name: name, { _ in return selection() })
     }
 }

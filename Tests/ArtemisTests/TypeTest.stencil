@@ -106,7 +106,7 @@ import XCTest
 
 extension {{type.name}} {
     func testSingleRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.{{sel}}{{selTrail}}
         }
         let response = Data("""
@@ -123,7 +123,7 @@ extension {{type.name}} {
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
         }
         let response = Data("""
@@ -140,7 +140,7 @@ extension {{type.name}} {
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             $0.{{sel}}s{{selTrail}}
         }
         let response = Data("""
@@ -159,7 +159,7 @@ extension {{type.name}} {
     }
 
     func testOptionalRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.{{sel}}Optional{{selTrail}}
         }
         let response = Data("""
@@ -180,7 +180,7 @@ extension {{type.name}} {
 
 extension {{type.name}} {
     func testSingleAliasRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.{{sel}}(alias: "alias"){{selTrail}}
         }
         let response = Data("""
@@ -197,7 +197,7 @@ extension {{type.name}} {
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
         }
         let response = Data("""
@@ -218,7 +218,7 @@ extension {{type.name}} {
 
 extension {{type.name}} {
     func testSingleOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.{{sel}}{{selTrail}}
             }
@@ -240,7 +240,7 @@ extension {{type.name}} {
     }
 
     func testSingleArgsOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
             }
@@ -262,7 +262,7 @@ extension {{type.name}} {
     }
 
     func testArrayOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.{{sel}}s{{selTrail}}
             }
@@ -286,7 +286,7 @@ extension {{type.name}} {
     }
 
     func testOptionalOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.{{sel}}Optional{{selTrail}}
             }
@@ -312,7 +312,7 @@ extension {{type.name}} {
 
 extension {{type.name}} {
     func testSingleAliasOnObject() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.{{sel}}(alias: "alias"){{selTrail}}
             }
@@ -335,7 +335,7 @@ extension {{type.name}} {
     }
 
     func testSingleArgsAliasOnObject() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
             }
@@ -365,7 +365,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}{{selTrail}}
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -385,7 +385,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}Args(arguments: .testDefault){{selTrail}}
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -405,7 +405,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}s{{selTrail}}
         }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             fragment
         }
         let response = Data("""
@@ -427,7 +427,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}Optional{{selTrail}}
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -451,7 +451,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}(alias: "alias"){{selTrail}}
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -471,7 +471,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.{{sel}}Args(alias: "alias", arguments: .testDefault){{selTrail}}
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -496,7 +496,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: {{selBase}}.self) {
             $0.{{sel}}{{selTrail}}
         }
-        let query: _Operation<Query, TestObject.Result> = .query {
+        let query: _Operation<TestSchema, TestObject.Result> = .query {
             $0.testObject {
                 fragment
             }
@@ -521,7 +521,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: {{selBase}}.self) {
             $0.{{sel}}{{selTrail}}
         }
-        let query: _Operation<Query, [TestObject.Result]> = .query {
+        let query: _Operation<TestSchema, [TestObject.Result]> = .query {
             $0.testObjects {
                 fragment
             }
@@ -548,7 +548,7 @@ extension {{type.name}} {
         let fragment = Fragment("fragName", on: {{selBase}}.self) {
             $0.{{sel}}{{selTrail}}
         }
-        let query: _Operation<Query, TestObject.Result> = .query {
+        let query: _Operation<TestSchema, TestObject.Result> = .query {
             $0.testObjectOptional {
                 fragment
             }

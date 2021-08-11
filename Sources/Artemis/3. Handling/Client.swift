@@ -29,7 +29,7 @@ rendered document and perform the actual networking. The network delegate will g
 response, which the client object will then turn into the appropriate result type (likely a `Partial` wrapper of the
 expected query selection type).
 */
-open class Client<Q: Object> {
+open class Client<FullSchema: Schema> {
 	/**
 	The object that performs the actual network requests for this client.
 	*/
@@ -83,7 +83,7 @@ open class Client<Q: Object> {
 	- parameter mock:
 	*/
     open func perform<R>(
-        _ operation: _Operation<Q, R>,
+        _ operation: _Operation<FullSchema, R>,
         mock: Data? = nil,
         completion: @escaping (Result<R, GraphQLError>) -> Void)
     {
@@ -123,14 +123,6 @@ open class Client<Q: Object> {
             }
         }
     }
-    
-//    open func perform<V, R>(
-//        _ reusableQuery: ReusableQuery<V, R>,
-//        variables: V,
-//        completion: @escaping (Result<R, GraphQLError>) -> Void)
-//    {
-//        
-//    }
 }
 
 private extension Data {

@@ -8,7 +8,7 @@ import XCTest
 
 extension TestInterface5_String_TypeTests {
     func testSingleRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i5_string 
         }
         let response = Data("""
@@ -25,7 +25,7 @@ extension TestInterface5_String_TypeTests {
     }
 
     func testSingleArgsRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i5_stringArgs(arguments: .testDefault) 
         }
         let response = Data("""
@@ -42,7 +42,7 @@ extension TestInterface5_String_TypeTests {
     }
 
     func testArrayRender() {
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             $0.i5_strings 
         }
         let response = Data("""
@@ -61,7 +61,7 @@ extension TestInterface5_String_TypeTests {
     }
 
     func testOptionalRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i5_stringOptional 
         }
         let response = Data("""
@@ -82,7 +82,7 @@ extension TestInterface5_String_TypeTests {
 
 extension TestInterface5_String_TypeTests {
     func testSingleAliasRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i5_string(alias: "alias") 
         }
         let response = Data("""
@@ -99,7 +99,7 @@ extension TestInterface5_String_TypeTests {
     }
 
     func testSingleArgsAliasRender() {
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             $0.i5_stringArgs(alias: "alias", arguments: .testDefault) 
         }
         let response = Data("""
@@ -120,7 +120,7 @@ extension TestInterface5_String_TypeTests {
 
 extension TestInterface5_String_TypeTests {
     func testSingleOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i5_string 
             }
@@ -142,7 +142,7 @@ extension TestInterface5_String_TypeTests {
     }
 
     func testSingleArgsOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i5_stringArgs(arguments: .testDefault) 
             }
@@ -164,7 +164,7 @@ extension TestInterface5_String_TypeTests {
     }
 
     func testArrayOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i5_strings 
             }
@@ -188,7 +188,7 @@ extension TestInterface5_String_TypeTests {
     }
 
     func testOptionalOnObjectRender() {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i5_stringOptional 
             }
@@ -214,7 +214,7 @@ extension TestInterface5_String_TypeTests {
 
 extension TestInterface5_String_TypeTests {
     func testSingleAliasOnObject() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i5_string(alias: "alias") 
             }
@@ -237,7 +237,7 @@ extension TestInterface5_String_TypeTests {
     }
 
     func testSingleArgsAliasOnObject() throws {
-        let query: _Operation<Query, Partial<TestObject>> = .query {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
             $0.testObject {
                 $0.i5_stringArgs(alias: "alias", arguments: .testDefault) 
             }
@@ -267,7 +267,7 @@ extension TestInterface5_String_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i5_string 
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -287,7 +287,7 @@ extension TestInterface5_String_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i5_stringArgs(arguments: .testDefault) 
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -307,7 +307,7 @@ extension TestInterface5_String_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i5_strings 
         }
-        let query: _Operation<Query, [SelectionType.Result]> = .query {
+        let query: _Operation<TestSchema, [SelectionType.Result]> = .query {
             fragment
         }
         let response = Data("""
@@ -329,7 +329,7 @@ extension TestInterface5_String_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i5_stringOptional 
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -353,7 +353,7 @@ extension TestInterface5_String_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i5_string(alias: "alias") 
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -373,7 +373,7 @@ extension TestInterface5_String_TypeTests {
         let fragment = Fragment("fragName", on: Query.self) {
             $0.i5_stringArgs(alias: "alias", arguments: .testDefault) 
         }
-        let query: _Operation<Query, SelectionType.Result> = .query {
+        let query: _Operation<TestSchema, SelectionType.Result> = .query {
             fragment
         }
         let response = Data("""
@@ -397,7 +397,7 @@ extension TestInterface5_String_TypeTests {
         let fragment = Fragment("fragName", on: TestInterface5.self) {
             $0.i5_string 
         }
-        let query: _Operation<Query, TestObject.Result> = .query {
+        let query: _Operation<TestSchema, TestObject.Result> = .query {
             $0.testObject {
                 fragment
             }
@@ -422,7 +422,7 @@ extension TestInterface5_String_TypeTests {
         let fragment = Fragment("fragName", on: TestInterface5.self) {
             $0.i5_string 
         }
-        let query: _Operation<Query, [TestObject.Result]> = .query {
+        let query: _Operation<TestSchema, [TestObject.Result]> = .query {
             $0.testObjects {
                 fragment
             }
@@ -449,7 +449,7 @@ extension TestInterface5_String_TypeTests {
         let fragment = Fragment("fragName", on: TestInterface5.self) {
             $0.i5_string 
         }
-        let query: _Operation<Query, TestObject.Result> = .query {
+        let query: _Operation<TestSchema, TestObject.Result> = .query {
             $0.testObjectOptional {
                 fragment
             }
