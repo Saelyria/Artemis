@@ -71,6 +71,68 @@ public struct _SelectionSetBuilder<T: Object> {
 }
 
 extension _SelectionSetBuilder {
+    public static func buildExpression<F: Object, S>(
+        _ fragment: Fragment<F, S>
+    ) -> _SelectionSet<S.Result> where F.SubSchema == T.SubSchema {
+        return _SelectionSet(
+            items: [fragment.selection],
+            rendered: "...\(fragment.name)",
+            resultBuilder: fragment.selection.createResult(from:)
+        )
+    }
+
+    public static func buildExpression<I: Interface, S>(
+        _ fragment: Fragment<I, S>
+    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I1 {
+        return _SelectionSet(
+            items: [fragment.selection],
+            rendered: "...\(fragment.name)",
+            resultBuilder: fragment.selection.createResult(from:)
+        )
+    }
+
+    public static func buildExpression<I: Interface, S>(
+        _ fragment: Fragment<I, S>
+    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I2 {
+        return _SelectionSet(
+            items: [fragment.selection],
+            rendered: "...\(fragment.name)",
+            resultBuilder: fragment.selection.createResult(from:)
+        )
+    }
+
+    public static func buildExpression<I: Interface, S>(
+        _ fragment: Fragment<I, S>
+    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I3 {
+        return _SelectionSet(
+            items: [fragment.selection],
+            rendered: "...\(fragment.name)",
+            resultBuilder: fragment.selection.createResult(from:)
+        )
+    }
+
+    public static func buildExpression<I: Interface, S>(
+        _ fragment: Fragment<I, S>
+    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I4 {
+        return _SelectionSet(
+            items: [fragment.selection],
+            rendered: "...\(fragment.name)",
+            resultBuilder: fragment.selection.createResult(from:)
+        )
+    }
+
+    public static func buildExpression<I: Interface, S>(
+        _ fragment: Fragment<I, S>
+    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I5 {
+        return _SelectionSet(
+            items: [fragment.selection],
+            rendered: "...\(fragment.name)",
+            resultBuilder: fragment.selection.createResult(from:)
+        )
+    }
+}
+
+extension _SelectionSetBuilder {
     public static func buildBlock<R>(_ set: _SelectionSet<R>) -> _SelectionSet<R> {
         return set
     }
@@ -297,68 +359,6 @@ extension _SelectionSetBuilder {
                     try set10.createResult(from: dict)
                 )
             }
-        )
-    }
-}
-
-extension _SelectionSetBuilder {
-    public static func buildExpression<F: Object, S>(
-        _ fragment: Fragment<F, S>
-    ) -> _SelectionSet<S.Result> where F.SubSchema == T.SubSchema {
-        return _SelectionSet(
-            items: [fragment.selection],
-            rendered: "...\(fragment.name)",
-            resultBuilder: fragment.selection.createResult(from:)
-        )
-    }
-
-    public static func buildExpression<I: Interface, S>(
-        _ fragment: Fragment<I, S>
-    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I1 {
-        return _SelectionSet(
-            items: [fragment.selection],
-            rendered: "...\(fragment.name)",
-            resultBuilder: fragment.selection.createResult(from:)
-        )
-    }
-
-    public static func buildExpression<I: Interface, S>(
-        _ fragment: Fragment<I, S>
-    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I2 {
-        return _SelectionSet(
-            items: [fragment.selection],
-            rendered: "...\(fragment.name)",
-            resultBuilder: fragment.selection.createResult(from:)
-        )
-    }
-
-    public static func buildExpression<I: Interface, S>(
-        _ fragment: Fragment<I, S>
-    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I3 {
-        return _SelectionSet(
-            items: [fragment.selection],
-            rendered: "...\(fragment.name)",
-            resultBuilder: fragment.selection.createResult(from:)
-        )
-    }
-
-    public static func buildExpression<I: Interface, S>(
-        _ fragment: Fragment<I, S>
-    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I4 {
-        return _SelectionSet(
-            items: [fragment.selection],
-            rendered: "...\(fragment.name)",
-            resultBuilder: fragment.selection.createResult(from:)
-        )
-    }
-
-    public static func buildExpression<I: Interface, S>(
-        _ fragment: Fragment<I, S>
-    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I5 {
-        return _SelectionSet(
-            items: [fragment.selection],
-            rendered: "...\(fragment.name)",
-            resultBuilder: fragment.selection.createResult(from:)
         )
     }
 }

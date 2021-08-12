@@ -34,7 +34,7 @@ public struct _Operation<FullSchema: Schema, Result> {
 	- parameter selection: A function builder of `Add` objects that selects the fields to include in the response to
 	this operation.
 	*/
-    fileprivate init<S: _SelectionProtocol, Q: Object>(_ type: OperationType, on: Q.Type, name: String? = nil, @_SelectionSetBuilder<Q> _ selection: (_Selector<Q>) -> S) where S.Result == Result {
+    fileprivate init<Q: Object>(_ type: OperationType, on: Q.Type, name: String? = nil, @_SelectionSetBuilder<Q> _ selection: (_Selector<Q>) -> _SelectionSet<Result>) {
 		self.operationType = type
 		self.name = name
 		let fieldsAggegate = selection(_Selector<Q>())
@@ -136,31 +136,31 @@ public struct _Operation<FullSchema: Schema, Result> {
 }
 
 extension _Operation {
-    public static func query<FullSchema: Schema, Sel: _SelectionProtocol>(
+    public static func query<FullSchema: Schema, R>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema.QueryType> _ selection: (_Selector<FullSchema.QueryType>) -> Sel
-    ) -> _Operation<FullSchema, Sel.Result> {
-        return _Operation<FullSchema, Sel.Result>(.query, on: FullSchema.QueryType.self, name: name, selection)
+        @_SelectionSetBuilder<FullSchema.QueryType> _ selection: (_Selector<FullSchema.QueryType>) -> _SelectionSet<R>
+    ) -> _Operation<FullSchema, R> {
+        return _Operation<FullSchema, R>(.query, on: FullSchema.QueryType.self, name: name, selection)
     }
 
-    public static func mutation<FullSchema: Schema, Sel: _SelectionProtocol>(
+    public static func mutation<FullSchema: Schema, R>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema.MutationType> _ selection: (_Selector<FullSchema.MutationType>) -> Sel
-    ) -> _Operation<FullSchema, Sel.Result> where FullSchema.MutationType: Object {
-        return _Operation<FullSchema, Sel.Result>(.mutation, on: FullSchema.MutationType.self, name: name, selection)
+        @_SelectionSetBuilder<FullSchema.MutationType> _ selection: (_Selector<FullSchema.MutationType>) -> _SelectionSet<R>
+    ) -> _Operation<FullSchema, R> where FullSchema.MutationType: Object {
+        return _Operation<FullSchema, R>(.mutation, on: FullSchema.MutationType.self, name: name, selection)
     }
 
-    public static func query<FullSchema: Schema, Sel: _SelectionProtocol>(
+    public static func query<FullSchema: Schema, R>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema.QueryType> _ selection: () -> Sel
-    ) -> _Operation<FullSchema, Sel.Result> {
-        return _Operation<FullSchema, Sel.Result>(.query, on: FullSchema.QueryType.self, name: name, { _ in return selection() })
+        @_SelectionSetBuilder<FullSchema.QueryType> _ selection: () -> _SelectionSet<R>
+    ) -> _Operation<FullSchema, R> {
+        return _Operation<FullSchema, R>(.query, on: FullSchema.QueryType.self, name: name, { _ in return selection() })
     }
 
-    public static func mutation<FullSchema: Schema, Sel: _SelectionProtocol>(
+    public static func mutation<FullSchema: Schema, R>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema.MutationType> _ selection: () -> Sel
-    ) -> _Operation<FullSchema, Sel.Result> where FullSchema.MutationType: Object {
-        return _Operation<FullSchema, Sel.Result>(.mutation, on: FullSchema.MutationType.self, name: name, { _ in return selection() })
+        @_SelectionSetBuilder<FullSchema.MutationType> _ selection: () -> _SelectionSet<R>
+    ) -> _Operation<FullSchema, R> where FullSchema.MutationType: Object {
+        return _Operation<FullSchema, R>(.mutation, on: FullSchema.MutationType.self, name: name, { _ in return selection() })
     }
 }
