@@ -235,6 +235,70 @@ extension _SelectionSetBuilder {
             }
         )
     }
+
+    public static func buildBlock<R1, R2, R3, R4, R5, R6, R7, R8, R9>(
+        _ set1: _SelectionSet<R1>,
+        _ set2: _SelectionSet<R2>,
+        _ set3: _SelectionSet<R3>,
+        _ set4: _SelectionSet<R4>,
+        _ set5: _SelectionSet<R5>,
+        _ set6: _SelectionSet<R6>,
+        _ set7: _SelectionSet<R7>,
+        _ set8: _SelectionSet<R8>,
+        _ set9: _SelectionSet<R9>
+    ) -> _SelectionSet<(R1, R2, R3, R4, R5, R6, R7, R8, R9)> {
+        let items = set1.items + set2.items + set3.items + set4.items + set5.items + set6.items + set7.items + set8.items + set9.items
+        return _SelectionSet(
+            items: items,
+            rendered: defaultRendered(items),
+            resultBuilder: { dict in
+                return (
+                    try set1.createResult(from: dict),
+                    try set2.createResult(from: dict),
+                    try set3.createResult(from: dict),
+                    try set4.createResult(from: dict),
+                    try set5.createResult(from: dict),
+                    try set6.createResult(from: dict),
+                    try set7.createResult(from: dict),
+                    try set8.createResult(from: dict),
+                    try set9.createResult(from: dict)
+                )
+            }
+        )
+    }
+
+    public static func buildBlock<R1, R2, R3, R4, R5, R6, R7, R8, R9, R10>(
+        _ set1: _SelectionSet<R1>,
+        _ set2: _SelectionSet<R2>,
+        _ set3: _SelectionSet<R3>,
+        _ set4: _SelectionSet<R4>,
+        _ set5: _SelectionSet<R5>,
+        _ set6: _SelectionSet<R6>,
+        _ set7: _SelectionSet<R7>,
+        _ set8: _SelectionSet<R8>,
+        _ set9: _SelectionSet<R9>,
+        _ set10: _SelectionSet<R10>
+    ) -> _SelectionSet<(R1, R2, R3, R4, R5, R6, R7, R8, R9, R10)> {
+        let items = set1.items + set2.items + set3.items + set4.items + set5.items + set6.items + set7.items + set8.items + set9.items + set10.items
+        return _SelectionSet(
+            items: items,
+            rendered: defaultRendered(items),
+            resultBuilder: { dict in
+                return (
+                    try set1.createResult(from: dict),
+                    try set2.createResult(from: dict),
+                    try set3.createResult(from: dict),
+                    try set4.createResult(from: dict),
+                    try set5.createResult(from: dict),
+                    try set6.createResult(from: dict),
+                    try set7.createResult(from: dict),
+                    try set8.createResult(from: dict),
+                    try set9.createResult(from: dict),
+                    try set10.createResult(from: dict)
+                )
+            }
+        )
+    }
 }
 
 extension _SelectionSetBuilder {
@@ -304,12 +368,26 @@ extension _SelectionSetBuilder {
         return set ?? _SelectionSet(items: [], rendered: "", resultBuilder: { _ in fatalError() })
     }
 
-    public static func buildEither<R>(first set: _SelectionSet<R>) -> _SelectionSet<R> {
-        return set
+    public static func buildEither<TrueR, FalseR>(first set: _SelectionSet<TrueR>) -> _ConditionalSelectionSet<TrueR, FalseR> {
+        return _ConditionalSelectionSet(underlying: set)
     }
 
-    public static func buildEither<R>(second set: _SelectionSet<R>) -> _SelectionSet<R> {
-        return set
+    public static func buildEither<TrueR, FalseR>(second set: _SelectionSet<FalseR>) -> _ConditionalSelectionSet<TrueR, FalseR> {
+        return _ConditionalSelectionSet(underlying: set)
+    }
+
+    public static func buildBlock<TrueR, FalseR>(_ set: _ConditionalSelectionSet<TrueR, FalseR>) -> _SelectionSet<Any> {
+        return _SelectionSet(items: set.items, rendered: defaultRendered(set.items), resultBuilder: {
+            try set.createResult(from: $0)
+        })
+    }
+}
+
+public class _ConditionalSelectionSet<TrueR, FalseR>: _SelectionSet<Any> {
+    fileprivate init<R>(underlying: _SelectionSet<R>) {
+        super.init(items: underlying.items, rendered: underlying.rendered, resultBuilder: { dict in
+            try underlying.resultBuilder(dict)
+        })
     }
 }
 

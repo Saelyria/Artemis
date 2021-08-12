@@ -54,10 +54,16 @@ public protocol _SelectionBase {
  ```
  The 'selection set' is an object that represents 'the selection of the 'name' and 'age' fields on a 'user' type'.
 */
-public struct _SelectionSet<Result>: _SelectionProtocol {
+public class _SelectionSet<Result>: _SelectionProtocol {
     public var items: [_SelectionBase]
     var rendered: String
 	var resultBuilder: ([String: Any]) throws -> Result
+
+    init(items: [_SelectionBase], rendered: String, resultBuilder: @escaping ([String: Any]) throws -> Result) {
+        self.items = items
+        self.rendered = rendered
+        self.resultBuilder = resultBuilder
+    }
 	
 	public func createResult(from: [String : Any]) throws -> Result {
 		try self.resultBuilder(from)
