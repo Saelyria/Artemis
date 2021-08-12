@@ -232,7 +232,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:string}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.string, alias: "alias")
+        let aliased = res?.string(alias: "alias")
         XCTAssertEqual(aliased, "value")
     }
 
@@ -255,7 +255,7 @@ extension TestObject_String_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:stringArgs\(testArgs)}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.stringArgs, alias: "alias")
+        let aliased = res?.stringArgs(alias: "alias")
         XCTAssertEqual(aliased, "value")
     }
 }

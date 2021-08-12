@@ -232,7 +232,7 @@ extension TestInterface3_Bool_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:i3_bool}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i3_bool, alias: "alias")
+        let aliased = res?.i3_bool(alias: "alias")
         XCTAssertEqual(aliased, true)
     }
 
@@ -255,7 +255,7 @@ extension TestInterface3_Bool_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:i3_boolArgs\(testArgs)}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i3_boolArgs, alias: "alias")
+        let aliased = res?.i3_boolArgs(alias: "alias")
         XCTAssertEqual(aliased, true)
     }
 }

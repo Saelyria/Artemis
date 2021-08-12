@@ -12,7 +12,31 @@ import Foundation
  */
 @dynamicMemberLookup
 public struct Partial<T: _SelectionOutput> {
+    public struct Getter<Value> {
+        var lookup: (String) -> Any?
+    }
+
     let values: [String: Any]
+}
+
+extension Partial.Getter where Value: Scalar {
+    func callAsFunction(alias: String) -> Value.Result? {
+        return try? Value.createUnsafeResult(from: lookup(alias) as Any, key: "")
+    }
+}
+
+extension Partial.Getter where Value: Object {
+    func callAsFunction(alias: String) -> Partial<Value>? {
+        guard let valueDict = lookup(alias) as? [String: Any] else { return nil }
+        return Partial<Value>(values: valueDict)
+    }
+}
+
+extension Partial.Getter where Value: Object & Collection, Value.Element: _SelectionOutput {
+    func callAsFunction(alias: String) -> [Partial<Value.Element>]? {
+        guard let valuesArray = lookup(alias) as? [[String: Any]] else { return nil }
+        return valuesArray.map { Partial<Value.Element>(values: $0) }
+    }
 }
 
 // MARK: Fetching Scalar & [Scalar]
@@ -26,20 +50,6 @@ extension Partial where T: Object {
     }
 
     public subscript<Value: Scalar, Args: ArgumentsList>(
-        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
-    ) -> Value.Result? {
-        guard let keyString = T.key(forPath: keyPath) else { return nil }
-        return try? Value.createUnsafeResult(from: self.values[keyString] as Any, key: "")
-    }
-
-    public subscript<Value: Collection & Scalar>(
-        dynamicMember keyPath: KeyPath<T.SubSchema, Value>
-    ) -> Value.Result? {
-        guard let keyString = T.key(forPath: keyPath) else { return nil }
-        return try? Value.createUnsafeResult(from: self.values[keyString] as Any, key: "")
-    }
-
-    public subscript<Value: Collection & Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
     ) -> Value.Result? {
         guard let keyString = T.key(forPath: keyPath) else { return nil }
@@ -83,113 +93,19 @@ extension Partial where T: Object {
     }
 }
 
+// MARK: Fetching with an alias
+
 extension Partial where T: Object {
-    /**
-     Gets the given property under the given alias.
-
-     - parameter keyPath: The keypath of the property as it was originally named on the object.
-     - parameter alias: The aliased name of the property as in the request.
-     */
-    public func get<Value: Scalar>(
-        _ keyPath: KeyPath<T.SubSchema, Value>,
-        alias: String
-    ) -> Value.Result? {
-        return try? Value.createUnsafeResult(from: self.values[alias] as Any, key: "")
+    public subscript<Value>(
+        dynamicMember keyPath: KeyPath<T.SubSchema, Value>
+    ) -> Getter<Value> {
+        return Getter(lookup: { self.values[$0] })
     }
 
-    /**
-     Gets the given property under the given alias.
-
-     - parameter keyPath: The keypath of the property as it was originally named on the object.
-     - parameter alias: The aliased name of the property as in the request.
-     */
-    public func get<Value: Scalar, Args: ArgumentsList>(
-        _ keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>,
-        alias: String
-    ) -> Value.Result? {
-        return try? Value.createUnsafeResult(from: self.values[alias] as Any, key: "")
-    }
-
-    /**
-     Gets the given property under the given alias.
-
-     - parameter keyPath: The keypath of the property as it was originally named on the object.
-     - parameter alias: The aliased name of the property as in the request.
-     */
-    public func get<Value: Collection & Scalar>(
-        _ keyPath: KeyPath<T.SubSchema, Value>,
-        alias: String
-    ) -> Value.Result? {
-        return try? Value.createUnsafeResult(from: self.values[alias] as Any, key: "")
-    }
-
-    /**
-     Gets the given property under the given alias.
-
-     - parameter keyPath: The keypath of the property as it was originally named on the object.
-     - parameter alias: The aliased name of the property as in the request.
-     */
-    public func get<Value: Collection & Scalar, Args: ArgumentsList>(
-        _ keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>,
-        alias: String
-    ) -> Value.Result? {
-        return try? Value.createUnsafeResult(from: self.values[alias] as Any, key: "")
-    }
-
-    /**
-     Gets the given property under the given alias.
-
-     - parameter keyPath: The keypath of the property as it was originally named on the object.
-     - parameter alias: The aliased name of the property as in the request.
-     */
-    public func get<Value: Object>(
-        _ keyPath: KeyPath<T.SubSchema, Value>,
-        alias: String
-    ) -> Partial<Value>? {
-        guard let valueDict = self.values[alias] as? [String: Any] else { return nil }
-        return Partial<Value>(values: valueDict)
-    }
-
-    /**
-     Gets the given property under the given alias.
-
-     - parameter keyPath: The keypath of the property as it was originally named on the object.
-     - parameter alias: The aliased name of the property as in the request.
-     */
-    public func get<Value: Object, Args: ArgumentsList>(
-        _ keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>,
-        alias: String
-    ) -> Partial<Value>? {
-        guard let valueDict = self.values[alias] as? [String: Any] else { return nil }
-        return Partial<Value>(values: valueDict)
-    }
-
-    /**
-     Gets the given property under the given alias.
-
-     - parameter keyPath: The keypath of the property as it was originally named on the object.
-     - parameter alias: The aliased name of the property as in the request.
-     */
-    public func get<Value: Collection & Object>(
-        _ keyPath: KeyPath<T.SubSchema, Value>,
-        alias: String
-    ) -> [Partial<Value.Element>]? {
-        guard let valuesArray = self.values[alias] as? [[String: Any]] else { return nil }
-        return valuesArray.map { Partial<Value.Element>(values: $0) }
-    }
-
-    /**
-     Gets the given property under the given alias.
-
-     - parameter keyPath: The keypath of the property as it was originally named on the object.
-     - parameter alias: The aliased name of the property as in the request.
-     */
-    public func get<Value: Collection & Object, Args: ArgumentsList>(
-        _ keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>,
-        alias: String
-    ) -> [Partial<Value.Element>]? {
-        guard let valuesArray = self.values[alias] as? [[String: Any]] else { return nil }
-        return valuesArray.map { Partial<Value.Element>(values: $0) }
+    public subscript<Value, Args: ArgumentsList>(
+        dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
+    ) -> Getter<Value> {
+        return Getter(lookup: { self.values[$0] })
     }
 }
 

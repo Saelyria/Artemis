@@ -232,7 +232,7 @@ extension TestInterface4_Float_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:i4_float}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i4_float, alias: "alias")
+        let aliased = res?.i4_float(alias: "alias")
         XCTAssertEqual(aliased, 1.23)
     }
 
@@ -255,7 +255,7 @@ extension TestInterface4_Float_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:i4_floatArgs\(testArgs)}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i4_floatArgs, alias: "alias")
+        let aliased = res?.i4_floatArgs(alias: "alias")
         XCTAssertEqual(aliased, 1.23)
     }
 }

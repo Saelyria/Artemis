@@ -232,7 +232,7 @@ extension TestInterface5_TestEnum_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:i5_testEnum}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i5_testEnum, alias: "alias")
+        let aliased = res?.i5_testEnum(alias: "alias")
         XCTAssertEqual(aliased, .first)
     }
 
@@ -255,7 +255,7 @@ extension TestInterface5_TestEnum_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:i5_testEnumArgs\(testArgs)}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i5_testEnumArgs, alias: "alias")
+        let aliased = res?.i5_testEnumArgs(alias: "alias")
         XCTAssertEqual(aliased, .first)
     }
 }

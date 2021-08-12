@@ -232,7 +232,7 @@ extension TestObject_Double_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:double}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.double, alias: "alias")
+        let aliased = res?.double(alias: "alias")
         XCTAssertEqual(aliased, 1.23)
     }
 
@@ -255,7 +255,7 @@ extension TestObject_Double_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:doubleArgs\(testArgs)}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.doubleArgs, alias: "alias")
+        let aliased = res?.doubleArgs(alias: "alias")
         XCTAssertEqual(aliased, 1.23)
     }
 }

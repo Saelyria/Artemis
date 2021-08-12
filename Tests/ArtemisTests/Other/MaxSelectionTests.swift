@@ -313,8 +313,8 @@ extension MaxSelectionTests {
         XCTAssertEqual(query.render(), "{testObject{one:int,two:int}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.int, nil)
-        XCTAssertEqual(res?.get(\.int, alias: "one"), 1)
-        XCTAssertEqual(res?.get(\.int, alias: "two"), 2)
+        XCTAssertEqual(res?.int(alias: "one"), 1)
+        XCTAssertEqual(res?.int(alias: "two"), 2)
     }
 
     func testSelection3Nested() {
@@ -340,9 +340,9 @@ extension MaxSelectionTests {
         XCTAssertEqual(query.render(), "{testObject{one:int,two:int,three:int}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.int, nil)
-        XCTAssertEqual(res?.get(\.int, alias: "one"), 1)
-        XCTAssertEqual(res?.get(\.int, alias: "two"), 2)
-        XCTAssertEqual(res?.get(\.int, alias: "three"), 3)
+        XCTAssertEqual(res?.int(alias: "one"), 1)
+        XCTAssertEqual(res?.int(alias: "two"), 2)
+        XCTAssertEqual(res?.int(alias: "three"), 3)
     }
 
     func testSelection4Nested() {
@@ -370,10 +370,10 @@ extension MaxSelectionTests {
         XCTAssertEqual(query.render(), "{testObject{one:int,two:int,three:int,four:int}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.int, nil)
-        XCTAssertEqual(res?.get(\.int, alias: "one"), 1)
-        XCTAssertEqual(res?.get(\.int, alias: "two"), 2)
-        XCTAssertEqual(res?.get(\.int, alias: "three"), 3)
-        XCTAssertEqual(res?.get(\.int, alias: "four"), 4)
+        XCTAssertEqual(res?.int(alias: "one"), 1)
+        XCTAssertEqual(res?.int(alias: "two"), 2)
+        XCTAssertEqual(res?.int(alias: "three"), 3)
+        XCTAssertEqual(res?.int(alias: "four"), 4)
     }
 
     func testSelection5Nested() {
@@ -403,11 +403,11 @@ extension MaxSelectionTests {
         XCTAssertEqual(query.render(), "{testObject{one:int,two:int,three:int,four:int,five:int}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.int, nil)
-        XCTAssertEqual(res?.get(\.int, alias: "one"), 1)
-        XCTAssertEqual(res?.get(\.int, alias: "two"), 2)
-        XCTAssertEqual(res?.get(\.int, alias: "three"), 3)
-        XCTAssertEqual(res?.get(\.int, alias: "four"), 4)
-        XCTAssertEqual(res?.get(\.int, alias: "five"), 5)
+        XCTAssertEqual(res?.int(alias: "one"), 1)
+        XCTAssertEqual(res?.int(alias: "two"), 2)
+        XCTAssertEqual(res?.int(alias: "three"), 3)
+        XCTAssertEqual(res?.int(alias: "four"), 4)
+        XCTAssertEqual(res?.int(alias: "five"), 5)
     }
 
     func testSelection6Nested() {
@@ -439,12 +439,12 @@ extension MaxSelectionTests {
         XCTAssertEqual(query.render(), "{testObject{one:int,two:int,three:int,four:int,five:int,six:int}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.int, nil)
-        XCTAssertEqual(res?.get(\.int, alias: "one"), 1)
-        XCTAssertEqual(res?.get(\.int, alias: "two"), 2)
-        XCTAssertEqual(res?.get(\.int, alias: "three"), 3)
-        XCTAssertEqual(res?.get(\.int, alias: "four"), 4)
-        XCTAssertEqual(res?.get(\.int, alias: "five"), 5)
-        XCTAssertEqual(res?.get(\.int, alias: "six"), 6)
+        XCTAssertEqual(res?.int(alias: "one"), 1)
+        XCTAssertEqual(res?.int(alias: "two"), 2)
+        XCTAssertEqual(res?.int(alias: "three"), 3)
+        XCTAssertEqual(res?.int(alias: "four"), 4)
+        XCTAssertEqual(res?.int(alias: "five"), 5)
+        XCTAssertEqual(res?.int(alias: "six"), 6)
     }
 
     func testSelection7Nested() {
@@ -478,13 +478,13 @@ extension MaxSelectionTests {
         XCTAssertEqual(query.render(), "{testObject{one:int,two:int,three:int,four:int,five:int,six:int,seven:int}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.int, nil)
-        XCTAssertEqual(res?.get(\.int, alias: "one"), 1)
-        XCTAssertEqual(res?.get(\.int, alias: "two"), 2)
-        XCTAssertEqual(res?.get(\.int, alias: "three"), 3)
-        XCTAssertEqual(res?.get(\.int, alias: "four"), 4)
-        XCTAssertEqual(res?.get(\.int, alias: "five"), 5)
-        XCTAssertEqual(res?.get(\.int, alias: "six"), 6)
-        XCTAssertEqual(res?.get(\.int, alias: "seven"), 7)
+        XCTAssertEqual(res?.int(alias: "one"), 1)
+        XCTAssertEqual(res?.int(alias: "two"), 2)
+        XCTAssertEqual(res?.int(alias: "three"), 3)
+        XCTAssertEqual(res?.int(alias: "four"), 4)
+        XCTAssertEqual(res?.int(alias: "five"), 5)
+        XCTAssertEqual(res?.int(alias: "six"), 6)
+        XCTAssertEqual(res?.int(alias: "seven"), 7)
     }
 
     func testSelection8Nested() {
@@ -520,14 +520,14 @@ extension MaxSelectionTests {
         XCTAssertEqual(query.render(), "{testObject{one:int,two:int,three:int,four:int,five:int,six:int,seven:int,eight:int}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.int, nil)
-        XCTAssertEqual(res?.get(\.int, alias: "one"), 1)
-        XCTAssertEqual(res?.get(\.int, alias: "two"), 2)
-        XCTAssertEqual(res?.get(\.int, alias: "three"), 3)
-        XCTAssertEqual(res?.get(\.int, alias: "four"), 4)
-        XCTAssertEqual(res?.get(\.int, alias: "five"), 5)
-        XCTAssertEqual(res?.get(\.int, alias: "six"), 6)
-        XCTAssertEqual(res?.get(\.int, alias: "seven"), 7)
-        XCTAssertEqual(res?.get(\.int, alias: "eight"), 8)
+        XCTAssertEqual(res?.int(alias: "one"), 1)
+        XCTAssertEqual(res?.int(alias: "two"), 2)
+        XCTAssertEqual(res?.int(alias: "three"), 3)
+        XCTAssertEqual(res?.int(alias: "four"), 4)
+        XCTAssertEqual(res?.int(alias: "five"), 5)
+        XCTAssertEqual(res?.int(alias: "six"), 6)
+        XCTAssertEqual(res?.int(alias: "seven"), 7)
+        XCTAssertEqual(res?.int(alias: "eight"), 8)
     }
 
     func testSelection9Nested() {
@@ -565,15 +565,15 @@ extension MaxSelectionTests {
         XCTAssertEqual(query.render(), "{testObject{one:int,two:int,three:int,four:int,five:int,six:int,seven:int,eight:int,nine:int}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.int, nil)
-        XCTAssertEqual(res?.get(\.int, alias: "one"), 1)
-        XCTAssertEqual(res?.get(\.int, alias: "two"), 2)
-        XCTAssertEqual(res?.get(\.int, alias: "three"), 3)
-        XCTAssertEqual(res?.get(\.int, alias: "four"), 4)
-        XCTAssertEqual(res?.get(\.int, alias: "five"), 5)
-        XCTAssertEqual(res?.get(\.int, alias: "six"), 6)
-        XCTAssertEqual(res?.get(\.int, alias: "seven"), 7)
-        XCTAssertEqual(res?.get(\.int, alias: "eight"), 8)
-        XCTAssertEqual(res?.get(\.int, alias: "nine"), 9)
+        XCTAssertEqual(res?.int(alias: "one"), 1)
+        XCTAssertEqual(res?.int(alias: "two"), 2)
+        XCTAssertEqual(res?.int(alias: "three"), 3)
+        XCTAssertEqual(res?.int(alias: "four"), 4)
+        XCTAssertEqual(res?.int(alias: "five"), 5)
+        XCTAssertEqual(res?.int(alias: "six"), 6)
+        XCTAssertEqual(res?.int(alias: "seven"), 7)
+        XCTAssertEqual(res?.int(alias: "eight"), 8)
+        XCTAssertEqual(res?.int(alias: "nine"), 9)
     }
 
     func testSelection10Nested() {
@@ -613,15 +613,15 @@ extension MaxSelectionTests {
         XCTAssertEqual(query.render(), "{testObject{one:int,two:int,three:int,four:int,five:int,six:int,seven:int,eight:int,nine:int,ten:int}}")
         let res = try? query.createResult(from: response)
         XCTAssertEqual(res?.int, nil)
-        XCTAssertEqual(res?.get(\.int, alias: "one"), 1)
-        XCTAssertEqual(res?.get(\.int, alias: "two"), 2)
-        XCTAssertEqual(res?.get(\.int, alias: "three"), 3)
-        XCTAssertEqual(res?.get(\.int, alias: "four"), 4)
-        XCTAssertEqual(res?.get(\.int, alias: "five"), 5)
-        XCTAssertEqual(res?.get(\.int, alias: "six"), 6)
-        XCTAssertEqual(res?.get(\.int, alias: "seven"), 7)
-        XCTAssertEqual(res?.get(\.int, alias: "eight"), 8)
-        XCTAssertEqual(res?.get(\.int, alias: "nine"), 9)
-        XCTAssertEqual(res?.get(\.int, alias: "ten"), 10)
+        XCTAssertEqual(res?.int(alias: "one"), 1)
+        XCTAssertEqual(res?.int(alias: "two"), 2)
+        XCTAssertEqual(res?.int(alias: "three"), 3)
+        XCTAssertEqual(res?.int(alias: "four"), 4)
+        XCTAssertEqual(res?.int(alias: "five"), 5)
+        XCTAssertEqual(res?.int(alias: "six"), 6)
+        XCTAssertEqual(res?.int(alias: "seven"), 7)
+        XCTAssertEqual(res?.int(alias: "eight"), 8)
+        XCTAssertEqual(res?.int(alias: "nine"), 9)
+        XCTAssertEqual(res?.int(alias: "ten"), 10)
     }
 }

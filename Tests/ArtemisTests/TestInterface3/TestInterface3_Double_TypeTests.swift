@@ -232,7 +232,7 @@ extension TestInterface3_Double_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:i3_double}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i3_double, alias: "alias")
+        let aliased = res?.i3_double(alias: "alias")
         XCTAssertEqual(aliased, 1.23)
     }
 
@@ -255,7 +255,7 @@ extension TestInterface3_Double_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:i3_doubleArgs\(testArgs)}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i3_doubleArgs, alias: "alias")
+        let aliased = res?.i3_doubleArgs(alias: "alias")
         XCTAssertEqual(aliased, 1.23)
     }
 }

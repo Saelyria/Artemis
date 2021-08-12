@@ -330,7 +330,7 @@ extension {{type.name}} {
         XCTAssertEqual(query.render(), "{testObject{{o}}alias:{{sel}}{{renderSelTrail}}}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.{{sel}}, alias: "alias")
+        let aliased = res?.{{sel}}(alias: "alias")
         XCTAssertEqual(aliased{{resultCompare}})
     }
 
@@ -353,7 +353,7 @@ extension {{type.name}} {
         XCTAssertEqual(query.render(), "{testObject{{o}}alias:{{sel}}Args\(testArgs){{renderSelTrail}}}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.{{sel}}Args, alias: "alias")
+        let aliased = res?.{{sel}}Args(alias: "alias")
         XCTAssertEqual(aliased{{resultCompare}})
     }
 }

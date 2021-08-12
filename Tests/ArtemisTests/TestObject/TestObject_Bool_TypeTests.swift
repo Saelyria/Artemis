@@ -232,7 +232,7 @@ extension TestObject_Bool_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:bool}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.bool, alias: "alias")
+        let aliased = res?.bool(alias: "alias")
         XCTAssertEqual(aliased, true)
     }
 
@@ -255,7 +255,7 @@ extension TestObject_Bool_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:boolArgs\(testArgs)}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.boolArgs, alias: "alias")
+        let aliased = res?.boolArgs(alias: "alias")
         XCTAssertEqual(aliased, true)
     }
 }

@@ -232,7 +232,7 @@ extension TestInterface5_Float_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:i5_float}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i5_float, alias: "alias")
+        let aliased = res?.i5_float(alias: "alias")
         XCTAssertEqual(aliased, 1.23)
     }
 
@@ -255,7 +255,7 @@ extension TestInterface5_Float_TypeTests {
         XCTAssertEqual(query.render(), "{testObject{alias:i5_floatArgs\(testArgs)}}")
         let res: Partial<TestObject>? = try? query.createResult(from: response)
         XCTAssertEqual(res?.values.count, 1)
-        let aliased = res?.get(\.i5_floatArgs, alias: "alias")
+        let aliased = res?.i5_floatArgs(alias: "alias")
         XCTAssertEqual(aliased, 1.23)
     }
 }
