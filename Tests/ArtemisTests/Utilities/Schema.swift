@@ -17,6 +17,7 @@ final class Query: Object {
     @Field("testObject") var testObject: TestObject
     @Field("testObjectArgs") var testObjectArgs: (TestObject, TestArguments.Type)
     @Field("testObjects") var testObjects: [TestObject]
+    @Field("testObjectsArgs") var testObjectsArgs: ([TestObject], TestArguments.Type)
     @Field("testObjectOptional") var testObjectOptional: TestObject?
 
     @Field("testEnum") var testEnum: TestEnum
@@ -62,6 +63,7 @@ final class Mutation: Object {
     @Field("mut_testObject") var mut_testObject: TestObject
     @Field("mut_testObjectArgs") var mut_testObjectArgs: (TestObject, TestArguments.Type)
     @Field("mut_testObjects") var mut_testObjects: [TestObject]
+    @Field("mut_testObjectsArgs") var mut_testObjectsArgs: ([TestObject], TestArguments.Type)
     @Field("mut_testObjectOptional") var mut_testObjectOptional: TestObject?
 
     @Field("mut_testEnum") var mut_testEnum: TestEnum
@@ -107,6 +109,7 @@ final class TestObject: Object {
     @Field("testObject") var testObject: TestObject
     @Field("testObjectArgs") var testObjectArgs: (TestObject, TestArguments.Type)
     @Field("testObjects") var testObjects: [TestObject]
+    @Field("testObjectsArgs") var testObjectsArgs: ([TestObject], TestArguments.Type)
     @Field("testObjectOptional") var testObjectOptional: TestObject?
 
     @Field("testEnum") var testEnum: TestEnum
@@ -216,6 +219,7 @@ final class TestInterface1: Interface {
     @Field("i1_testObject") var i1_testObject: TestObject
     @Field("i1_testObjectArgs") var i1_testObjectArgs: (TestObject, TestArguments.Type)
     @Field("i1_testObjects") var i1_testObjects: [TestObject]
+    @Field("i1_testObjectsArgs") var i1_testObjectsArgs: ([TestObject], TestArguments.Type)
     @Field("i1_testObjectOptional") var i1_testObjectOptional: TestObject?
 
     @Field("i1_testEnum") var i1_testEnum: TestEnum
@@ -253,6 +257,7 @@ final class TestInterface2: Interface {
     @Field("i2_testObject") var i2_testObject: TestObject
     @Field("i2_testObjectArgs") var i2_testObjectArgs: (TestObject, TestArguments.Type)
     @Field("i2_testObjects") var i2_testObjects: [TestObject]
+    @Field("i2_testObjectsArgs") var i2_testObjectsArgs: ([TestObject], TestArguments.Type)
     @Field("i2_testObjectOptional") var i2_testObjectOptional: TestObject?
 
     @Field("i2_testEnum") var i2_testEnum: TestEnum
@@ -290,6 +295,7 @@ final class TestInterface3: Interface {
     @Field("i3_testObject") var i3_testObject: TestObject
     @Field("i3_testObjectArgs") var i3_testObjectArgs: (TestObject, TestArguments.Type)
     @Field("i3_testObjects") var i3_testObjects: [TestObject]
+    @Field("i3_testObjectsArgs") var i3_testObjectsArgs: ([TestObject], TestArguments.Type)
     @Field("i3_testObjectOptional") var i3_testObjectOptional: TestObject?
 
     @Field("i3_testEnum") var i3_testEnum: TestEnum
@@ -327,6 +333,7 @@ final class TestInterface4: Interface {
     @Field("i4_testObject") var i4_testObject: TestObject
     @Field("i4_testObjectArgs") var i4_testObjectArgs: (TestObject, TestArguments.Type)
     @Field("i4_testObjects") var i4_testObjects: [TestObject]
+    @Field("i4_testObjectsArgs") var i4_testObjectsArgs: ([TestObject], TestArguments.Type)
     @Field("i4_testObjectOptional") var i4_testObjectOptional: TestObject?
 
     @Field("i4_testEnum") var i4_testEnum: TestEnum
@@ -364,6 +371,7 @@ final class TestInterface5: Interface {
     @Field("i5_testObject") var i5_testObject: TestObject
     @Field("i5_testObjectArgs") var i5_testObjectArgs: (TestObject, TestArguments.Type)
     @Field("i5_testObjects") var i5_testObjects: [TestObject]
+    @Field("i5_testObjectsArgs") var i5_testObjectsArgs: ([TestObject], TestArguments.Type)
     @Field("i5_testObjectOptional") var i5_testObjectOptional: TestObject?
 
     @Field("i5_testEnum") var i5_testEnum: TestEnum

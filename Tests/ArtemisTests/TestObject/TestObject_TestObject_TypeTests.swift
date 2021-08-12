@@ -208,6 +208,29 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         XCTAssertEqual(res?.testObjectOptional?.int, 321)
     }
+
+    func testArrayArgsOnObject() throws {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
+            $0.testObject {
+                $0.testObjectsArgs(arguments: .testDefault) { $0.int }
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "testObjectsArgs": [{ "int": 321 }, { "int": 123 }]
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObject{testObjectsArgs\(testArgs){int}}}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.testObjectsArgs?[safe: 0]?.int, 321)
+        XCTAssertEqual(res?.testObjectsArgs?[safe: 1]?.int, 123)
+    }
 }
 
 // MARK: - Tests to ensure an alias of TestObject and [TestObject] on an Object can be used to pull values out of a result
@@ -257,6 +280,54 @@ extension TestObject_TestObject_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         let aliased = res?.testObjectArgs(alias: "alias")
         XCTAssertEqual(aliased?.int, 321)
+    }
+
+    func testArrayAliasOnObject() throws {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
+            $0.testObject {
+                $0.testObjects(alias: "alias") { $0.int }
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": [{ "int": 321 }, { "int": 123 }]
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObject{alias:testObjects{int}}}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.testObjects(alias: "alias")
+        XCTAssertEqual(aliased?[safe: 0]?.int, 321)
+        XCTAssertEqual(aliased?[safe: 1]?.int, 123)
+    }
+
+    func testArrayArgsAliasOnObject() throws {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
+            $0.testObject {
+                $0.testObjectsArgs(alias: "alias", arguments: .testDefault) { $0.int }
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": [{ "int": 321 }, { "int": 123 }]
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObject{alias:testObjectsArgs\(testArgs){int}}}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.testObjectsArgs(alias: "alias")
+        XCTAssertEqual(aliased?[safe: 0]?.int, 321)
+        XCTAssertEqual(aliased?[safe: 1]?.int, 123)
     }
 }
 

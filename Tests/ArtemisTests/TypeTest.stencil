@@ -306,6 +306,31 @@ extension {{type.name}} {
         XCTAssertEqual(res?.values.count, 1)
         XCTAssertEqual(res?.{{sel}}Optional{{resultCompare}})
     }
+
+{% if selType == "TestObject" %}
+    func testArrayArgsOnObject() throws {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
+            $0.testObject {
+                $0.{{sel}}sArgs(arguments: .testDefault){{selTrail}}
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "{{sel}}sArgs": [{{valueRaw}}, {{value2Raw}}]
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObject{{o}}{{sel}}sArgs\(testArgs){{renderSelTrail}}}}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        XCTAssertEqual(res?.{{sel}}sArgs?[safe: 0]{{resultCompare}})
+        XCTAssertEqual(res?.{{sel}}sArgs?[safe: 1]{{resultCompare2}})
+    }
+{% endif %}
 }
 
 // MARK: - Tests to ensure an alias of {{selType}} and [{{selType}}] on an Object can be used to pull values out of a result
@@ -356,6 +381,56 @@ extension {{type.name}} {
         let aliased = res?.{{sel}}Args(alias: "alias")
         XCTAssertEqual(aliased{{resultCompare}})
     }
+
+    func testArrayAliasOnObject() throws {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
+            $0.testObject {
+                $0.{{sel}}s(alias: "alias"){{selTrail}}
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": [{{valueRaw}}, {{value2Raw}}]
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObject{{o}}alias:{{sel}}s{{renderSelTrail}}}}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.{{sel}}s(alias: "alias")
+        XCTAssertEqual(aliased?[safe: 0]{{resultCompare}})
+        XCTAssertEqual(aliased?[safe: 1]{{resultCompare2}})
+    }
+
+{% if selType == "TestObject" %}
+    func testArrayArgsAliasOnObject() throws {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
+            $0.testObject {
+                $0.{{sel}}sArgs(alias: "alias", arguments: .testDefault){{selTrail}}
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": [{{valueRaw}}, {{value2Raw}}]
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObject{{o}}alias:{{sel}}sArgs\(testArgs){{renderSelTrail}}}}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.{{sel}}sArgs(alias: "alias")
+        XCTAssertEqual(aliased?[safe: 0]{{resultCompare}})
+        XCTAssertEqual(aliased?[safe: 1]{{resultCompare2}})
+    }
+{% endif %}
 }
 
 // MARK: - Tests to ensure fragments on Query selecting {{selType}} and [{{selType}}] can be used at the top level of an operation

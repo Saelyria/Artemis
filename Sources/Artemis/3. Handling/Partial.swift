@@ -27,14 +27,14 @@ extension Partial.Getter where Value: Scalar {
 
 extension Partial.Getter where Value: Object {
     func callAsFunction(alias: String) -> Partial<Value>? {
-        guard let valueDict = lookup(alias) as? [String: Any] else { return nil }
-        return Partial<Value>(values: valueDict)
+        let valueDict = lookup(alias) as? [String: Any]
+        return valueDict.map { Partial<Value>(values: $0) }
     }
 }
 
 extension Partial.Getter where Value: Object & Collection, Value.Element: _SelectionOutput {
     func callAsFunction(alias: String) -> [Partial<Value.Element>]? {
-        guard let valuesArray = lookup(alias) as? [[String: Any]] else { return nil }
+        let valuesArray = lookup(alias) as? [[String: Any]] ?? []
         return valuesArray.map { Partial<Value.Element>(values: $0) }
     }
 }
@@ -45,15 +45,17 @@ extension Partial where T: Object {
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<T.SubSchema, Value>
     ) -> Value.Result? {
-        guard let keyString = T.key(forPath: keyPath) else { return nil }
-        return try? Value.createUnsafeResult(from: self.values[keyString] as Any, key: "")
+        return try? T.key(forPath: keyPath)
+            .map { self.values[$0] as Any }
+            .map { try Value.createUnsafeResult(from: $0, key: "") }
     }
 
     public subscript<Value: Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
     ) -> Value.Result? {
-        guard let keyString = T.key(forPath: keyPath) else { return nil }
-        return try? Value.createUnsafeResult(from: self.values[keyString] as Any, key: "")
+        return try? T.key(forPath: keyPath)
+            .map { self.values[$0] as Any }
+            .map { try Value.createUnsafeResult(from: $0, key: "") }
     }
 }
 
@@ -63,33 +65,33 @@ extension Partial where T: Object {
     public subscript<Value: Object>(
         dynamicMember keyPath: KeyPath<T.SubSchema, Value>
     ) -> Partial<Value>? {
-        guard let keyString = T.key(forPath: keyPath) else { return nil }
-        guard let valueDict = self.values[keyString] as? [String: Any] else { return nil }
-        return Partial<Value>(values: valueDict)
+        return T.key(forPath: keyPath)
+            .map { self.values[$0] as? [String: Any] ?? [:] }
+            .map { Partial<Value>(values: $0) }
     }
 
     public subscript<Value: Object, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
     ) -> Partial<Value>? {
-        guard let keyString = T.key(forPath: keyPath) else { return nil }
-        guard let valueDict = self.values[keyString] as? [String: Any] else { return nil }
-        return Partial<Value>(values: valueDict)
+        return T.key(forPath: keyPath)
+            .map { self.values[$0] as? [String: Any] ?? [:] }
+            .map { Partial<Value>(values: $0) }
     }
 
     public subscript<Value: Collection & Object>(
         dynamicMember keyPath: KeyPath<T.SubSchema, Value>
     ) -> [Partial<Value.Element>]? {
-        guard let keyString = T.key(forPath: keyPath) else { return nil }
-        guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
-        return valuesArray.map { Partial<Value.Element>(values: $0) }
+        return T.key(forPath: keyPath)
+            .map { self.values[$0] as? [[String: Any]] ?? [] }
+            .map { $0.map { Partial<Value.Element>(values: $0) } }
     }
 
     public subscript<Value: Collection & Object, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
     ) -> [Partial<Value.Element>]? {
-        guard let keyString = T.key(forPath: keyPath) else { return nil }
-        guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
-        return valuesArray.map { Partial<Value.Element>(values: $0) }
+        return T.key(forPath: keyPath)
+            .map { self.values[$0] as? [[String: Any]] ?? [] }
+            .map { $0.map { Partial<Value.Element>(values: $0) } }
     }
 }
 

@@ -208,6 +208,7 @@ extension TestInterface2_Double_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         XCTAssertEqual(res?.i2_doubleOptional, 1.23)
     }
+
 }
 
 // MARK: - Tests to ensure an alias of Double and [Double] on an Object can be used to pull values out of a result
@@ -258,6 +259,31 @@ extension TestInterface2_Double_TypeTests {
         let aliased = res?.i2_doubleArgs(alias: "alias")
         XCTAssertEqual(aliased, 1.23)
     }
+
+    func testArrayAliasOnObject() throws {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
+            $0.testObject {
+                $0.i2_doubles(alias: "alias") 
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": [1.23, 3.21]
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObject{alias:i2_doubles}}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.i2_doubles(alias: "alias")
+        XCTAssertEqual(aliased?[safe: 0], 1.23)
+        XCTAssertEqual(aliased?[safe: 1], 3.21)
+    }
+
 }
 
 // MARK: - Tests to ensure fragments on Query selecting Double and [Double] can be used at the top level of an operation

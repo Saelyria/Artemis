@@ -208,6 +208,7 @@ extension TestInterface2_TestEnum_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         XCTAssertEqual(res?.i2_testEnumOptional, .first)
     }
+
 }
 
 // MARK: - Tests to ensure an alias of TestEnum and [TestEnum] on an Object can be used to pull values out of a result
@@ -258,6 +259,31 @@ extension TestInterface2_TestEnum_TypeTests {
         let aliased = res?.i2_testEnumArgs(alias: "alias")
         XCTAssertEqual(aliased, .first)
     }
+
+    func testArrayAliasOnObject() throws {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
+            $0.testObject {
+                $0.i2_testEnums(alias: "alias") 
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": ["FIRST", "SECOND"]
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObject{alias:i2_testEnums}}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.i2_testEnums(alias: "alias")
+        XCTAssertEqual(aliased?[safe: 0], .first)
+        XCTAssertEqual(aliased?[safe: 1], .second)
+    }
+
 }
 
 // MARK: - Tests to ensure fragments on Query selecting TestEnum and [TestEnum] can be used at the top level of an operation

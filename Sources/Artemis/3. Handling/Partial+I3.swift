@@ -10,15 +10,17 @@ extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
     ) -> Value.Result? {
-        guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        return try? Value.createUnsafeResult(from: self.values[keyString] as Any, key: "")
+        return try? I3.key(forPath: keyPath)
+            .map { self.values[$0] as Any }
+            .map { try Value.createUnsafeResult(from: $0, key: "") }
     }
 
     public subscript<Value: Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>
     ) -> Value.Result? {
-        guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        return try? Value.createUnsafeResult(from: self.values[keyString] as Any, key: "")
+        return try? I3.key(forPath: keyPath)
+            .map { self.values[$0] as Any }
+            .map { try Value.createUnsafeResult(from: $0, key: "") }
     }
 }
 
@@ -28,35 +30,36 @@ extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
     public subscript<Value: Object>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
     ) -> Partial<Value>? {
-        guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        guard let valueDict = self.values[keyString] as? [String: Any] else { return nil }
-        return Partial<Value>(values: valueDict)
+        return I3.key(forPath: keyPath)
+            .map { self.values[$0] as? [String: Any] ?? [:] }
+            .map { Partial<Value>(values: $0) }
     }
 
     public subscript<Value: Object, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>
     ) -> Partial<Value>? {
-        guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        guard let valueDict = self.values[keyString] as? [String: Any] else { return nil }
-        return Partial<Value>(values: valueDict)
+        return I3.key(forPath: keyPath)
+            .map { self.values[$0] as? [String: Any] ?? [:] }
+            .map { Partial<Value>(values: $0) }
     }
 
     public subscript<Value: Collection & Object>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
     ) -> [Partial<Value.Element>]? {
-        guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
-        return valuesArray.map { Partial<Value.Element>(values: $0) }
+        return I3.key(forPath: keyPath)
+            .map { self.values[$0] as? [[String: Any]] ?? [] }
+            .map { $0.map { Partial<Value.Element>(values: $0) } }
     }
 
     public subscript<Value: Collection & Object, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>
     ) -> [Partial<Value.Element>]? {
-        guard let keyString = I3.key(forPath: keyPath) else { return nil }
-        guard let valuesArray = self.values[keyString] as? [[String: Any]] else { return nil }
-        return valuesArray.map { Partial<Value.Element>(values: $0) }
+        return I3.key(forPath: keyPath)
+            .map { self.values[$0] as? [[String: Any]] ?? [] }
+            .map { $0.map { Partial<Value.Element>(values: $0) } }
     }
 }
+
 
 // MARK: Fetching with an alias
 

@@ -208,6 +208,7 @@ extension TestInterface3_String_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         XCTAssertEqual(res?.i3_stringOptional, "value")
     }
+
 }
 
 // MARK: - Tests to ensure an alias of String and [String] on an Object can be used to pull values out of a result
@@ -258,6 +259,31 @@ extension TestInterface3_String_TypeTests {
         let aliased = res?.i3_stringArgs(alias: "alias")
         XCTAssertEqual(aliased, "value")
     }
+
+    func testArrayAliasOnObject() throws {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
+            $0.testObject {
+                $0.i3_strings(alias: "alias") 
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": ["value", "value2"]
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObject{alias:i3_strings}}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.i3_strings(alias: "alias")
+        XCTAssertEqual(aliased?[safe: 0], "value")
+        XCTAssertEqual(aliased?[safe: 1], "value2")
+    }
+
 }
 
 // MARK: - Tests to ensure fragments on Query selecting String and [String] can be used at the top level of an operation

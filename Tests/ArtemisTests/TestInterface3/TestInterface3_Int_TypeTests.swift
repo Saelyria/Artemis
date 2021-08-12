@@ -208,6 +208,7 @@ extension TestInterface3_Int_TypeTests {
         XCTAssertEqual(res?.values.count, 1)
         XCTAssertEqual(res?.i3_intOptional, 123)
     }
+
 }
 
 // MARK: - Tests to ensure an alias of Int and [Int] on an Object can be used to pull values out of a result
@@ -258,6 +259,31 @@ extension TestInterface3_Int_TypeTests {
         let aliased = res?.i3_intArgs(alias: "alias")
         XCTAssertEqual(aliased, 123)
     }
+
+    func testArrayAliasOnObject() throws {
+        let query: _Operation<TestSchema, Partial<TestObject>> = .query {
+            $0.testObject {
+                $0.i3_ints(alias: "alias") 
+            }
+        }
+        let response = Data("""
+        {
+            "data": {
+                "testObject": {
+                    "alias": [123, 321]
+                }
+            }
+        }
+        """.utf8)
+
+        XCTAssertEqual(query.render(), "{testObject{alias:i3_ints}}")
+        let res: Partial<TestObject>? = try? query.createResult(from: response)
+        XCTAssertEqual(res?.values.count, 1)
+        let aliased = res?.i3_ints(alias: "alias")
+        XCTAssertEqual(aliased?[safe: 0], 123)
+        XCTAssertEqual(aliased?[safe: 1], 321)
+    }
+
 }
 
 // MARK: - Tests to ensure fragments on Query selecting Int and [Int] can be used at the top level of an operation
