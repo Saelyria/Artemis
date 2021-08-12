@@ -1,11 +1,5 @@
 import Foundation
 
-public protocol _SelectionProtocol: _SelectionBase {
-    associatedtype Result
-
-    func createResult(from: [String : Any]) throws -> Result
-}
-
 /**
 A type that can be the value of a field selectable for an operation.
 
@@ -32,52 +26,12 @@ public protocol _SelectionInput {
 }
 
 /**
- A type-erased reference to a selection (either `_SelectionSet` or `Add`) that allows them to be put into arrays/
- individually called for their 'render' strings to build queries.
+ A type-erased reference to a selection (either `_SelectionSet`, `_FragmentSelection`, or `_Selection`) that allows them
+ to be put into arrays/individually called for their 'render' strings to build queries.
 */
-public protocol _SelectionBase {
-    var items: [_SelectionBase] { get }
-    var renderedFragmentDeclarations: [String] { get }
-    var error: GraphQLError? { get }
-    func render() -> String
-}
-
-/**
- A type that holds the generic values for a set of one or more selected fields on a type.
-
- For example, given a selection set like:
- ```
- user {
-    name
-    age
- }
- ```
- The 'selection set' is an object that represents 'the selection of the 'name' and 'age' fields on a 'user' type'.
-*/
-public class _SelectionSet<Result>: _SelectionProtocol {
-    public var items: [_SelectionBase]
-    var rendered: String
-	var resultBuilder: ([String: Any]) throws -> Result
-
-    init(items: [_SelectionBase], rendered: String, resultBuilder: @escaping ([String: Any]) throws -> Result) {
-        self.items = items
-        self.rendered = rendered
-        self.resultBuilder = resultBuilder
-    }
-	
-	public func createResult(from: [String : Any]) throws -> Result {
-		try self.resultBuilder(from)
-	}
-
-    public var renderedFragmentDeclarations: [String] {
-        return self.items.flatMap { $0.renderedFragmentDeclarations }
-    }
-
-    public var error: GraphQLError? {
-        return self.items.compactMap { $0.error }.first
-    }
-
-    public func render() -> String {
-        return rendered
-    }
+struct _AnySelection {
+    var items: [_AnySelection]
+    var renderedFragmentDeclarations: [String]
+    var error: GraphQLError?
+    var render: () -> String
 }

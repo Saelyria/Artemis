@@ -13,8 +13,8 @@ public struct _SelectionSetBuilder<T: Object> {
         _ ss1: _Selection<T, R>
     ) -> _SelectionSet<R> {
         return _SelectionSet(
-            items: [ss1],
-            rendered: defaultRendered([ss1]),
+            items: [ss1.erased],
+            rendered: defaultRendered([ss1.erased]),
             resultBuilder: ss1.createResult(from:)
         )
     }
@@ -23,8 +23,8 @@ public struct _SelectionSetBuilder<T: Object> {
         _ ss1: _Selection<T.ImplementedInterfaces.I1, R>
     ) -> _SelectionSet<R> where T.ImplementedInterfaces.I1: Interface {
         return _SelectionSet(
-            items: [ss1],
-            rendered: defaultRendered([ss1]),
+            items: [ss1.erased],
+            rendered: defaultRendered([ss1.erased]),
             resultBuilder: ss1.createResult(from:)
         )
     }
@@ -33,8 +33,8 @@ public struct _SelectionSetBuilder<T: Object> {
         _ ss1: _Selection<T.ImplementedInterfaces.I2, R>
     ) -> _SelectionSet<R> where T.ImplementedInterfaces.I2: Interface {
         return _SelectionSet(
-            items: [ss1],
-            rendered: defaultRendered([ss1]),
+            items: [ss1.erased],
+            rendered: defaultRendered([ss1.erased]),
             resultBuilder: ss1.createResult(from:)
         )
     }
@@ -43,8 +43,8 @@ public struct _SelectionSetBuilder<T: Object> {
         _ ss1: _Selection<T.ImplementedInterfaces.I3, R>
     ) -> _SelectionSet<R> where T.ImplementedInterfaces.I3: Interface {
         return _SelectionSet(
-            items: [ss1],
-            rendered: defaultRendered([ss1]),
+            items: [ss1.erased],
+            rendered: defaultRendered([ss1.erased]),
             resultBuilder: ss1.createResult(from:)
         )
     }
@@ -53,8 +53,8 @@ public struct _SelectionSetBuilder<T: Object> {
         _ ss1: _Selection<T.ImplementedInterfaces.I4, R>
     ) -> _SelectionSet<R> where T.ImplementedInterfaces.I4: Interface {
         return _SelectionSet(
-            items: [ss1],
-            rendered: defaultRendered([ss1]),
+            items: [ss1.erased],
+            rendered: defaultRendered([ss1.erased]),
             resultBuilder: ss1.createResult(from:)
         )
     }
@@ -63,69 +63,69 @@ public struct _SelectionSetBuilder<T: Object> {
         _ ss1: _Selection<T.ImplementedInterfaces.I5, R>
     ) -> _SelectionSet<R> where T.ImplementedInterfaces.I5: Interface {
         return _SelectionSet(
-            items: [ss1],
-            rendered: defaultRendered([ss1]),
+            items: [ss1.erased],
+            rendered: defaultRendered([ss1.erased]),
             resultBuilder: ss1.createResult(from:)
         )
     }
 }
 
 extension _SelectionSetBuilder {
-    public static func buildExpression<F: Object, S>(
-        _ fragment: Fragment<F, S>
-    ) -> _SelectionSet<S.Result> where F.SubSchema == T.SubSchema {
+    public static func buildExpression<F: Object, R>(
+        _ fragment: Fragment<F, R>
+    ) -> _SelectionSet<R> where F.SubSchema == T.SubSchema {
         return _SelectionSet(
-            items: [fragment.selection],
+            items: [fragment.selection.erased],
             rendered: "...\(fragment.name)",
             resultBuilder: fragment.selection.createResult(from:)
         )
     }
 
-    public static func buildExpression<I: Interface, S>(
-        _ fragment: Fragment<I, S>
-    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I1 {
+    public static func buildExpression<I: Interface, R>(
+        _ fragment: Fragment<I, R>
+    ) -> _SelectionSet<R> where I == T.SubSchema.ImplementedInterfaces.I1 {
         return _SelectionSet(
-            items: [fragment.selection],
+            items: [fragment.selection.erased],
             rendered: "...\(fragment.name)",
             resultBuilder: fragment.selection.createResult(from:)
         )
     }
 
-    public static func buildExpression<I: Interface, S>(
-        _ fragment: Fragment<I, S>
-    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I2 {
+    public static func buildExpression<I: Interface, R>(
+        _ fragment: Fragment<I, R>
+    ) -> _SelectionSet<R> where I == T.SubSchema.ImplementedInterfaces.I2 {
         return _SelectionSet(
-            items: [fragment.selection],
+            items: [fragment.selection.erased],
             rendered: "...\(fragment.name)",
             resultBuilder: fragment.selection.createResult(from:)
         )
     }
 
-    public static func buildExpression<I: Interface, S>(
-        _ fragment: Fragment<I, S>
-    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I3 {
+    public static func buildExpression<I: Interface, R>(
+        _ fragment: Fragment<I, R>
+    ) -> _SelectionSet<R> where I == T.SubSchema.ImplementedInterfaces.I3 {
         return _SelectionSet(
-            items: [fragment.selection],
+            items: [fragment.selection.erased],
             rendered: "...\(fragment.name)",
             resultBuilder: fragment.selection.createResult(from:)
         )
     }
 
-    public static func buildExpression<I: Interface, S>(
-        _ fragment: Fragment<I, S>
-    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I4 {
+    public static func buildExpression<I: Interface, R>(
+        _ fragment: Fragment<I, R>
+    ) -> _SelectionSet<R> where I == T.SubSchema.ImplementedInterfaces.I4 {
         return _SelectionSet(
-            items: [fragment.selection],
+            items: [fragment.selection.erased],
             rendered: "...\(fragment.name)",
             resultBuilder: fragment.selection.createResult(from:)
         )
     }
 
-    public static func buildExpression<I: Interface, S>(
-        _ fragment: Fragment<I, S>
-    ) -> _SelectionSet<S.Result> where I == T.SubSchema.ImplementedInterfaces.I5 {
+    public static func buildExpression<I: Interface, R>(
+        _ fragment: Fragment<I, R>
+    ) -> _SelectionSet<R> where I == T.SubSchema.ImplementedInterfaces.I5 {
         return _SelectionSet(
-            items: [fragment.selection],
+            items: [fragment.selection.erased],
             rendered: "...\(fragment.name)",
             resultBuilder: fragment.selection.createResult(from:)
         )
@@ -391,6 +391,6 @@ public class _ConditionalSelectionSet<TrueR, FalseR>: _SelectionSet<Any> {
     }
 }
 
-private func defaultRendered(_ items: [_SelectionBase]) -> String {
+private func defaultRendered(_ items: [_AnySelection]) -> String {
     return "\(items.map { "\($0.render())" }.joined(separator: ","))"
 }

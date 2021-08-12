@@ -9,15 +9,15 @@ public class _Selector<T: Object> { }
 // MARK: Selecting on Object and Scalar on T
 
 extension _Selector {
-    public subscript<Value: Object, S: _SelectionProtocol>(
+    public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<T.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<T, S, Value, Value, NoArguments> {
+    ) -> _SelectionSetBuilderWrapper<T, R, Value, Value, NoArguments> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 
-    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
+    public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<T, S, (Value, Args.Type), Value, Args> {
+    ) -> _SelectionSetBuilderWrapper<T, R, (Value, Args.Type), Value, Args> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 }
@@ -58,15 +58,15 @@ extension _Selector where T.ImplementedInterfaces.I1: Interface {
 }
 
 extension _Selector where T.ImplementedInterfaces.I1: Interface {
-    public subscript<Value: Object, S: _SelectionProtocol>(
+    public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<I1.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<I1, S, Value, Value, NoArguments> {
+    ) -> _SelectionSetBuilderWrapper<I1, R, Value, Value, NoArguments> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 
-    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
+    public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<I1.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<I1, S, (Value, Args.Type), Value, Args> {
+    ) -> _SelectionSetBuilderWrapper<I1, R, (Value, Args.Type), Value, Args> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 }
@@ -98,15 +98,15 @@ extension _Selector where T.ImplementedInterfaces.I2: Interface {
 }
 
 extension _Selector where T.ImplementedInterfaces.I2: Interface {
-    public subscript<Value: Object, S: _SelectionProtocol>(
+    public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<I2.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<I2, S, Value, Value, NoArguments> {
+    ) -> _SelectionSetBuilderWrapper<I2, R, Value, Value, NoArguments> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 
-    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
+    public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<I2.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<I2, S, (Value, Args.Type), Value, Args> {
+    ) -> _SelectionSetBuilderWrapper<I2, R, (Value, Args.Type), Value, Args> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 }
@@ -138,15 +138,15 @@ extension _Selector where T.ImplementedInterfaces.I3: Interface {
 }
 
 extension _Selector where T.ImplementedInterfaces.I3: Interface {
-    public subscript<Value: Object, S: _SelectionProtocol>(
+    public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<I3, S, Value, Value, NoArguments> {
+    ) -> _SelectionSetBuilderWrapper<I3, R, Value, Value, NoArguments> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 
-    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
+    public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<I3, S, (Value, Args.Type), Value, Args> {
+    ) -> _SelectionSetBuilderWrapper<I3, R, (Value, Args.Type), Value, Args> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 }
@@ -178,15 +178,15 @@ extension _Selector where T.ImplementedInterfaces.I4: Interface {
 }
 
 extension _Selector where T.ImplementedInterfaces.I4: Interface {
-    public subscript<Value: Object, S: _SelectionProtocol>(
+    public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<I4.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<I4, S, Value, Value, NoArguments> {
+    ) -> _SelectionSetBuilderWrapper<I4, R, Value, Value, NoArguments> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 
-    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
+    public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<I4.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<I4, S, (Value, Args.Type), Value, Args> {
+    ) -> _SelectionSetBuilderWrapper<I4, R, (Value, Args.Type), Value, Args> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 }
@@ -218,15 +218,15 @@ extension _Selector where T.ImplementedInterfaces.I5: Interface {
 }
 
 extension _Selector where T.ImplementedInterfaces.I5: Interface {
-    public subscript<Value: Object, S: _SelectionProtocol>(
+    public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<I5.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<I5, S, Value, Value, NoArguments> {
+    ) -> _SelectionSetBuilderWrapper<I5, R, Value, Value, NoArguments> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 
-    public subscript<Value: Object, Args: ArgumentsList, S: _SelectionProtocol>(
+    public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<I5.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<I5, S, (Value, Args.Type), Value, Args> {
+    ) -> _SelectionSetBuilderWrapper<I5, R, (Value, Args.Type), Value, Args> {
         return _SelectionSetBuilderWrapper(keyPath: keyPath)
     }
 }
@@ -292,7 +292,7 @@ extension _Selector {
     // add the `alias` parameter name to the call site
     public struct _SelectionSetBuilderWrapper<
         T: Object,
-        S: _SelectionProtocol,
+        R,
         FieldVal,
         Value: Object,
         Args: ArgumentsList
@@ -307,7 +307,7 @@ extension _Selector {
         public func callAsFunction(
             alias: String? = nil,
             arguments: Args,
-            @_SelectionSetBuilder<Value> _ builder: @escaping (_Selector<Value>) -> S
+            @_SelectionSetBuilder<Value> _ builder: @escaping (_Selector<Value>) -> _SelectionSet<R>
         ) -> _Selection<T, Value.Result> {
             // Accessing the keypath makes the Field property wrapper populate a dictionary for the Object instance
             // with the string name of the keypath.
@@ -336,7 +336,7 @@ extension _Selector {
         public func callAsFunction(
             alias: String? = nil,
             arguments: Args,
-            @_SelectionSetBuilder<Value> _ _SelectionSet: @escaping () -> S
+            @_SelectionSetBuilder<Value> _ _SelectionSet: @escaping () -> _SelectionSet<R>
         ) -> _Selection<T, Value.Result> {
             return self.callAsFunction(alias: alias, arguments: arguments) { _ in return _SelectionSet() }
         }
@@ -377,7 +377,7 @@ extension _Selector._SelectionSetBuilderWrapper where Args == NoArguments {
     */
     public func callAsFunction(
         alias: String? = nil,
-        @_SelectionSetBuilder<Value> _ builder: @escaping (_Selector<Value>) -> S
+        @_SelectionSetBuilder<Value> _ builder: @escaping (_Selector<Value>) -> _SelectionSet<R>
     ) -> _Selection<T, Value.Result> {
         // Accessing the keypath makes the Field property wrapper populate a dictionary for the Object instance
         // with the string name of the keypath.
@@ -405,7 +405,7 @@ extension _Selector._SelectionSetBuilderWrapper where Args == NoArguments {
     */
     public func callAsFunction(
         alias: String? = nil,
-        @_SelectionSetBuilder<Value> _ _SelectionSet: @escaping () -> S
+        @_SelectionSetBuilder<Value> _ _SelectionSet: @escaping () -> _SelectionSet<R>
     ) -> _Selection<T, Value.Result> {
         return self.callAsFunction(alias: alias) { _ in return _SelectionSet() }
     }
