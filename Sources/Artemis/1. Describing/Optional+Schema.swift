@@ -64,39 +64,3 @@ extension Optional: CaseIterable where Wrapped: Enum {
 }
 
 extension Optional: Enum where Wrapped: Enum { }
-
-//extension Optional: Queryable where Wrapped: Queryable {
-//    typealias QueryableType = Wrapped.QueryableType
-//    typealias Args = Wrapped.Args
-//    typealias Result = Partial<Wrapped>?
-//
-//    static func string(for keyPath: PartialKeyPath<Wrapped.QueryableType>) -> String {
-//        return Wrapped.string(for: keyPath)
-//    }
-//
-//    static func string(for argument: Wrapped.Args) -> String {
-//        return Wrapped.string(for: argument)
-//    }
-//
-//    static func createResult(from dict: [String : Any], key: String) throws -> Partial<Wrapped>? {
-//        if let value = dict[key], !(value is NSNull) {
-//            guard let selfDict = value as? [String: Any] else { throw GraphQLError.singleItemParseFailure(operation: key) }
-//            return Partial(values: selfDict)
-//        }
-//        return nil
-//    }
-//}
-//extension Optional where Wrapped: Collection, Wrapped.Element: Queryable {
-//    static func createResult(from dict: [String : Any], key: String) throws -> [Partial<Wrapped.Element>]? {
-//        if let value = dict[key], !(value is NSNull) {
-//            guard let objectsArray = value as? [[String: Any]] else { throw GraphQLError.arrayParseFailure(operation: key) }
-//            return objectsArray.map {
-//                return Partial(values: $0)
-//            }
-//        }
-//        return nil
-//    }
-//}
-//extension Optional: GraphQLScalarValue where Wrapped: GraphQLScalarValue { }
-//extension Optional: GraphQLCompatibleValue where Wrapped: GraphQLCompatibleValue { }
-

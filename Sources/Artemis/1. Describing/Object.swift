@@ -165,4 +165,3 @@ public extension Object {
 		return Partial<Self>(values: dictRepresentation) as! Result
 	}
 }
-

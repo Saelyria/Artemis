@@ -58,33 +58,6 @@ private var cachedArgListsForTypes: [String: Any] = [:]
 ///  on the `ArgumentsList`, and the `String` value returned is the string name of the keypath we can use with GraphQL.
 private var nameStringsForArgumentKeyPaths: [String: [AnyKeyPath: String]] = [:]
 
-extension ArgumentsList {
-    private static var typeName: String { String(describing: Self.self) }
-
-    static var instance: Self {
-//        let instance: Self
-//        if let i = cachedArgListsForTypes[typeName] as? Self {
-//            instance = i
-//        } else {
-//            instance = Self.init()
-//            cachedArgListsForTypes[typeName] = instance
-//        }
-//        return instance
-        fatalError()
-    }
-
-    static func set(name: String, forPath keyPath: AnyKeyPath) {
-        if nameStringsForArgumentKeyPaths[typeName] == nil {
-            nameStringsForArgumentKeyPaths[typeName] = [:]
-        }
-        nameStringsForArgumentKeyPaths[typeName]?[keyPath] = name
-    }
-
-    static func name(forPath keyPath: AnyKeyPath) -> String {
-        return nameStringsForArgumentKeyPaths[typeName]![keyPath]!
-    }
-}
-
 /**
 A type that can be used with a `Field` instance to indicate that the field takes no arguments.
 */
