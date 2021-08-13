@@ -9,12 +9,14 @@ public protocol Scalar: _SelectionOutput, _SelectionInput {
     associatedtype Result = Self
 }
 
+// swiftlint:disable missing_docs
 extension Scalar {
     public static func createUnsafeResult(from object: Any, key: String) throws -> Result {
         guard let returnValue = object as? Result else { throw GraphQLError.singleItemParseFailure(operation: key) }
         return returnValue
     }
 }
+// swiftlint:enable missing_docs
 
 // MARK: Standard type Scalar conformance
 
@@ -22,6 +24,9 @@ extension Array: Scalar where Element: Scalar { }
 
 extension Optional: Scalar where Wrapped: Scalar { }
 
+/**
+ An alias for `String` that can be used with GraphQL schema for clarity.
+*/
 public typealias ID = String
 
 extension String: Scalar {

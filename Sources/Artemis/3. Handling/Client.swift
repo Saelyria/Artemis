@@ -31,9 +31,9 @@ public protocol NetworkDelegate {
 */
 open class Client<FullSchema: Schema> {
     /// The object that performs the actual network requests for this client.
-    public let networkDelegate: NetworkDelegate
+    public let networkDelegate: NetworkDelegate // swiftlint:disable:this weak_delegate
     /// Whether the client logs requests and responses.
-	public var loggingEnabled: Bool = true
+	public var loggingEnabled = true
 
 	/**
      Creates a new client object that sends operations to the given URL.
@@ -51,10 +51,14 @@ open class Client<FullSchema: Schema> {
 		or other values to be customized. The request object will already be populated with the GraphQL document,
 		default headers, and the endpoint.
 	*/
-	public init(endpoint: URL, method: HTTPNetworkingDelegate.Method = .post, requestBuilder: ((_ request: URLRequest) -> Void)? = nil) {
+	public init(
+        endpoint: URL,
+        method: HTTPNetworkingDelegate.Method = .post,
+        requestBuilder: ((_ request: URLRequest) -> Void)? = nil
+    ) {
 		self.networkDelegate = HTTPNetworkingDelegate(endpoint: endpoint, method: method)
 	}
-    
+
 	/**
      Creates a new client object that sends requests through the given network delegate.
 	
@@ -68,7 +72,7 @@ open class Client<FullSchema: Schema> {
     public init(networkDelegate: NetworkDelegate) {
         self.networkDelegate = networkDelegate
     }
-    
+
 	/**
      Performs the given GraphQL operation.
 	
@@ -83,8 +87,8 @@ open class Client<FullSchema: Schema> {
     open func perform<R>(
         _ operation: _Operation<FullSchema, R>,
         mock: Data? = nil,
-        completion: @escaping (Result<R, GraphQLError>) -> Void)
-    {
+        completion: @escaping (Result<R, GraphQLError>) -> Void
+    ) {
         if let error = operation.error {
             assertionFailure("Built query was not valid - \(error)")
 			return
@@ -101,7 +105,7 @@ open class Client<FullSchema: Schema> {
                 let result = try operation.createResult(from: data)
                 completion(.success(result))
             } catch {
-                completion(.failure(error as! GraphQLError))
+                completion(.failure(error as? GraphQLError ?? GraphQLError.other(error)))
             }
         } else {
             self.networkDelegate.send(document: operation.render()) { [weak self] rawResult in
@@ -123,12 +127,12 @@ open class Client<FullSchema: Schema> {
     }
 }
 
-private extension Data {
-    var prettyPrintedJSONString: NSString? {
+extension Data {
+    fileprivate var prettyPrintedJSONString: NSString? {
         guard let object = try? JSONSerialization.jsonObject(with: self, options: []),
             let data = try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]),
             let prettyPrintedString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) else { return nil }
-        
+
         return prettyPrintedString
     }
 }

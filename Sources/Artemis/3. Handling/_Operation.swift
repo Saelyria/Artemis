@@ -15,26 +15,34 @@ public struct _Operation<FullSchema: Schema, Result> {
 		case query
 		case mutation
 	}
-	
+
 	private let name: String?
 	let error: GraphQLError?
 	let resultCreator: ([String: Any]) throws -> Result
-	let rendered_SelectionSets: String
+	let renderedSelectionSets: String
 	let renderedFragments: String
     let operationType: OperationType
 
-    fileprivate init<Q: Object>(_ type: OperationType, on: Q.Type, name: String? = nil, @_SelectionSetBuilder<Q> _ selection: (_Selector<Q>) -> _SelectionSet<Result>) {
+    fileprivate init<Q: Object>(
+        _ type: OperationType,
+        on: Q.Type,
+        name: String? = nil,
+        @_SelectionSetBuilder<Q> _ selection: (_Selector<Q>) -> _SelectionSet<Result>
+    ) {
 		self.operationType = type
 		self.name = name
 		let fieldsAggegate = selection(_Selector<Q>())
 		self.error = fieldsAggegate.error
-		self.rendered_SelectionSets = fieldsAggegate.render()
+		self.renderedSelectionSets = fieldsAggegate.render()
 		self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
 		self.renderedFragments = Set(fieldsAggegate.renderedFragmentDeclarations).sorted().joined(separator: ",")
 	}
 
 	func render() -> String {
-		let nameString = (self.name == nil) ? "" : " \(self.name!)"
+        var nameString = ""
+        if let name = self.name {
+            nameString = " \(name)"
+        }
 		let opName: String
 		if self.operationType == .query && nameString.isEmpty {
 			opName = ""
@@ -44,14 +52,14 @@ public struct _Operation<FullSchema: Schema, Result> {
 			opName = "mutation\(nameString)"
 		}
 		let fragmentString = (self.renderedFragments.isEmpty) ? "" : ",\(self.renderedFragments)"
-		return "\(opName){\(self.rendered_SelectionSets)}\(fragmentString)"
+		return "\(opName){\(self.renderedSelectionSets)}\(fragmentString)"
 	}
 
 	func renderDebug() -> String {
 		let ugly = self.render()
-		
+
 		var result: String = ""
-		
+
 		var tabs = ""
 		var isOnArgumentsLine = false
 		var previousChar: Character?
@@ -59,7 +67,7 @@ public struct _Operation<FullSchema: Schema, Result> {
 			if char == "(" {
 				isOnArgumentsLine = true
 			}
-			
+
 			if char == "{" {
 				if previousChar != nil && previousChar != "\n" && previousChar != " " {
 					result.append(" ")
@@ -92,7 +100,7 @@ public struct _Operation<FullSchema: Schema, Result> {
 			}
 			previousChar = char
 		}
-		
+
 		return result
 	}
 
@@ -121,11 +129,11 @@ extension _Operation {
      - parameter name: An optional debug name for the operation sent along with the document.
      - parameter selection: The selected set of fields to include with the document.
      */
-    public static func query<FullSchema: Schema, R>(
+    public static func query<S: Schema, R>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema.QueryType> _ selection: (_Selector<FullSchema.QueryType>) -> _SelectionSet<R>
-    ) -> _Operation<FullSchema, R> {
-        return _Operation<FullSchema, R>(.query, on: FullSchema.QueryType.self, name: name, selection)
+        @_SelectionSetBuilder<S.QueryType> _ selection: (_Selector<S.QueryType>) -> _SelectionSet<R>
+    ) -> _Operation<S, R> {
+        return _Operation<S, R>(.query, on: S.QueryType.self, name: name, selection)
     }
 
     /**
@@ -133,11 +141,11 @@ extension _Operation {
      - parameter name: An optional debug name for the operation sent along with the document.
      - parameter selection: The selected set of fields to include with the document.
      */
-    public static func mutation<FullSchema: Schema, R>(
+    public static func mutation<S: Schema, R>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema.MutationType> _ selection: (_Selector<FullSchema.MutationType>) -> _SelectionSet<R>
-    ) -> _Operation<FullSchema, R> where FullSchema.MutationType: Object {
-        return _Operation<FullSchema, R>(.mutation, on: FullSchema.MutationType.self, name: name, selection)
+        @_SelectionSetBuilder<S.MutationType> _ selection: (_Selector<S.MutationType>) -> _SelectionSet<R>
+    ) -> _Operation<S, R> where S.MutationType: Object {
+        return _Operation<S, R>(.mutation, on: S.MutationType.self, name: name, selection)
     }
 
     /**
@@ -145,11 +153,11 @@ extension _Operation {
      - parameter name: An optional debug name for the operation sent along with the document.
      - parameter selection: The selected set of fields to include with the document.
      */
-    public static func query<FullSchema: Schema, R>(
+    public static func query<S: Schema, R>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema.QueryType> _ selection: () -> _SelectionSet<R>
-    ) -> _Operation<FullSchema, R> {
-        return _Operation<FullSchema, R>(.query, on: FullSchema.QueryType.self, name: name, { _ in return selection() })
+        @_SelectionSetBuilder<S.QueryType> _ selection: () -> _SelectionSet<R>
+    ) -> _Operation<S, R> {
+        return _Operation<S, R>(.query, on: S.QueryType.self, name: name, { _ in return selection() })
     }
 
     /**
@@ -157,10 +165,10 @@ extension _Operation {
      - parameter name: An optional debug name for the operation sent along with the document.
      - parameter selection: The selected set of fields to include with the document.
      */
-    public static func mutation<FullSchema: Schema, R>(
+    public static func mutation<S: Schema, R>(
         name: String? = nil,
-        @_SelectionSetBuilder<FullSchema.MutationType> _ selection: () -> _SelectionSet<R>
-    ) -> _Operation<FullSchema, R> where FullSchema.MutationType: Object {
-        return _Operation<FullSchema, R>(.mutation, on: FullSchema.MutationType.self, name: name, { _ in return selection() })
+        @_SelectionSetBuilder<S.MutationType> _ selection: () -> _SelectionSet<R>
+    ) -> _Operation<S, R> where S.MutationType: Object {
+        return _Operation<S, R>(.mutation, on: S.MutationType.self, name: name, { _ in return selection() })
     }
 }

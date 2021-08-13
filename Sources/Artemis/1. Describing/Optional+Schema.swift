@@ -5,6 +5,8 @@ extension Optional: _SelectionOutput where Wrapped: _SelectionOutput {
     public static func createUnsafeResult(from: Any, key: String) throws -> Result {
         return try Wrapped.createUnsafeResult(from: from, key: key)
     }
+
+    public static var `default`: Wrapped? { nil }
 }
 extension Optional: _SelectionInput where Wrapped: _SelectionInput {
     public func render() -> String {
@@ -13,9 +15,6 @@ extension Optional: _SelectionInput where Wrapped: _SelectionInput {
         case .none: return "null"
         }
     }
-}
-extension Optional {
-    public static var `default`: Optional<Wrapped> { nil }
 }
 
 extension Optional: _AnyObject where Wrapped: _AnyObject {
@@ -37,7 +36,7 @@ extension Optional: Input where Wrapped: Input { }
 
 extension Optional: RawRepresentable where Wrapped: RawRepresentable, Wrapped.RawValue == String {
     public init?(rawValue: String) {
-        if let wrapped = Wrapped.init(rawValue: rawValue) {
+        if let wrapped = Wrapped(rawValue: rawValue) {
             self = .some(wrapped)
         }
         self = .none

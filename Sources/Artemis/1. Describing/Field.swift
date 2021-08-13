@@ -9,6 +9,8 @@ import Foundation
 */
 @propertyWrapper
 public struct Field<T, Value: _SelectionOutput, ArgType: ArgumentsList> {
+    /// The field's wrapped value. This will not return a real value; it is only used for triggering the caching of the
+    /// field's string name.
     public static subscript<OuterSelf: Object>(
         _enclosingInstance object: OuterSelf,
         wrapped wrappedKeyPath: ReferenceWritableKeyPath<OuterSelf, T>,
@@ -20,18 +22,25 @@ public struct Field<T, Value: _SelectionOutput, ArgType: ArgumentsList> {
         }
         set { }
     }
-    
+
 	/// The string name of the field as it should appear in a document.
     public let key: String
-    @available(*, unavailable, message: "Fields are only available on classes conforming to Object, Interface, or Input")
+
+    /// The wrapped value of the field. This should not be accessible.
+    @available(*, unavailable, message: "Fields are available on classes conforming to Object, Interface, or Input")
     public var wrappedValue: T {
-        get { fatalError() }
-        set { fatalError() }
+        get { fatalError("wrappedValue is unavailable") }
+        // swiftlint:disable:next unused_setter_value
+        set { fatalError("wrappedValue is unavailable") }
     }
     private let throwawayValue: () -> T
 }
 
 extension Field where T == (Value, ArgType.Type) {
+    /**
+     Instantiates a new field with the given name.
+     - parameter key: The string name of the field as it will appear in GraphQL documents.
+     */
     public init(_ key: String) {
         self.key = key
         self.throwawayValue = { (.default, ArgType.self) }
@@ -39,6 +48,10 @@ extension Field where T == (Value, ArgType.Type) {
 }
 
 extension Field where Value: _SelectionOutput, ArgType == NoArguments, T == Value {
+    /**
+     Instantiates a new field with the given name.
+     - parameter key: The string name of the field as it will appear in GraphQL documents.
+     */
     public init(_ key: String) {
         self.key = key
         self.throwawayValue = { .default }

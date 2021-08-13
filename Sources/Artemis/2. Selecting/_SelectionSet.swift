@@ -23,7 +23,7 @@ public class _SelectionSet<Result> {
         self.resultBuilder = resultBuilder
     }
 
-    func createResult(from: [String : Any]) throws -> Result {
+    func createResult(from: [String: Any]) throws -> Result {
         try self.resultBuilder(from)
     }
 

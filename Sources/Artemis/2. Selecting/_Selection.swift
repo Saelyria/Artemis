@@ -28,16 +28,23 @@ public class _Selection<T: Object, Result> {
         self.key = alias ?? key
         self.createResultClosure = createResult
 
+        let fragmentDeclarations = renderedFragmentDeclarations + items.flatMap { $0.renderedFragmentDeclarations }
         self.erased = _AnySelection(
             items: items,
-            renderedFragmentDeclarations: renderedFragmentDeclarations + items.flatMap { $0.renderedFragmentDeclarations },
+            renderedFragmentDeclarations: fragmentDeclarations,
             error: error,
             render: {
-                let name: String = (alias == nil) ? key : "\(alias!):\(key)"
-                let selectionSet = (renderedSelectionSet == nil) ? "" : "{\(renderedSelectionSet!)}"
-                var renderedArgs = arguments.map {
-                    "\($0.name):\($0.value)"
-                }.joined(separator: ",")
+                var name = key
+                if let alias = alias {
+                    name = "\(alias):\(key)"
+                }
+                var selectionSet = ""
+                if let renderedSelectionSet = renderedSelectionSet {
+                    selectionSet = "{\(renderedSelectionSet)}"
+                }
+                var renderedArgs = arguments
+                    .map { "\($0.name):\($0.value)" }
+                    .joined(separator: ",")
                 renderedArgs = renderedArgs.isEmpty ? renderedArgs : "(\(renderedArgs))"
 
                 return "\(name)\(renderedArgs)\(selectionSet)"
@@ -45,7 +52,7 @@ public class _Selection<T: Object, Result> {
         )
     }
 
-    func createResult(from dict: [String : Any]) throws -> Result {
+    func createResult(from dict: [String: Any]) throws -> Result {
         try createResultClosure(dict[self.key] as Any)
 	}
 }

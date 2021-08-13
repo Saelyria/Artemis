@@ -11,6 +11,7 @@ import Foundation
 */
 @_functionBuilder
 public struct _SelectionSetBuilder<T: Object> {
+    // swiftlint:disable missing_docs
     public static func buildExpression<R>(
         _ ss1: _Selection<T, R>
     ) -> _SelectionSet<R> {
@@ -281,7 +282,8 @@ extension _SelectionSetBuilder {
         _ set7: _SelectionSet<R7>,
         _ set8: _SelectionSet<R8>
     ) -> _SelectionSet<(R1, R2, R3, R4, R5, R6, R7, R8)> {
-        let items = set1.items + set2.items + set3.items + set4.items + set5.items + set6.items + set7.items + set8.items
+        let items = set1.items + set2.items + set3.items + set4.items
+            + set5.items + set6.items + set7.items + set8.items
         return _SelectionSet(
             items: items,
             rendered: defaultRendered(items),
@@ -311,7 +313,8 @@ extension _SelectionSetBuilder {
         _ set8: _SelectionSet<R8>,
         _ set9: _SelectionSet<R9>
     ) -> _SelectionSet<(R1, R2, R3, R4, R5, R6, R7, R8, R9)> {
-        let items = set1.items + set2.items + set3.items + set4.items + set5.items + set6.items + set7.items + set8.items + set9.items
+        let items = set1.items + set2.items + set3.items + set4.items
+            + set5.items + set6.items + set7.items + set8.items + set9.items
         return _SelectionSet(
             items: items,
             rendered: defaultRendered(items),
@@ -343,7 +346,8 @@ extension _SelectionSetBuilder {
         _ set9: _SelectionSet<R9>,
         _ set10: _SelectionSet<R10>
     ) -> _SelectionSet<(R1, R2, R3, R4, R5, R6, R7, R8, R9, R10)> {
-        let items = set1.items + set2.items + set3.items + set4.items + set5.items + set6.items + set7.items + set8.items + set9.items + set10.items
+        let items = set1.items + set2.items + set3.items + set4.items
+            + set5.items + set6.items + set7.items + set8.items + set9.items + set10.items
         return _SelectionSet(
             items: items,
             rendered: defaultRendered(items),
@@ -366,15 +370,20 @@ extension _SelectionSetBuilder {
 }
 
 extension _SelectionSetBuilder {
+    // swiftlint:disable:next discouraged_optional_collection
     public static func buildIf<R>(_ set: _SelectionSet<R>?) -> _SelectionSet<R> {
-        return set ?? _SelectionSet(items: [], rendered: "", resultBuilder: { _ in fatalError() })
+        return set ?? _SelectionSet(items: [], rendered: "", resultBuilder: { _ in fatalError("Shouldn't be called") })
     }
 
-    public static func buildEither<TrueR, FalseR>(first set: _SelectionSet<TrueR>) -> _ConditionalSelectionSet<TrueR, FalseR> {
+    public static func buildEither<TrueR, FalseR>(
+        first set: _SelectionSet<TrueR>
+    ) -> _ConditionalSelectionSet<TrueR, FalseR> {
         return _ConditionalSelectionSet(underlying: set)
     }
 
-    public static func buildEither<TrueR, FalseR>(second set: _SelectionSet<FalseR>) -> _ConditionalSelectionSet<TrueR, FalseR> {
+    public static func buildEither<TrueR, FalseR>(
+        second set: _SelectionSet<FalseR>
+    ) -> _ConditionalSelectionSet<TrueR, FalseR> {
         return _ConditionalSelectionSet(underlying: set)
     }
 
@@ -386,6 +395,7 @@ extension _SelectionSetBuilder {
         })
     }
 }
+// swiftlint:enable missing_docs
 
 public class _ConditionalSelectionSet<TrueR, FalseR>: _SelectionSet<Any> {
     fileprivate init<R>(underlying: _SelectionSet<R>) {

@@ -12,6 +12,7 @@ import Foundation
  */
 @dynamicMemberLookup
 public struct Partial<T: _SelectionOutput> {
+    /// A callable object that retrieves a value under an alias.
     public struct Getter<Value> {
         var lookup: (String) -> Any?
     }
@@ -20,27 +21,42 @@ public struct Partial<T: _SelectionOutput> {
 }
 
 extension Partial.Getter where Value: Scalar {
-    func callAsFunction(alias: String) -> Value.Result? {
+    /**
+     Gets the value for the field that was requested under an alias.
+     - parameter alias: The alias the field was requested under.
+     */
+    public func callAsFunction(alias: String) -> Value.Result? {
         return try? Value.createUnsafeResult(from: lookup(alias) as Any, key: "")
     }
 }
 
 extension Partial.Getter where Value: Object {
-    func callAsFunction(alias: String) -> Partial<Value>? {
+    /**
+     Gets the value for the field that was requested under an alias.
+     - parameter alias: The alias the field was requested under.
+     */
+    public func callAsFunction(alias: String) -> Partial<Value>? {
         let valueDict = lookup(alias) as? [String: Any]
         return valueDict.map { Partial<Value>(values: $0) }
     }
 }
 
+// swiftlint:disable discouraged_optional_collection
 extension Partial.Getter where Value: Object & Collection, Value.Element: _SelectionOutput {
-    func callAsFunction(alias: String) -> [Partial<Value.Element>]? {
+    /**
+     Gets the value for the field that was requested under an alias.
+     - parameter alias: The alias the field was requested under.
+     */
+    public func callAsFunction(alias: String) -> [Partial<Value.Element>]? {
         let valuesArray = lookup(alias) as? [[String: Any]] ?? []
         return valuesArray.map { Partial<Value.Element>(values: $0) }
     }
 }
+// swiftlint:enable discouraged_optional_collection
 
 // MARK: Fetching Scalar & [Scalar]
 
+// swiftlint:disable discouraged_optional_collection missing_docs
 extension Partial where T: Object {
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<T.SubSchema, Value>
@@ -110,18 +126,21 @@ extension Partial where T: Object {
         return Getter(lookup: { self.values[$0] })
     }
 }
+// swiftlint:enable discouraged_optional_collection missing_docs
 
 extension Partial: CustomStringConvertible {
     public var description: String {
-        var desc = "Partial<\(String(describing: T.self).split(separator: ".").last!)>("
-        let values = self.values.map { (pair) -> String in
-            let (key, value) = pair
-            var valueDesc: String = "nil"
-            if let value = value as? CustomStringConvertible {
-                valueDesc = value.description
+        var desc = "Partial<\(String(describing: T.self).split(separator: ".").last ?? "")>("
+        let values = self.values
+            .map { pair -> String in
+                let (key, value) = pair
+                var valueDesc: String = "nil"
+                if let value = value as? CustomStringConvertible {
+                    valueDesc = value.description
+                }
+                return "\(key): \(valueDesc)"
             }
-            return "\(key): \(valueDesc)"
-        }.joined(separator: ", ")
+            .joined(separator: ", ")
         desc.append("\(values))")
 
         return desc

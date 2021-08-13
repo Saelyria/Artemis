@@ -1,5 +1,6 @@
 import Foundation
 
+// swiftlint:disable discouraged_optional_collection missing_docs
 extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
     public typealias I3 = T.ImplementedInterfaces.I3
 }
@@ -60,7 +61,6 @@ extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
     }
 }
 
-
 // MARK: Fetching with an alias
 
 extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
@@ -76,3 +76,4 @@ extension Partial where T: Object, T.ImplementedInterfaces.I3: Interface {
         return Getter(lookup: { self.values[$0] })
     }
 }
+// swiftlint:enable discouraged_optional_collection missing_docs

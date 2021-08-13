@@ -44,7 +44,7 @@ struct _FragmentSelection<Result> {
         )
     }
 
-    func createResult(from dict: [String : Any]) throws -> Result {
+    func createResult(from dict: [String: Any]) throws -> Result {
         try underlying.createResult(from: dict)
     }
 }

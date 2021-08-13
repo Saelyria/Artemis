@@ -1,4 +1,4 @@
-name: Swift
+name: Artemis-Build
 
 on:
   push:
@@ -6,13 +6,25 @@ on:
         - main
         - develop
         - ci
+    paths:
+      - '.swiftlint.yml'
+      - '**/*.swift'
   pull_request:
     branches:
         - main
         - develop
         - ci
+    paths:
+      - '.swiftlint.yml'
+      - '**/*.swift'
 
 jobs:
+  lint:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: GitHub Action for SwiftLint
+        uses: norio-nomura/action-swiftlint@3.2.1
   build:
     runs-on: macos-latest
     steps:

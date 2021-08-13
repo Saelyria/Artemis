@@ -7,7 +7,7 @@ class _ArgumentEncoder {
         guard let (_, parsedValue) = encoder.data.values.first(where: { key, _ in key == "root" }) else { return "" }
         return parsedValue.rendered(isRoot: true)
     }
-    
+
     func encode<T: Encodable>(_ value: T) throws -> [Argument] {
         let encoder = ArgumentEncoding(data: .init(), codingPath: [])
         try value.encode(to: encoder)
@@ -139,7 +139,7 @@ private struct ArgumentKeyedEncoding<Key: CodingKey>: KeyedEncodingContainerProt
     }
 
     mutating func superEncoder() -> Encoder {
-        let superKey = Key(stringValue: "super")!
+        guard let superKey = Key(stringValue: "super") else { fatalError("Invalid key value") }
         return superEncoder(forKey: superKey)
     }
 

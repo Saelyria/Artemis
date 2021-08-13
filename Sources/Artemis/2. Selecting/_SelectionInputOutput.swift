@@ -8,9 +8,12 @@ this protocol (done by conforming to the protocol for one of the aforementioned 
 'return value' for a field selected in an operation (query or mutation).
 */
 public protocol _SelectionOutput {
+    /// The type that is returned in a response when a field with this type is selected.
     associatedtype Result = Partial<Self>
+    /// Attempts to create this output's `Result` type from the given object.
     static func createUnsafeResult(from: Any, key: String) throws -> Result
 
+    /// A default, 'throwaway' value that can be used to build internal, unused instances of the type.
     static var `default`: Self { get }
 }
 

@@ -23,12 +23,12 @@ extension Array: _SelectionOutput where Element: _SelectionOutput {
         guard let returnedArray = mappedArray as? R else { throw GraphQLError.arrayParseFailure(operation: key) }
         return returnedArray
     }
+
+    public static var `default`: [Element] { [] }
 }
+
 extension Array: _SelectionInput where Element: _SelectionInput {
     public func render() -> String {
         return "[\(self.map { $0.render() }.joined(separator: ","))]"
     }
-}
-extension Array {
-    public static var `default`: [Element] { [] }
 }

@@ -9,6 +9,7 @@ public class _Selector<T: Object> { }
 
 // MARK: Selecting on Object and Scalar on T
 
+// swiftlint:disable missing_docs
 extension _Selector {
     public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<T.SubSchema, Value>
@@ -242,6 +243,7 @@ extension _Selector where T.ImplementedInterfaces.I5: Interface {
         return _AliasSelector(keyPath: keyPath)
     }
 }
+// swiftlint:enable missing_docs
 
 /*
  Technical note: the following two objects are required to be returned instead of a closure for a couple reasons. One,
@@ -267,7 +269,7 @@ extension _Selector {
         ) -> _Selection<T, Value.Result> {
             // Accessing the keypath makes the Field property wrapper populate a dictionary for the Object instance
             // with the string name of the keypath.
-            let _ = T.schema[keyPath: keyPath]
+            _ = T.schema[keyPath: keyPath]
             guard let key = T.key(forPath: keyPath) else {
                 fatalError("No key set - is this value wrapped in a @Field property wrapper?")
             }
@@ -302,7 +304,7 @@ extension _Selector {
         ) -> _Selection<T, Value.Result> {
             // Accessing the keypath makes the Field property wrapper populate a dictionary for the Object instance
             // with the string name of the keypath.
-            let _ = T.schema[keyPath: keyPath]
+            _ = T.schema[keyPath: keyPath]
             let selectedFields = builder(_Selector<Value>())
             guard let key = T.key(forPath: keyPath) else {
                 fatalError("No key set - is this value wrapped in a @Field property wrapper?")
@@ -343,7 +345,7 @@ extension _Selector._AliasSelector where Args == NoArguments {
     ) -> _Selection<T, Value.Result> {
         // Accessing the keypath makes the Field property wrapper populate a dictionary for the Object instance
         // with the string name of the keypath.
-        let _ = T.schema[keyPath: keyPath]
+        _ = T.schema[keyPath: keyPath]
         guard let key = T.key(forPath: keyPath) else {
             fatalError("No key set - is this value wrapped in a @Field property wrapper?")
         }
@@ -371,7 +373,7 @@ extension _Selector._AliasObjectSelector where Args == NoArguments {
     ) -> _Selection<T, Value.Result> {
         // Accessing the keypath makes the Field property wrapper populate a dictionary for the Object instance
         // with the string name of the keypath.
-        let _ = T.schema[keyPath: keyPath]
+        _ = T.schema[keyPath: keyPath]
         let selectedFields = builder(_Selector<Value>())
         guard let key = T.key(forPath: keyPath) else {
             fatalError("No key set - is this value wrapped in a @Field property wrapper?")
