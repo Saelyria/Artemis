@@ -1,20 +1,18 @@
 import Foundation
 
 /**
-An object that represents an operation (either a query or mutation) performed with a GraphQL API.
+ An object that represents an operation (either a query or mutation) performed with a GraphQL API.
 
-Operation objects are used with `Client` objects to make requests with a GraphQL API. In this relationship, operations
-describe the GraphQL request document by being created with the selected fields via `Add` objects.
+ Operation objects are used with `Client` objects to make requests with a GraphQL API. In this relationship, operations
+ describe the GraphQL request document by being created with the selected fields. Operations are instantiated using the
+ static `query` and `mutation` functions.
 
-These objects are generally created inside a `Client.perform(_:completion:)` method call so that their `Schema` and
-`Result` types can be inferred from the selections done inside their function builders.
+ These objects are generally created inside a `Client.perform(_:completion:)` method call so that their `Schema` and
+ `Result` types can be inferred from the selections done inside their function builders.
 */
 public struct _Operation<FullSchema: Schema, Result> {
-	/// A type of GraphQL operation.
     enum OperationType {
-		/// An operation that is meant to query data from a GraphQL API.
 		case query
-		/// An operation that is meant to mutate (either update or add) data in a GraphQL API.
 		case mutation
 	}
 	
@@ -23,17 +21,8 @@ public struct _Operation<FullSchema: Schema, Result> {
 	let resultCreator: ([String: Any]) throws -> Result
 	let rendered_SelectionSets: String
 	let renderedFragments: String
-	/// The type of GraphQL operation this operation will perform.
     let operationType: OperationType
-	
-	/**
-	Creates a new operation using the selection set from the given function builder.
-	
-	- parameter type: The type of this operation.
-	- parameter name: The optional name of this operation, used mainly for debugging and logging purposes.
-	- parameter selection: A function builder of `Add` objects that selects the fields to include in the response to
-	this operation.
-	*/
+
     fileprivate init<Q: Object>(_ type: OperationType, on: Q.Type, name: String? = nil, @_SelectionSetBuilder<Q> _ selection: (_Selector<Q>) -> _SelectionSet<Result>) {
 		self.operationType = type
 		self.name = name
@@ -43,10 +32,7 @@ public struct _Operation<FullSchema: Schema, Result> {
 		self.resultCreator = { try fieldsAggegate.createResult(from: $0) }
 		self.renderedFragments = Set(fieldsAggegate.renderedFragmentDeclarations).sorted().joined(separator: ",")
 	}
-	
-	/**
-	Renders the operation and its sub-selected fields into a string that can be added to a document.
-	*/
+
 	func render() -> String {
 		let nameString = (self.name == nil) ? "" : " \(self.name!)"
 		let opName: String
@@ -60,10 +46,7 @@ public struct _Operation<FullSchema: Schema, Result> {
 		let fragmentString = (self.renderedFragments.isEmpty) ? "" : ",\(self.renderedFragments)"
 		return "\(opName){\(self.rendered_SelectionSets)}\(fragmentString)"
 	}
-	
-	/**
-	Renders the operation and its sub-selected fields into a pretty-printed string for debugging.
-	*/
+
 	func renderDebug() -> String {
 		let ugly = self.render()
 		
@@ -112,10 +95,7 @@ public struct _Operation<FullSchema: Schema, Result> {
 		
 		return result
 	}
-	
-	/**
-	Creates the expected result type from the given raw data.
-	*/
+
 	func createResult(from data: Data) throws -> Result {
 		guard let jsonResult = try? JSONSerialization.jsonObject(with: data, options: .mutableLeaves) as? [String: Any] else {
 			if let dataString = String(data: data, encoding: .utf8) {
@@ -136,6 +116,11 @@ public struct _Operation<FullSchema: Schema, Result> {
 }
 
 extension _Operation {
+    /**
+     Creates a query operation with the given field selection.
+     - parameter name: An optional debug name for the operation sent along with the document.
+     - parameter selection: The selected set of fields to include with the document.
+     */
     public static func query<FullSchema: Schema, R>(
         name: String? = nil,
         @_SelectionSetBuilder<FullSchema.QueryType> _ selection: (_Selector<FullSchema.QueryType>) -> _SelectionSet<R>
@@ -143,6 +128,11 @@ extension _Operation {
         return _Operation<FullSchema, R>(.query, on: FullSchema.QueryType.self, name: name, selection)
     }
 
+    /**
+     Creates a mutation operation with the given field selection.
+     - parameter name: An optional debug name for the operation sent along with the document.
+     - parameter selection: The selected set of fields to include with the document.
+     */
     public static func mutation<FullSchema: Schema, R>(
         name: String? = nil,
         @_SelectionSetBuilder<FullSchema.MutationType> _ selection: (_Selector<FullSchema.MutationType>) -> _SelectionSet<R>
@@ -150,6 +140,11 @@ extension _Operation {
         return _Operation<FullSchema, R>(.mutation, on: FullSchema.MutationType.self, name: name, selection)
     }
 
+    /**
+     Creates a query operation with the given field selection.
+     - parameter name: An optional debug name for the operation sent along with the document.
+     - parameter selection: The selected set of fields to include with the document.
+     */
     public static func query<FullSchema: Schema, R>(
         name: String? = nil,
         @_SelectionSetBuilder<FullSchema.QueryType> _ selection: () -> _SelectionSet<R>
@@ -157,6 +152,11 @@ extension _Operation {
         return _Operation<FullSchema, R>(.query, on: FullSchema.QueryType.self, name: name, { _ in return selection() })
     }
 
+    /**
+     Creates a mutation operation with the given field selection.
+     - parameter name: An optional debug name for the operation sent along with the document.
+     - parameter selection: The selected set of fields to include with the document.
+     */
     public static func mutation<FullSchema: Schema, R>(
         name: String? = nil,
         @_SelectionSetBuilder<FullSchema.MutationType> _ selection: () -> _SelectionSet<R>

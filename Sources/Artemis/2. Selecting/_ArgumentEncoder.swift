@@ -1,6 +1,6 @@
 import Foundation
 
-class ArgumentEncoder {
+class _ArgumentEncoder {
     func encode<T: Encodable>(_ value: T) throws -> String {
         let encoder = ArgumentEncoding(data: .init(), codingPath: [])
         try value.encode(to: encoder)

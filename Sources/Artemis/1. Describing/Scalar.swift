@@ -9,8 +9,8 @@ public protocol Scalar: _SelectionOutput, _SelectionInput {
     associatedtype Result = Self
 }
 
-public extension Scalar {
-    static func createUnsafeResult(from object: Any, key: String) throws -> Result {
+extension Scalar {
+    public static func createUnsafeResult(from object: Any, key: String) throws -> Result {
         guard let returnValue = object as? Result else { throw GraphQLError.singleItemParseFailure(operation: key) }
         return returnValue
     }

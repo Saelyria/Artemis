@@ -1,7 +1,8 @@
 import Foundation
 
 /**
- A type used to turn keypaths from `T` into functions that build `Selection` instances.
+ A type used to turn keypaths from `T` into functions that build `_Selection` instances inside closures that use the
+ `_SelectionSetBuilder` result builder.
  */
 @dynamicMemberLookup
 public class _Selector<T: Object> { }
@@ -11,43 +12,34 @@ public class _Selector<T: Object> { }
 extension _Selector {
     public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<T.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<T, R, Value, Value, NoArguments> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<T, R, Value, Value, NoArguments> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 
     public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<T, R, (Value, Args.Type), Value, Args> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<T, R, (Value, Args.Type), Value, Args> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 }
 
 extension _Selector {
-    /**
-     Adds the given field to the operation.
-    */
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<T.SubSchema, Value>
     ) -> _Selection<T, Value.Result> {
-        return AliasBuilderWrapper<T, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+        return _AliasSelector<T, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
     }
 
-    /**
-     Adds the given field to the operation, giving the selected field an alias.
-    */
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<T.SubSchema, Value>
-    ) -> AliasBuilderWrapper<T, Value, Value, NoArguments> {
-        return AliasBuilderWrapper<T, Value, Value, NoArguments>(keyPath: keyPath)
+    ) -> _AliasSelector<T, Value, Value, NoArguments> {
+        return _AliasSelector<T, Value, Value, NoArguments>(keyPath: keyPath)
     }
 
-    /**
-     Adds the given field to the operation with the given arguments, giving the selected field an alias.
-    */
     public subscript<Value: Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<T.SubSchema, (Value, Args.Type)>
-    ) -> AliasBuilderWrapper<T, (Value, Args.Type), Value, Args> {
-        return AliasBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasSelector<T, (Value, Args.Type), Value, Args> {
+        return _AliasSelector(keyPath: keyPath)
     }
 }
 
@@ -60,14 +52,14 @@ extension _Selector where T.ImplementedInterfaces.I1: Interface {
 extension _Selector where T.ImplementedInterfaces.I1: Interface {
     public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<I1.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<I1, R, Value, Value, NoArguments> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<I1, R, Value, Value, NoArguments> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 
     public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<I1.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<I1, R, (Value, Args.Type), Value, Args> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<I1, R, (Value, Args.Type), Value, Args> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 }
 
@@ -75,19 +67,19 @@ extension _Selector where T.ImplementedInterfaces.I1: Interface {
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I1.SubSchema, Value>
     ) -> _Selection<I1, Value.Result> {
-        return AliasBuilderWrapper<I1, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+        return _AliasSelector<I1, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
     }
 
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I1.SubSchema, Value>
-    ) -> AliasBuilderWrapper<I1, Value, Value, NoArguments> {
-        return AliasBuilderWrapper<I1, Value, Value, NoArguments>(keyPath: keyPath)
+    ) -> _AliasSelector<I1, Value, Value, NoArguments> {
+        return _AliasSelector<I1, Value, Value, NoArguments>(keyPath: keyPath)
     }
 
     public subscript<Value: Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<I1.SubSchema, (Value, Args.Type)>
-    ) -> AliasBuilderWrapper<I1, (Value, Args.Type), Value, Args> {
-        return AliasBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasSelector<I1, (Value, Args.Type), Value, Args> {
+        return _AliasSelector(keyPath: keyPath)
     }
 }
 
@@ -100,14 +92,14 @@ extension _Selector where T.ImplementedInterfaces.I2: Interface {
 extension _Selector where T.ImplementedInterfaces.I2: Interface {
     public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<I2.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<I2, R, Value, Value, NoArguments> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<I2, R, Value, Value, NoArguments> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 
     public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<I2.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<I2, R, (Value, Args.Type), Value, Args> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<I2, R, (Value, Args.Type), Value, Args> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 }
 
@@ -115,19 +107,19 @@ extension _Selector where T.ImplementedInterfaces.I2: Interface {
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I2.SubSchema, Value>
     ) -> _Selection<I2, Value.Result> {
-        return AliasBuilderWrapper<I2, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+        return _AliasSelector<I2, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
     }
 
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I2.SubSchema, Value>
-    ) -> AliasBuilderWrapper<I2, Value, Value, NoArguments> {
-        return AliasBuilderWrapper<I2, Value, Value, NoArguments>(keyPath: keyPath)
+    ) -> _AliasSelector<I2, Value, Value, NoArguments> {
+        return _AliasSelector<I2, Value, Value, NoArguments>(keyPath: keyPath)
     }
 
     public subscript<Value: Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<I2.SubSchema, (Value, Args.Type)>
-    ) -> AliasBuilderWrapper<I2, (Value, Args.Type), Value, Args> {
-        return AliasBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasSelector<I2, (Value, Args.Type), Value, Args> {
+        return _AliasSelector(keyPath: keyPath)
     }
 }
 
@@ -140,14 +132,14 @@ extension _Selector where T.ImplementedInterfaces.I3: Interface {
 extension _Selector where T.ImplementedInterfaces.I3: Interface {
     public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<I3, R, Value, Value, NoArguments> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<I3, R, Value, Value, NoArguments> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 
     public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<I3, R, (Value, Args.Type), Value, Args> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<I3, R, (Value, Args.Type), Value, Args> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 }
 
@@ -155,19 +147,19 @@ extension _Selector where T.ImplementedInterfaces.I3: Interface {
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
     ) -> _Selection<I3, Value.Result> {
-        return AliasBuilderWrapper<I3, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+        return _AliasSelector<I3, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
     }
 
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, Value>
-    ) -> AliasBuilderWrapper<I3, Value, Value, NoArguments> {
-        return AliasBuilderWrapper<I3, Value, Value, NoArguments>(keyPath: keyPath)
+    ) -> _AliasSelector<I3, Value, Value, NoArguments> {
+        return _AliasSelector<I3, Value, Value, NoArguments>(keyPath: keyPath)
     }
 
     public subscript<Value: Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<I3.SubSchema, (Value, Args.Type)>
-    ) -> AliasBuilderWrapper<I3, (Value, Args.Type), Value, Args> {
-        return AliasBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasSelector<I3, (Value, Args.Type), Value, Args> {
+        return _AliasSelector(keyPath: keyPath)
     }
 }
 
@@ -180,14 +172,14 @@ extension _Selector where T.ImplementedInterfaces.I4: Interface {
 extension _Selector where T.ImplementedInterfaces.I4: Interface {
     public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<I4.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<I4, R, Value, Value, NoArguments> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<I4, R, Value, Value, NoArguments> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 
     public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<I4.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<I4, R, (Value, Args.Type), Value, Args> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<I4, R, (Value, Args.Type), Value, Args> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 }
 
@@ -195,19 +187,19 @@ extension _Selector where T.ImplementedInterfaces.I4: Interface {
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I4.SubSchema, Value>
     ) -> _Selection<I4, Value.Result> {
-        return AliasBuilderWrapper<I4, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+        return _AliasSelector<I4, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
     }
 
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I4.SubSchema, Value>
-    ) -> AliasBuilderWrapper<I4, Value, Value, NoArguments> {
-        return AliasBuilderWrapper<I4, Value, Value, NoArguments>(keyPath: keyPath)
+    ) -> _AliasSelector<I4, Value, Value, NoArguments> {
+        return _AliasSelector<I4, Value, Value, NoArguments>(keyPath: keyPath)
     }
 
     public subscript<Value: Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<I4.SubSchema, (Value, Args.Type)>
-    ) -> AliasBuilderWrapper<I4, (Value, Args.Type), Value, Args> {
-        return AliasBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasSelector<I4, (Value, Args.Type), Value, Args> {
+        return _AliasSelector(keyPath: keyPath)
     }
 }
 
@@ -220,14 +212,14 @@ extension _Selector where T.ImplementedInterfaces.I5: Interface {
 extension _Selector where T.ImplementedInterfaces.I5: Interface {
     public subscript<Value: Object, R>(
         dynamicMember keyPath: KeyPath<I5.SubSchema, Value>
-    ) -> _SelectionSetBuilderWrapper<I5, R, Value, Value, NoArguments> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<I5, R, Value, Value, NoArguments> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 
     public subscript<Value: Object, Args: ArgumentsList, R>(
         dynamicMember keyPath: KeyPath<I5.SubSchema, (Value, Args.Type)>
-    ) -> _SelectionSetBuilderWrapper<I5, R, (Value, Args.Type), Value, Args> {
-        return _SelectionSetBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasObjectSelector<I5, R, (Value, Args.Type), Value, Args> {
+        return _AliasObjectSelector(keyPath: keyPath)
     }
 }
 
@@ -235,34 +227,39 @@ extension _Selector where T.ImplementedInterfaces.I5: Interface {
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I5.SubSchema, Value>
     ) -> _Selection<I5, Value.Result> {
-        return AliasBuilderWrapper<I5, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
+        return _AliasSelector<I5, Value, Value, NoArguments>(keyPath: keyPath)(alias: nil)
     }
 
     public subscript<Value: Scalar>(
         dynamicMember keyPath: KeyPath<I5.SubSchema, Value>
-    ) -> AliasBuilderWrapper<I5, Value, Value, NoArguments> {
-        return AliasBuilderWrapper<I5, Value, Value, NoArguments>(keyPath: keyPath)
+    ) -> _AliasSelector<I5, Value, Value, NoArguments> {
+        return _AliasSelector<I5, Value, Value, NoArguments>(keyPath: keyPath)
     }
 
     public subscript<Value: Scalar, Args: ArgumentsList>(
         dynamicMember keyPath: KeyPath<I5.SubSchema, (Value, Args.Type)>
-    ) -> AliasBuilderWrapper<I5, (Value, Args.Type), Value, Args> {
-        return AliasBuilderWrapper(keyPath: keyPath)
+    ) -> _AliasSelector<I5, (Value, Args.Type), Value, Args> {
+        return _AliasSelector(keyPath: keyPath)
     }
 }
 
+/*
+ Technical note: the following two objects are required to be returned instead of a closure for a couple reasons. One,
+ result builders can't be applied to free closures (otherwise, the above subscripts that return these objects would
+ instead return a closure like `(@_SelectionSetBuilder () -> _SelectionSet<R>) -> _Selection<T, R>`. Using an object
+ with `callAsFunction` allows the result builder to be used, and also allows named arguments/better organization
+ anyway.
+ */
 extension _Selector {
-    // We need to return this instead of a closure so we can add the `alias` parameter name to the callsite
-    public struct AliasBuilderWrapper<
-        T: Object,
-        FieldVal,
-        Value: Scalar,
-        Args: ArgumentsList
-    > {
+    /**
+     An object that can be used to add an alias or arguments to a scalar field selection made with a `_Selector`.
+     */
+    public struct _AliasSelector<T: Object, FieldVal, Value: Scalar, Args: ArgumentsList> {
         let keyPath: KeyPath<T.SubSchema, FieldVal>
 
         /**
          - parameter alias: The alias to use for this field in the rendered GraphQL document.
+         - parameter arguments: The arguments for the field.
         */
         public func callAsFunction(
             alias: String? = nil,
@@ -277,7 +274,7 @@ extension _Selector {
             return _Selection(
                 key: key,
                 alias: alias,
-                arguments: (try? ArgumentEncoder().encode(arguments)) ?? [],
+                arguments: (try? _ArgumentEncoder().encode(arguments)) ?? [],
                 renderedSelectionSet: nil,
                 createResult: { try Value.createUnsafeResult(from: $0, key: alias ?? key) },
                 items: [],
@@ -287,22 +284,16 @@ extension _Selector {
         }
     }
 
-    // We need to return this instead of a closure so that the result builder syntax can work (we can't put a result
-    // builder i.e. `@_SelectionSetBuilder` as an argument in a closure; needs to be in a static function). It also lets us
-    // add the `alias` parameter name to the call site
-    public struct _SelectionSetBuilderWrapper<
-        T: Object,
-        R,
-        FieldVal,
-        Value: Object,
-        Args: ArgumentsList
-    > {
+    /**
+     An object that can be used to add an alias or arguments to an object field selection made with a `_Selector`.
+     */
+    public struct _AliasObjectSelector<T: Object, R, FieldVal, Value: Object, Args: ArgumentsList> {
         let keyPath: KeyPath<T.SubSchema, FieldVal>
 
         /**
          - parameter alias: The alias to use for this field in the rendered GraphQL document.
-         - parameter _SelectionSet: A function builder that additional `Add` components can be given in to select fields on
-        this `Add` instance's returned value.
+         - parameter arguments: The arguments for the field.
+         - parameter builder: A closure to build the nested selection on this selection.
         */
         public func callAsFunction(
             alias: String? = nil,
@@ -319,7 +310,7 @@ extension _Selector {
             return _Selection(
                 key: key,
                 alias: alias,
-                arguments: (try? ArgumentEncoder().encode(arguments)) ?? [],
+                arguments: (try? _ArgumentEncoder().encode(arguments)) ?? [],
                 renderedSelectionSet: selectedFields.render(),
                 createResult: { try Value.createUnsafeResult(from: $0, key: alias ?? key) },
                 items: selectedFields.items,
@@ -330,20 +321,20 @@ extension _Selector {
 
         /**
          - parameter alias: The alias to use for this field in the rendered GraphQL document.
-         - parameter _SelectionSet: A function builder that additional `Add` components can be given in to select fields on
-        this `Add` instance's returned value.
+         - parameter arguments: The arguments for the field.
+         - parameter builder: A closure to build the nested selection on this selection.
         */
         public func callAsFunction(
             alias: String? = nil,
             arguments: Args,
-            @_SelectionSetBuilder<Value> _ _SelectionSet: @escaping () -> _SelectionSet<R>
+            @_SelectionSetBuilder<Value> _ builder: @escaping () -> _SelectionSet<R>
         ) -> _Selection<T, Value.Result> {
-            return self.callAsFunction(alias: alias, arguments: arguments) { _ in return _SelectionSet() }
+            return self.callAsFunction(alias: alias, arguments: arguments) { _ in return builder() }
         }
     }
 }
 
-extension _Selector.AliasBuilderWrapper where Args == NoArguments {
+extension _Selector._AliasSelector where Args == NoArguments {
     /**
      - parameter alias: The alias to use for this field in the rendered GraphQL document.
     */
@@ -369,11 +360,10 @@ extension _Selector.AliasBuilderWrapper where Args == NoArguments {
     }
 }
 
-extension _Selector._SelectionSetBuilderWrapper where Args == NoArguments {
+extension _Selector._AliasObjectSelector where Args == NoArguments {
     /**
      - parameter alias: The alias to use for this field in the rendered GraphQL document.
-     - parameter _SelectionSet: A function builder that additional `Add` components can be given in to select fields on
-    this `Add` instance's returned value.
+     - parameter builder: A closure to build the nested selection on this selection.
     */
     public func callAsFunction(
         alias: String? = nil,
@@ -400,13 +390,12 @@ extension _Selector._SelectionSetBuilderWrapper where Args == NoArguments {
 
     /**
      - parameter alias: The alias to use for this field in the rendered GraphQL document.
-     - parameter _SelectionSet: A function builder that additional `Add` components can be given in to select fields on
-    this `Add` instance's returned value.
+     - parameter builder: A closure to build the nested selection on this selection.
     */
     public func callAsFunction(
         alias: String? = nil,
-        @_SelectionSetBuilder<Value> _ _SelectionSet: @escaping () -> _SelectionSet<R>
+        @_SelectionSetBuilder<Value> _ builder: @escaping () -> _SelectionSet<R>
     ) -> _Selection<T, Value.Result> {
-        return self.callAsFunction(alias: alias) { _ in return _SelectionSet() }
+        return self.callAsFunction(alias: alias) { _ in return builder() }
     }
 }

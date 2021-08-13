@@ -34,7 +34,7 @@ private var keyStringsForSchemaKeyPaths: [String: [AnyKeyPath: String]] = [:]
 extension Object {
     public static var _schemaName: String { String(describing: SubSchema.self) }
 
-    static var schema: SubSchema {
+    internal static var schema: SubSchema {
         let schema: SubSchema
         if let s = cachedSchemasForTypes[_schemaName] as? SubSchema {
             schema = s
@@ -45,14 +45,14 @@ extension Object {
         return schema
     }
 
-    static func set(key: String, forPath keyPath: AnyKeyPath) {
+    internal static func set(key: String, forPath keyPath: AnyKeyPath) {
         if keyStringsForSchemaKeyPaths[_schemaName] == nil {
             keyStringsForSchemaKeyPaths[_schemaName] = [:]
         }
         keyStringsForSchemaKeyPaths[_schemaName]?[keyPath] = key
     }
 
-    static func key(forPath keyPath: AnyKeyPath) -> String? {
+    internal static func key(forPath keyPath: AnyKeyPath) -> String? {
         print(keyStringsForSchemaKeyPaths)
         return keyStringsForSchemaKeyPaths[_schemaName]?[keyPath]
     }
@@ -89,8 +89,8 @@ extension Enum where Result == Self {
 }
 
 internal struct _EncodedEnum: _SelectionInput, Encodable {
-    var rawValue: String
-    func render() -> String {
+    internal var rawValue: String
+    internal func render() -> String {
         return rawValue
     }
 }
@@ -115,43 +115,43 @@ public protocol AnyInterfaces {
 }
 
 // MARK: -
-public extension Interfaces where I5: Interface, I4: Interface, I3: Interface, I2: Interface, I1: Interface {
-    init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type, _ i4: I4.Type, _ i5: I5.Type) { }
+extension Interfaces where I5: Interface, I4: Interface, I3: Interface, I2: Interface, I1: Interface {
+    public init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type, _ i4: I4.Type, _ i5: I5.Type) { }
 }
-public extension Interfaces where I5 == Void, I4: Interface, I3: Interface, I2: Interface, I1: Interface {
-	init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type, _ i4: I4.Type) { }
+extension Interfaces where I5 == Void, I4: Interface, I3: Interface, I2: Interface, I1: Interface {
+    public init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type, _ i4: I4.Type) { }
 }
-public extension Interfaces where I5 == Void, I4 == Void, I3: Interface, I2: Interface, I1: Interface {
-	init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type) { }
+extension Interfaces where I5 == Void, I4 == Void, I3: Interface, I2: Interface, I1: Interface {
+    public init(_ i1: I1.Type, _ i2: I2.Type, _ i3: I3.Type) { }
 }
-public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2: Interface, I1: Interface {
-	init(_ i1: I1.Type, _ i2: I2.Type) { }
+extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2: Interface, I1: Interface {
+    public init(_ i1: I1.Type, _ i2: I2.Type) { }
 }
-public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void, I1: Interface {
-	init(_ i1: I1.Type) { }
+extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void, I1: Interface {
+    public init(_ i1: I1.Type) { }
 }
-public extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void, I1 == Void {
-	init() { }
+extension Interfaces where I5 == Void, I4 == Void, I3 == Void, I2 == Void, I1 == Void {
+	public init() { }
 }
 
-public extension Enum {
-	func render() -> String {
+extension Enum {
+	public func render() -> String {
 		return self.rawValue
 	}
 }
 
-public extension Input {
-	func render() -> String {
+extension Input {
+	public func render() -> String {
 		return ""
 	}
 }
 
-public extension Object where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
-	static var implements: ImplementedInterfaces { return Interfaces() }
+extension Object where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
+	public static var implements: ImplementedInterfaces { return Interfaces() }
 }
 
-public extension Object {
-	static func createUnsafeResult(from object: Any, key: String) throws -> Result {
+extension Object {
+	public static func createUnsafeResult(from object: Any, key: String) throws -> Result {
 		guard let dictRepresentation = object as? [String: Any] else { throw GraphQLError.singleItemParseFailure(operation: key) }
 		return Partial<Self>(values: dictRepresentation) as! Result
 	}

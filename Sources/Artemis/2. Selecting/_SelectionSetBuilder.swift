@@ -1,14 +1,16 @@
 import Foundation
 
 /**
- A function builder type that builds selection sets from `Selection` instances.
+ A result builder type that builds selection sets.
 
- T: The object that the selection set is selecting keypaths from
+ This result builder can be applied to closures that return `_SelectionSet` instances (i.e. the 'components' and 'final
+ result' of the result builder DSL) in order to turn instances of either `_Selection` or `Fragment` (i.e. the
+ 'expressions' of the result builder DSL) into full `_SelectionSet`s. Closures that use this builder should have a
+ `_Selector` passed into them so that new instances of `_Selection` can be easily created using keypaths from `T` (i.e.
+ the field being whose fields are being selected from).
 */
 @_functionBuilder
 public struct _SelectionSetBuilder<T: Object> {
-    /// Function builder method to transform a `Selection` instance into a `_SelectionSet` that will get piped into one of
-    /// the `buildBlock` methods.
     public static func buildExpression<R>(
         _ ss1: _Selection<T, R>
     ) -> _SelectionSet<R> {
@@ -376,6 +378,8 @@ extension _SelectionSetBuilder {
         return _ConditionalSelectionSet(underlying: set)
     }
 
+    // This buildBlock is required to transform the _ConditionalSelectionSet returned from buildEither into a
+    // _SelectionSet, which is required as the result builder's 'component' type is _SelectionSet.
     public static func buildBlock<TrueR, FalseR>(_ set: _ConditionalSelectionSet<TrueR, FalseR>) -> _SelectionSet<Any> {
         return _SelectionSet(items: set.items, rendered: defaultRendered(set.items), resultBuilder: {
             try set.createResult(from: $0)

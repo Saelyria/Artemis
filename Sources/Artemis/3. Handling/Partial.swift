@@ -4,8 +4,8 @@ import Foundation
  An object that wraps values related to a wrapped type.
 
  When using GraphQL, we often don't fetch full representations of model objects - instead, we get 'partial' instances
- that only contain some properties. This object is used to be this 'partial' representation of a model object - `Partial`
- instances are specialized with a type to represent, and are returned as the result of a GraphQL operation.
+ that only contain some properties. This object is used to be this 'partial' representation of a model object -
+ `Partial` instances are specialized with a type to represent, and are returned as the result of a GraphQL operation.
 
  `Partial` instances can be queried for properties related to their underlying represented type with the same property
  names as the represented type in a type-safe way using `KeyPath` objects.

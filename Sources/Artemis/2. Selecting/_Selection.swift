@@ -1,16 +1,13 @@
 import Foundation
 
 /**
-A type that adds a field to a selection set.
+ A type that adds a field to a selection set.
 
-Instances of this type are created inside an operation's selection set to specify the fields that are being queried
-for on the operation. They are created using `KeyPath` objects of the type being queried. If the value of the keypath
-is an object (i.e. non-scalar value), an additional sub-selection builder of `Add` objects is also given to the `Add`
-instance.
+ Instances of this type are created inside an operation's selection set to specify the fields that are being queried
+ for on the operation.
 
-- `T`: The GraphQL object type that we are selecting fields on. For example, a `User` type.
-- `F`: The specific `Field` type (i.e. property) that this 'add' object is selecting. For example, the `name` field on
-	the `User`, which could be a `Field<String, NoArguments>`.
+ - `T`: The GraphQL object type that we are selecting fields on. For example, a `User` type.
+ - `Result`: The type returned to the response as a result of selecting this field.
 */
 public class _Selection<T: Object, Result> {
     let key: String
