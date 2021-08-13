@@ -18,7 +18,12 @@ extension Optional {
     public static var `default`: Optional<Wrapped> { nil }
 }
 
-extension Optional: _ObjectSchema where Wrapped: _ObjectSchema {
+extension Optional: _AnyObject where Wrapped: _AnyObject {
+    public static var _schemaName: String { Wrapped._schemaName }
+}
+
+extension Optional: Object where Wrapped: Object {
+    public typealias SubSchema = Wrapped.SubSchema
     public typealias ImplementedInterfaces = Wrapped.ImplementedInterfaces
 
     public static var implements: ImplementedInterfaces { Wrapped.implements }
@@ -28,17 +33,8 @@ extension Optional: _ObjectSchema where Wrapped: _ObjectSchema {
     }
 }
 
-extension Optional: _AnyObject where Wrapped: _AnyObject {
-    public static var _schemaName: String { Wrapped._schemaName }
-}
+extension Optional: Input where Wrapped: Input { }
 
-extension Optional: Object where Wrapped: Object {
-    public typealias SubSchema = Wrapped.SubSchema
-}
-
-extension Optional: Input where Wrapped: Input {
-
-}
 extension Optional: RawRepresentable where Wrapped: RawRepresentable, Wrapped.RawValue == String {
     public init?(rawValue: String) {
         if let wrapped = Wrapped.init(rawValue: rawValue) {

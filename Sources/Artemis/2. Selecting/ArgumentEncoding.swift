@@ -242,7 +242,7 @@ extension ArgumentEncoding: SingleValueEncodingContainer {
 
     mutating func encode<T: Encodable>(_ value: T) throws {
         // Enums are sent through with the `EncodedEnum` wrapper instead of their String value so that "" isn't added
-        if let encodedEnum = value as? EncodedEnum {
+        if let encodedEnum = value as? _EncodedEnum {
             data.add(.value(encodedEnum), codingPath: codingPath)
             return
         }

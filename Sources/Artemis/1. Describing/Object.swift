@@ -6,10 +6,16 @@ A protocol that identifies a type as representing a GraphQL 'object'.
 'Objects' in GraphQL are any types that have selectable fields of other 'objects' or 'scalars'. This protocol is
 conformed to by data types that are meant to represent the various objects of your GraphQL API.
 */
-public protocol Object: _SelectionOutput, _ObjectSchema, _AnyObject {
+public protocol Object: _SelectionOutput, _AnyObject {
 	/// The type whose keypaths can be used to construct GraphQL queries. Defaults to `Self`.
-	associatedtype SubSchema: _ObjectSchema = Self
+	associatedtype SubSchema: Object = Self
 	associatedtype Result = Partial<Self>
+
+    associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void, Void, Void>
+
+    static var implements: ImplementedInterfaces { get }
+
+    init()
 }
 extension Object where SubSchema == Self {
     public static var `default`: Self {
@@ -71,7 +77,7 @@ extension Enum where Result == Self {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        try container.encode(EncodedEnum(rawValue: self.rawValue))
+        try container.encode(_EncodedEnum(rawValue: self.rawValue))
     }
 
     public static func createUnsafeResult(from object: Any, key: String) throws -> Result {
@@ -82,7 +88,7 @@ extension Enum where Result == Self {
     }
 }
 
-internal struct EncodedEnum: _SelectionInput, Encodable {
+internal struct _EncodedEnum: _SelectionInput, Encodable {
     var rawValue: String
     func render() -> String {
         return rawValue
@@ -95,21 +101,6 @@ A protocol that designates a type as representing a GraphQL 'input object' type.
 public protocol Input: _SelectionInput, Encodable { }
 
 // MARK: -
-
-/**
-A protocol that designates a type as containing the fields for an `Object` type.
-
-This protocol is separate from the `Object` protocol to allow existing model types to declare themselves as GraphQL
-`objects`, but to specify another type as representing its 'schema' (i.e. another type that contains all the heavily-
-marked-up `Field` properties). When object types are generated, they will generally conform to both of these protocols.
-*/
-public protocol _ObjectSchema {
-	associatedtype ImplementedInterfaces: AnyInterfaces = Interfaces<Void, Void, Void, Void, Void>
-	
-	static var implements: ImplementedInterfaces { get }
-
-	init()
-}
 
 public protocol _AnyObject {
     static var _schemaName: String { get }
@@ -155,7 +146,7 @@ public extension Input {
 	}
 }
 
-public extension _ObjectSchema where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
+public extension Object where ImplementedInterfaces == Interfaces<Void, Void, Void, Void, Void> {
 	static var implements: ImplementedInterfaces { return Interfaces() }
 }
 

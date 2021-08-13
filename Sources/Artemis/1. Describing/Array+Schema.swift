@@ -6,15 +6,12 @@ extension Array: _AnyObject where Element: _AnyObject {
 
 extension Array: Object where Element: Object {
     public typealias SubSchema = Element.SubSchema
-}
-
-extension Array: Input where Element: Input { }
-
-extension Array: _ObjectSchema where Element: _ObjectSchema {
     public typealias ImplementedInterfaces = Element.ImplementedInterfaces
 
     public static var implements: ImplementedInterfaces { Element.implements }
 }
+
+extension Array: Input where Element: Input { }
 
 extension Array: _SelectionOutput where Element: _SelectionOutput {
     public typealias Result = [Element.Result]

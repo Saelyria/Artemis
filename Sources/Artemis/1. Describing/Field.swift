@@ -1,11 +1,11 @@
 import Foundation
 
 /**
-An object containing the information about a field on a GraphQL type.
+ A property wrapper that marks a property on an `Object` as a GraphQL field.
 
-Instances of this type are added as properties on a GraphQL type to represent the fields that can be queried or mutated
-on that oject. Via generic associated types, `Field` objects contain type information for the value that is returned
-when this field is queried as well as the type whose properties represent the arguments to this field.
+ This property wrapper must be applied to properties on an `Object` for its properties to be selectable for a query.
+ Failure to add this wrapper results in a runtime error. This property wrapper can only be applied to `Object` or
+ `Interface` types.
 */
 @propertyWrapper
 public struct Field<T, Value: _SelectionOutput, ArgType: ArgumentsList> {
@@ -59,7 +59,8 @@ private var cachedArgListsForTypes: [String: Any] = [:]
 private var nameStringsForArgumentKeyPaths: [String: [AnyKeyPath: String]] = [:]
 
 /**
-A type that can be used with a `Field` instance to indicate that the field takes no arguments.
+ A type that can be used with a `Field` instance to indicate that the field takes no arguments. If an argument type is
+ not
 */
 public struct NoArguments: ArgumentsList {
     public func encode(to encoder: Encoder) throws { }
