@@ -74,7 +74,7 @@ public struct _SelectionSetBuilder<T: Object> {
 }
 
 extension _SelectionSetBuilder {
-    public static func buildExpression<F: Object, R>(
+    public static func buildExpression<F, R>(
         _ fragment: Fragment<F, R>
     ) -> _SelectionSet<R> where F.SubSchema == T.SubSchema {
         return _SelectionSet(
