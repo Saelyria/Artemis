@@ -1,107 +1,220 @@
 # Getting started with Artemis
 
-> This guide assumes you've already installed Artemis as a dependency to your project and setup schema generation. If you haven't yet, be
-sure to check out the [installation and setup guide](https://github.com/Saelyria/Artemis/tree/master/InstallationSetup.md) first.
+> This guide assumes you've already added Artemis as a dependency to your project with Swift Package Manager. If you need help, please
+refer to the documentation [here](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app).
 
-> It also assumes that you're reasonably familiar with the basics of GraphQL. If you're not, we recommend you take a quick look at their
-beginner documentation [here](https://graphql.org/learn/).
+> It also assumes that you're reasonably familiar with GraphQL. If you're not, we recommend you take a quick look at their beginner 
+documentation [here](https://graphql.org/learn/).
 
-## Core types in Artemis
+## Defining your schema
 
-At a high level, requests are made with Artemis by creating a `Client` object, then giving it `Operation` objects to perform. Operations are 
-created using function builders, where we give them all the fields on schema types we want included in the response. These schema types
-are generated from GraphQL schema files, and represent the objects, enums, interfaces, etc. that make up the GraphQL API. In the 
-response handler on a client object, we get `Partial` objects that wrap a type in our GraphQL schema - kind of like a type-safe dictionary
-replacement with all the same keypaths as the generated schema types. All interaction with your GraphQL API is done with Swift types with
-all the type safety that gives us - you're never dealing with text files of GraphQL requests or raw `Data` or `Dictionary` responses that you
-need to parse.
+The first step to using Artemis is to define your schema in Swift types that Artmis can use. This can be done fairly easily by referring to your
+GraphQL API's schema. In this tutorial, we're going to make the following 'countries of the world' GraphQL API in Artemis:
 
-### Fields
-
-First things first, we'll look at `Field`s. In this guide, we'll be using a countries GraphQL API found [here](https://countries.trevorblades.com),
-building on it where appropriate to demo different features. Running this API's schema through Artemis' codegen tool gives us a bunch of 
-model schema files that look something like this:
-
-```swift
-import Artemis
-
-final class Continent: Object, ObjectSchema {
-
-  var code = Field<String, NoArguments>("code")
-
-  var name = Field<String, NoArguments>("name")
-
-  var countries = Field<[Country]?, NoArguments>("countries")
-}
 ```
-A lot of this `Continent` type can be inferred from reading it, but there's a handful of things that might look a little peculiar so that we can
-map the GraphQL query language into Swift while taking full advantage of Swift's type safety.
+schema {
+  query: Query
+}
 
-The most important bits are the `Field` properties on our `Continent` - `code`, `name`, and `countries`. `Field` properties first declare
-the returned type of the field, then a struct that contains all the arguments to the field. We'll get to arguments later - for now, none of these
-fields have arguments, so this is set to `NoArguments`.
+type Query {
+  countryCount: Int!
+  countries: [Country!]!
+  continents: [Continent!]!
+  country(code: String!): Country
+}
 
-Now let's assume we have a simple query root object like this:
+type Country {
+  code: String!
+  name: String!
+  languages: [String!]!
+  continent: Continent!
+}
 
-```swift
-final class Query: Object, ObjectSchema {
-
-  var continents = Field<[Continent]?, NoArguments>("continents")
+type Continent {
+  code: String!
+  name: String!
+  countries: [Country!]!
 }
 ```
 
-### Making requests with clients
-
-With that, we can create a new `Client` object and make a request with all the keypath information on these two types. We'll do a simple
-one that just gets all the continents, getting the name of each continent. First we'll make a new client object by initializing it with the URL
-to our API:
+To start, we'll make the 'schema' and 'query' types in Swift. These will be two classes, where the 'schema' conforms to the `Schema` 
+protocol, and the 'query' conforms to the `Object` protocol - something like this:
 
 ```swift
-let client = Client<Query>(endpoint: URL(string: "https://countries.trevorblades.com/")!)
+final class MySchema: Schema {
+    
+}
+
+final class Query: Object {
+    
+}
+```
+The `Object` protocol declares that the conforming Swift type represents a GraphQL 'object' (i.e. an entity declared with `type` in the 
+GraphQL schema). Its requirements are all there automatically for now, but we'll get to some more of them later. 
+
+The `Schema` protocol declares that the conforming Swift type represents a GraphQL 'schema' (i.e. an entity declared with `schema` in the
+GraphQL schema). Its only requirement is a static `query` property, which the compiler should be warning about. We can fix this by adding 
+a static `query` property to our `MySchema` object that refers to our `Query` class, like this:
+
+```swift
+final class MySchema: Schema {
+  static let query = Query()
+}
 ```
 
-Then we'll call the `perform` method on the client object, building a new `Operation` object. Operation objects are initialized with the
-type of operation (either 'query' or 'mutation'), then a function builder of `Add` instances where we add the fields we want to select. `Add`
-objects are created at the top-level with keypaths from the `Query` object we specialized our client with. So, we'll start out by 'selecting'
-the one field on our root query object - the 'continents' field. We can do that like this:
+Next, we'll declare our main object types - `Country` and `Continent`. We'll do this just like we did with our `Query` type - a 
+`final class` that conforms to `Object`:
 
 ```swift
-client.perform(Operation(.query) {
-  Add(\.continents)
-}, completion: { result in
+final class Country: Object {
 
-})
+}
+
+final class Continent: Object {
+
+}
 ```
 
-Try and run that, though, and it won't compile. Following GraphQL's rules, if the value of the selected field (i.e., the value of the keypath) is 
-an 'object' or an array of 'objects', we need to keep giving selections until we get to 'scalar' values (i.e. raw values like integers or strings).
-In other words, we need to keep specifying on our selected 'continents' field which properties of `Continent` we want. So, we'll add that
-we want the continent's name, like so:
+With all our main types declares, all that's left is to start filling in our fields. This is done using the `@Field` property wrapper on variables
+inside our `Object` types. Here's what our `Country` type looks like with the `code`,  `name`, `languages`, and `continent` fields from our 
+schema:
 
 ```swift
-client.perform(Operation(.query) {
-  Add(\.continents) {
-    Add(\.name)
+final class Country: Object {
+  @Field(key: "code") 
+  var code: String
+
+  @Field(key: "name") 
+  var name: String
+    
+  @Field(key: "languages") 
+  var languages: [String]
+    
+  @Field(key: "continent") 
+  var continent: Continent
+}
+```
+As you can see, each field from the original GraphQL schema is represented as a variable with the same name and type (remember that `!`
+in a GraphQL schema means non-optional!). These variables are then wrapped with `@Field`, where the `Field` is instantiated with the
+string name of the field in the original GraphQL schema. While the variable name can technically be different from the schema, the `key` 
+string value _must_ match the original GraphQL schema.
+
+We can now do the same with our `Continent` type:
+
+```swift
+final class Continent: Object {
+  @Field(key: "code") 
+  var code: String
+
+  @Field(key: "name") 
+  var name: String
+
+  @Field(key: "countries") 
+  var countries: [Country]
+}
+```
+
+Now that our two main types are defined, we can go back to our top-level `Query` type. One of its fields (`country`) uses arguments, so the 
+field is declared slightly differently on the Swift type. Arguments must be represented by a type (preferably a struct) that conforms to the 
+`ArgumentsList` protocol. The properties of this 'arguments list' type should each represent one of the arguments available to the field it's 
+associated with. 
+
+We'll describe the arguments for the `country` field as a new struct nested inside `Query`, something like this:
+
+```swift
+final class Query: Object {
+  struct CountryArgs: ArgumentsList {
+    var code: String
   }
-}, completion: { result in
+}
+```
+> `ArgumentsList` only requires that the conforming type be `Encodable` (so the type's properties can be turned into the string arguments 
+on the sent GraphQL document), so its requirements are automatic on this struct.
+
+Now we can declare our `country` field using the same `@Field` property wrapper. However, instead of declaring the type of this variable
+as simply `Country` (i.e. the return type of the field), we need to declare it as a tuple along with a reference to our 'arguments list' type.
+This would look like this, along with the other fields on `Query`:
+
+```swift
+final class Query: Object {
+  @Field(key: "countryCount")
+  var countryCount: Int
+
+  @Field(key: "countries")
+  var countries: [Country]
+    
+  @Field(key: "continents")
+  var continents: [Continent]
+
+  @Field(key: "country")
+  var country: (Country, CountryArgs.Type)
+
+  struct CountryArgs: ArgumentsList {
+    var code: String
+  }
+}
+```
+
+Now we're ready to start using this schema to make some requests!
+
+## Making requests
+
+Requests with Artemis are made with instances of `Client`. Most simply, this object is created with a reference to your `Schema` type then
+given a `URL` to your GraphQL API's endpoint - something like this:
+
+```swift
+let client = Client<MySchema>(endpoint: URL(string: "https://myapi.com")!)
+```
+
+`Client` has a `perform` method that we then call with our field selection and a completion handler for the result. Selection starts by
+calling either the `.query` or `.mutation` methods (though, our API only supports queries for now, so we'll stick to just `.query`). This 
+method is then passed in a closure that include our field selection. Without getting into the weeds of it, fields are 'selected' using a special
+[result builder](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID630) closure. This closure is passed in a 
+special 'selector' object that can be used with all the same properties as our `Query` type.
+
+This is all best learned with an example. Say we want to make a request that gets all countries (via the `countries` field). Ignoring the 
+completion handler for now, this is done by calling the `Client.perform` method like this:
+
+```swift
+client.perform(.query {
+  $0.countries
+}, completion: { _ in
 
 })
 ```
-This will compile, since `name` is a `String` (a scalar value). You'll also notice that `name` is referring to the keypath on our generated
-`Continent` type - Artemis builds all its requests using these type-safe keypaths, so it always knows what types we're dealing with, and
-can have compile-time checking for rules like that object-scalar selection rule.
 
-This compile-time checking also comes in handy with the `result` in the completion handler. This is a native Swift `Result` enum whose
-'success' type is determined by the selection in the operation - in this case, an array of `Partial<Continent>`s. These 'partial' objects
-can be treated like a stand-in `Continent` object - we'll play around with one to demonstrate. Update your request's completion handler
-like this:
+Try and run that, and... it won't compile. This is because this is an invalid GraphQL query - we need to keep selecting properties until we
+reach only 'scalar' types (i.e. basic types like integers or strings), which is enforced by Artemis' type-checking. So, we'll update our
+`perform` call to include each country's `name`, like this:
+
+```swift
+client.perform(.query {
+  $0.countries {
+    $0.name
+  }
+}, completion: { _ in
+
+})
+```
+
+### Handling responses
+
+This will compile, since `name` is a `String` (a scalar value). Another noteworthy thing here is that this will also not compile if we tried to
+switch `countries` and `name` - Artemis checks the types of nested properties, so it knows that `name` is a property of `Country` (and
+that `Country` is the underlying type for the `countries` variable). In a nutshell, this means we're getting Swift compile-time checking on
+our GraphQL queries.
+
+This compile-time checking extends past just our requests, though - let's take a look at our completion handler. The value passed into this
+handler is a native Swift `Result` enum whose 'success' type is determined by the selection in the operation.
+
+Update your request's completion handler like this:
 
 ```swift
 ... completion: { result in
   switch result {
-  case .success(let continents):
-    continents.forEach { continent in
-	  print(continent.name)
+  case .success(let countries):
+    for country in countries {
+	  print(country.name)
 	}
   case .failure(let error):
     print(error)
@@ -109,94 +222,177 @@ like this:
 }
 ```
 
-Which, if hooked up to a live API with real data, would make the request and populate these 'partial' continent objects with a 'name' string.
-The thing that makes it 'partial' is that, naturally, if we were to ask our `continent` in the for-each loop for its `code`, like this:
+Play around with the `countries` property passed into the `completion`. For example, you'll notice that, if you type `country.` inside the 
+loop, you should get an autocomplete list for all the properties on `Country`. Let's run an experiment - update the selection on your
+`query` to this while keeping the same code in the `completion`, like this:
 
 ```swift
-continents.forEach { continent in
-  print(continent.code)
+client.perform(.query {
+  $0.countryCount
+}, completion: { result in
+  switch result {
+  case .success(let countries):
+    for country in countries {
+      print(country.name)
+    }
+  case .failure(let error):
+    print(error)
+  }
+})
+```
+
+...and you'll get a compiler error. Since our selection changed, the type of result we get in our `completion` handler also changed - so,
+instead of `.success(let countries)` referring to an array of `Country` instances, it is now an integer (since `countryCount` returns an
+`Int`). Update your code to this, and it should all compile as expected:
+
+```swift
+client.perform(.query {
+  $0.countryCount
+}, completion: { result in
+  switch result {
+  case .success(let countryCount):
+    print("There are \(countryCount) countries!")
+  case .failure(let error):
+    print(error)
+  }
+})
+```
+
+### Passing arguments
+
+Passing arguments to fields is also very simple. We have one field in our API that can have arguments passed to it - our `country` field. 
+Let's update our request code to look like this:
+
+```swift
+client.perform(.query {
+  $0.country {
+    $0.name
+  }
+}, completion: { _ in
+  
+})
+```
+...and it won't compile. This is because, for fields that have arguments, they _must_ be passed (since this would result in an invalid query as
+well). To pass arguments, we just need to call that `country` selection with an `arguments` parameter with an instance of the field's
+associated `ArgumentsList` type (in this case, an instance of `CountryArgs`). That all looks like this:
+
+```swift
+client.perform(.query {
+  $0.country(arguments: .init(code: "CA")) {
+    $0.name
+  }
+}, completion: { _ in
+  
+})
+```
+
+## Mutations
+
+Now, let's say our API wanted to add the ability to create new countries (creating new nations is as easy as an API call, after all). Events
+that create or update must be declared as a 'mutation' field. In Artemis, this is done in basically the same way as creating a query object - 
+simply create a new class conforming to `Object`, then declare it on the schema. That all looks like this, updating our existing `MySchema`:
+
+```swift
+final class MySchema: Schema {
+    static let query = Query()
+    static let mutation = Mutation()
+}
+
+final class Mutation: Object {
+    
 }
 ```
 
-It would return nil, since it wasn't added to the request's selection. If we changed our minds and did want to add it, we can just add it to
-the request like this, just like you'd expect:
+Let's assume that our GraphQL schema for the mutation looks like this, where all the required fields of a country are provided:
+
+```
+type Mutation {
+  createCountry(code: String!, name: String!, languages: [String!]!, continentCode: String!): Country!
+}
+
+```
+
+Then we'll just make up a quick `createCountry` field on our `Mutation`, along with an `ArgumentsList` type that contains all the 
+arguments listed on the field:
 
 ```swift
-Operation(.query) {
-  Add(\.continents) {
-    Add(\.name)
-    Add(\.code)
+final class Mutation: Object {
+  @Field("createCountry")
+  var createCountry: (Country, CreateCountryArgs.Type)
+  
+  struct CreateCountryArgs: ArgumentsList {
+    var code: String
+    var name: String
+    var languages: [String]
+    var continentCode: String
   }
 }
 ```
 
-### Arguments
-
-An important feature with GraphQL is the ability for fields to take arguments. In Artemis, 'argument lists' for a field are generated as a class
-conforming to the `ArgumentsList` protocol, where its properties (of type `Argument`) are the arguments to a field. They are attached to
-a field via the generic arguments to it. Here's an example of what that all might look like with a new `continent` field on our root query:
+...and our mutation is ready to use in basically the same way as how we make queries - all we need to do is, instead of using the `.query`
+function to build our operation, we use `.mutation`, calling fields from our schema's `mutation` type:
 
 ```swift
-var continent = Field<Continent?, ContinentArguments>("continent")
-final class ContinentArguments: ArgumentsList {
-  var code = Argument<String>("code")
-}
-```
-
-The code is a little verbose, but don't worry about all the types in it - all these relationships are automatically generated from the schema 
-file.
-
-Once we have arguments declared on a field, we can add them to a selection of that field on a request in basically the same way we add
-arguments to a SwiftUI view - as a trailing function call, like this:
-
-```swift
-client.perform(Operation(.query) {
-  Add(\.continent) {
-    Add(\.name)
+client.perform(.mutation {
+  $0.createCountry(arguments: .init(code: "GV", name: "Genovia", languages: ["fr", "it", "en"], continentCode: "eu")) {
+    $0.name
   }
-  .code("NA")
-}, completion: { _ in })
+}, completion: { _ in
+  
+})
 ```
-
-Where the value passed into the function call is the value for the argument.
 
 ### Input objects
 
-Sometimes, arguments for our selections require more complicated 'input object' types. Artemis gives you a syntax very close to GraphQL's
-own for selecting fields on input objects. As an example, say our `continents` field had an input object that let us optionally add arguments
-to filter the returned continents with filters like the languages spoken, a minimum population, and a maximum population. This would get
-generated into a Swift class like this:
+Many GraphQL APIs will use input objects rather than long lists of arguments, especially if arguments are shared between fields. Let's 
+imagine our countries API updated its schema so that the `createCountry` field took an input object instead of a long arguments list:
+
+```
+input CountryInput {
+  code: String!
+  name: String!
+  languages: [String!]!
+  continentCode: String!
+}
+
+type Mutation {
+  createCountry(input: CountryInput!): Country!
+}
+
+```
+
+This is supported in Artemis by defining types that conform to `Input` (which, like `ArgumentsList`, just requires that the type conform to
+`Encodable`). This means that, most of the time, we'll just define a struct with all the properties of the input (that way, we get the
+memberwise initializer for free!). The updated mutation API might then look like this:
 
 ```swift
-final class ContinentFilterInput: Input, ObjectSchema {
-  var languages = Field<[String], NoArguments>("languages")
-  var minimumPopulation = Field<Int, NoArguments>("minimumPopulation")
-  var maximumPopulation = Field<Int, NoArguments>("maximumPopulation")
+struct CountryInput: Input {
+  var code: String
+  var name: String
+  var languages: [String]
+  var continentCode: String
+}
+
+final class Mutation: Object {
+  @Field("createCountry")
+  var createCountry: (Country, CreateCountryArgs.Type)
+  
+  struct CreateCountryArgs: ArgumentsList {
+    var input: CountryInput
+  }
 }
 ```
 
-and the `continents` field and its arguments type would be generated like this:
+Calling our `createCountry` field can then look like this:
 
 ```swift
-var continents = Field<[Continent], ContinentsArguments>("continent")
-final class ContinentsArguments: ArgumentsList {
-  var filters = Argument<ContinentFilterInput>("filters")
-}
-```
+let input = CountryInput(code: "GV", name: "Genovia", languages: ["fr", "it", "en"], continentCode: "eu")
 
-We can then create a request for continents with filters attached like this:
-
-```swift
-client.perform(Operation(.query) {
-  Add(\.continents) {
-    Add(\.name)
+client.perform(.mutation {
+  $0.createCountry(input: .init(input: input)) {
+    $0.name
   }
-  .filters { 
-    $0.languages(["Japanese", "Hindi"])
-    $0.minimumPopulation(50000000) 
-  }
-}, completion: { _ in })
+}, completion: { _ in
+  
+})
 ```
-
-Here, we've added the `filters` argument to the `continents` field. Since this `filters` argument takes an input object, we give the
-`filters` call a closure that gets passed in an object that we call with the input object's fields and their arguments.
