@@ -19,18 +19,18 @@ on:
       - '**/*.swift'
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: GitHub Action for SwiftLint
-        uses: norio-nomura/action-swiftlint@3.2.1
+#  lint:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v1
+#      - name: GitHub Action for SwiftLint
+#        uses: norio-nomura/action-swiftlint@3.2.1
   build:
     runs-on: macos-latest
     steps:
     - uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: latest
+        xcode-version: latest 
     - uses: actions/checkout@v2
     - name: Build
       run: swift build -v
