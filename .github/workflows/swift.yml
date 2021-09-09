@@ -5,7 +5,6 @@ on:
     branches:
         - main
         - develop
-        - ci
     paths:
       - '.swiftlint.yml'
       - '**/*.swift'
@@ -13,7 +12,6 @@ on:
     branches:
         - main
         - develop
-        - ci
     paths:
       - '.swiftlint.yml'
       - '**/*.swift'
