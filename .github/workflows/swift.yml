@@ -15,7 +15,13 @@ on:
     paths:
       - '.swiftlint.yml'
       - '**/*.swift'
-
+  workflow_dispatch:
+    branches:
+        - main
+        - develop
+    paths:
+      - '.swiftlint.yml'
+      - '**/*.swift'
 jobs:
   build:
     runs-on: macos-latest
