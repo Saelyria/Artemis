@@ -3,9 +3,9 @@ import Foundation
 /**
  A property wrapper that marks a property on an `Object` as a GraphQL field.
 
- This property wrapper must be applied to properties on an `Object` for its properties to be selectable for a query.
- Failure to add this wrapper results in a runtime error. This property wrapper can only be applied to `Object` or
- `Interface` types.
+ This property wrapper must be applied to properties on an `Object` for its properties to be selectable for an
+ operation. Failure to add this wrapper results in a runtime error. This property wrapper can only be applied to
+ `Object` or `Interface` types.
 */
 @propertyWrapper
 public struct Field<T, Value: _SelectionOutput, ArgType: ArgumentsList> {
