@@ -15,5 +15,5 @@ let package = Package(
         .target(name: "Artemis", dependencies: []),
         .testTarget(name: "ArtemisTests", dependencies: ["Artemis"])
     ],
-    swiftLanguageVersions: [.v5]
+    swiftLanguageVersions: [.version("5.4")]
 )
