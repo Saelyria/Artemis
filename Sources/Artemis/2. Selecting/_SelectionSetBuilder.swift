@@ -9,7 +9,7 @@ import Foundation
  `_Selector` passed into them so that new instances of `_Selection` can be easily created using keypaths from `T` (i.e.
  the field being whose fields are being selected from).
 */
-@_functionBuilder
+@resultBuilder
 public struct _SelectionSetBuilder<T: Object> {
     // swiftlint:disable missing_docs
     public static func buildExpression<R>(

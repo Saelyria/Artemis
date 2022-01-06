@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "Artemis",
     platforms: [
-        .macOS(.v10_10), .iOS(.v8)
+        .macOS(.v10_10), .iOS(.v9)
     ],
     products: [
         .library(name: "Artemis", targets: ["Artemis"])
