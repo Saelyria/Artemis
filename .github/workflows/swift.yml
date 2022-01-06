@@ -1,23 +1,34 @@
-name: Swift
+name: build
 
 on:
   push:
     branches:
         - main
         - develop
-        - ci
+    paths:
+      - '.swiftlint.yml'
+      - '**/*.swift'
   pull_request:
     branches:
         - main
         - develop
-        - ci
-
+    paths:
+      - '.swiftlint.yml'
+      - '**/*.swift'
+  workflow_dispatch:
+    branches:
+        - main
+        - develop
+    paths:
+      - '.swiftlint.yml'
+      - '**/*.swift'
 jobs:
   build:
-
     runs-on: macos-latest
-
     steps:
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: latest
     - uses: actions/checkout@v2
     - name: Build
       run: swift build -v
