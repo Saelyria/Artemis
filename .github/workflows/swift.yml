@@ -1,30 +1,10 @@
 name: build
 
-on:
-  push:
-    branches:
-        - main
-        - develop
-    paths:
-      - '.swiftlint.yml'
-      - '**/*.swift'
-  pull_request:
-    branches:
-        - main
-        - develop
-    paths:
-      - '.swiftlint.yml'
-      - '**/*.swift'
-  workflow_dispatch:
-    branches:
-        - main
-        - develop
-    paths:
-      - '.swiftlint.yml'
-      - '**/*.swift'
+on: [pull_request, workflow_dispatch]
+
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
     - uses: maxim-lobanov/setup-xcode@v1
       with:
@@ -34,3 +14,5 @@ jobs:
       run: swift build -v
     - name: Run tests
       run: swift test -v
+    - name: Run SwiftLint
+      run: swiftlint lint --reporter github-actions-logging
